@@ -1,0 +1,17 @@
+#add-btn {
+    -fx-background-image: url('../icons/add.png');
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+
+#delete-btn {
+    -fx-background-image: url('../icons/delete.png');
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+
+#copy-btn {
+    -fx-background-image: url('../icons/copy.png');
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}

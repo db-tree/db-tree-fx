@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="823.0" prefWidth="857.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.vzhilin.dbview.MainWindowController">
+   <children>
+      <MenuBar>
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#onConfigAction" text="Configuration" />
+                  <MenuItem mnemonicParsing="false" text="Close" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Delete" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <BorderPane prefHeight="451.0" prefWidth="488.0" VBox.vgrow="ALWAYS">
+         <center>
+            <TreeTableView fx:id="treeTable" prefHeight="277.0" prefWidth="364.0" BorderPane.alignment="CENTER">
+              <columns>
+                <TreeTableColumn fx:id="itemColumn" prefWidth="75.0" text="Item" />
+                <TreeTableColumn fx:id="valueColumn" prefWidth="75.0" text="Value" />
+                  <TreeTableColumn fx:id="meaningfulValueColumn" prefWidth="75.0" text="Meaningful value" />
+              </columns>
+               <columnResizePolicy>
+                  <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy>
+            </TreeTableView>
+         </center>
+         <top>
+            <BorderPane prefHeight="0.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+               <right>
+                  <HBox>
+                     <children>
+                        <ComboBox fx:id="cbConnection" prefHeight="31.0" prefWidth="175.0">
+                           <HBox.margin>
+                              <Insets bottom="5.0" left="5.0" top="5.0" />
+                           </HBox.margin></ComboBox>
+                        <Button fx:id="findButton" mnemonicParsing="false" onAction="#onFindAction" text="Find" BorderPane.alignment="CENTER">
+                           <HBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </HBox.margin></Button>
+                     </children>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </HBox>
+               </right>
+               <center>
+                  <TextField fx:id="textField" onAction="#onFindAction" prefHeight="31.0" prefWidth="123.0" BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets bottom="5.0" left="5.0" top="5.0" />
+                     </BorderPane.margin></TextField>
+               </center>
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin>
+            </BorderPane>
+         </top>
+      </BorderPane>
+   </children>
+</VBox>
