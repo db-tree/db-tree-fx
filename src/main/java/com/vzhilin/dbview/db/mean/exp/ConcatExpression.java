@@ -2,17 +2,22 @@ package com.vzhilin.dbview.db.mean.exp;
 
 import com.vzhilin.dbview.db.data.Row;
 
-final class ConcatExpression implements Expression {
-    private final Expression left;
-    private final Expression right;
+import java.util.List;
 
-    public ConcatExpression(Expression left, Expression right) {
-        this.left = left;
-        this.right = right;
+public final class ConcatExpression implements Expression {
+    private final List<Expression> expressions;
+
+    public ConcatExpression(List<Expression> expressionList) {
+        this.expressions = expressionList;
     }
 
     @Override
-    public String render(Row row) {
-        return left.render(row) + right.render(row);
+    public ExpressionValue render(Row row) {
+        StringBuilder sb = new StringBuilder();
+        for (Expression exp: expressions) {
+            sb.append(String.valueOf(exp.render(row)));
+        }
+
+        return new ExpressionValue(sb.toString());
     }
 }

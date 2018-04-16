@@ -10,7 +10,11 @@ public class ColumnExpression implements Expression {
     }
 
     @Override
-    public String render(Row row) {
-        return String.valueOf(row.getField(column));
+    public ExpressionValue render(Row row) {
+        if (row.getTable().getRelations().containsKey(column)) {
+            return new ExpressionValue((Row) row.references().get(column));
+        } else {
+            return new ExpressionValue(row.getField(column));
+        }
     }
 }

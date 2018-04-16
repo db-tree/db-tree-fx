@@ -1,14 +1,13 @@
 package com.vzhilin.dbview.tree;
 
-import java.util.Collection;
-import java.util.Map;
-
 import com.vzhilin.dbview.TreeTableNode;
 import com.vzhilin.dbview.db.data.Row;
 import com.vzhilin.dbview.db.schema.Table;
-
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
+
+import java.util.Collection;
+import java.util.Map;
 
 public final class ToManyNode extends TreeItem<TreeTableNode> {
     private final Row row;

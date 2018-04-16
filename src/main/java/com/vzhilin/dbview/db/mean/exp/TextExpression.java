@@ -10,7 +10,7 @@ public class TextExpression implements Expression {
     }
 
     @Override
-    public String render(Row row) {
-        return text;
+    public ExpressionValue render(Row row) {
+        return new ExpressionValue(text.substring(1, text.length() - 1));
     }
 }

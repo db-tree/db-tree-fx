@@ -1,8 +1,8 @@
 package com.vzhilin.dbview.db.data;
 
-import java.util.Map;
-
 import com.vzhilin.dbview.db.schema.Table;
+
+import java.util.Map;
 
 public interface IRow {
     /**

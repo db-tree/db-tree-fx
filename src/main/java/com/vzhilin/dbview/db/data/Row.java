@@ -167,4 +167,8 @@ public class Row implements IRow {
 
         return template;
     }
+
+    public long getPk() {
+        return pk;
+    }
 }

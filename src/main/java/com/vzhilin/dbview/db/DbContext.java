@@ -1,12 +1,11 @@
 package com.vzhilin.dbview.db;
 
-import java.sql.SQLException;
-
 import com.vzhilin.dbview.db.schema.Schema;
 import com.vzhilin.dbview.db.schema.SchemaLoader;
-
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.dbutils.QueryRunner;
+
+import java.sql.SQLException;
 
 public final class DbContext {
     private Schema schema;

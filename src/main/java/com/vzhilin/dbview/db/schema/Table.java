@@ -1,15 +1,10 @@
 package com.vzhilin.dbview.db.schema;
 
+import com.google.common.base.Objects;
+import com.google.common.collect.*;
+
 import java.util.Map;
 import java.util.Set;
-
-import com.google.common.base.Objects;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 
 /**
  * Таблица

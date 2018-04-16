@@ -3,7 +3,6 @@ package com.vzhilin.dbview;
 import com.vzhilin.dbview.conf.ConnectionSettings;
 import com.vzhilin.dbview.conf.Settings;
 import com.vzhilin.dbview.conf.Template;
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

@@ -11,6 +11,7 @@ import com.vzhilin.dbview.db.mean.exp.MeaningfulExpression;
 import com.vzhilin.dbview.db.schema.Table;
 import javafx.beans.property.ListProperty;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.sql.SQLException;
@@ -60,6 +61,7 @@ public class MeaningfulRendererTest {
         return settings;
     }
 
+    @Ignore
     @Test
     public void expressionTest() {
         String e1 = "DICROWCODE + ': ' + DICROWNAME";

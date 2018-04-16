@@ -1,12 +1,11 @@
 package com.vzhilin.dbview.test;
 
-import java.util.ArrayList;
-
-import org.junit.Test;
-
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
+import org.junit.Test;
+
+import java.util.ArrayList;
 
 public class ComplexBindingTest {
     @Test

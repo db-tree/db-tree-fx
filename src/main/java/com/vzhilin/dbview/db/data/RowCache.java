@@ -1,13 +1,12 @@
 package com.vzhilin.dbview.db.data;
 
-import java.math.BigDecimal;
-import java.util.Map;
-
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.SetMultimap;
 import com.vzhilin.dbview.db.schema.Table;
-
 import org.apache.commons.dbutils.QueryRunner;
+
+import java.math.BigDecimal;
+import java.util.Map;
 
 public class RowCache {
     private final SetMultimap<Table, IRow> shadeRows = LinkedHashMultimap.create();

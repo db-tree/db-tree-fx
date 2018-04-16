@@ -1,15 +1,14 @@
 package com.vzhilin.dbview.tree;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import com.vzhilin.dbview.TreeTableNode;
 import com.vzhilin.dbview.db.data.Row;
 import com.vzhilin.dbview.db.schema.Table;
-
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public final class ToOneNode extends TreeItem<TreeTableNode> {
     private boolean loaded = false;
