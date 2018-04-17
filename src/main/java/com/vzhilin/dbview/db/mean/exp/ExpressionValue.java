@@ -8,7 +8,6 @@ public final class ExpressionValue {
     private final Object value;
     private final boolean isRow;
 
-
     public ExpressionValue(Object value) {
         isRow  = value instanceof Row;
         this.row = isRow ? (Row) value : null;

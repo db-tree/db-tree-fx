@@ -84,7 +84,9 @@ public class MainWindowController {
         QueryContext queryContext = new QueryContext(ctxProperty.getValue(), cbConnection.getValue());
         for (Row r: new RowFinder(queryContext).find(textField.getText())) {
             Table table = r.getTable();
-            newRoot.getChildren().add(new ToOneNode(r,  new TreeTableNode(table.getName(), String.valueOf(r.getField(table.getPk())), r.meaningfulValue())));
+
+            TreeTableNode newNode = new TreeTableNode(table.getName(), String.valueOf(r.getField(table.getPk())), r.meaningfulValue());
+            newRoot.getChildren().add(new ToOneNode(r, newNode));
         }
 
         treeTable.setRoot(newRoot);

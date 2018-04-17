@@ -8,7 +8,8 @@ exp
     : simple_column
     | complex_column
     | string
-    | '$' ev_exp;
+    | '$' ev_exp
+    ;
 
 ev_exp
     : simple_column
@@ -32,7 +33,11 @@ STRING_LITERAL
     : '\'' ( ~'\'' | '\'\'' )* '\''
     ;
 
-DOT : '.';
-PLUS: '+';
+DOT : '.'
+    ;
 
-WS: [ \t\r\n]+ -> skip ; // skip spaces, tabs, newlines ;
+PLUS: '+'
+    ;
+
+WS: [ \t\r\n]+ -> skip
+    ; // skip spaces, tabs, newlines ;

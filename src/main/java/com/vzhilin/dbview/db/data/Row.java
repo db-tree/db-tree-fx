@@ -11,7 +11,6 @@ import com.vzhilin.dbview.db.schema.Table;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.MapHandler;
 import org.apache.commons.dbutils.handlers.MapListHandler;
-import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.apache.log4j.Logger;
 
 import java.math.BigDecimal;
@@ -151,21 +150,7 @@ public class Row implements IRow {
 
     @Override
     public String meaningfulValue() {
-        String template = queryContext.getTemplate(table.getName());
-        if (template == null || template.isEmpty()) {
-            return "";
-        }
-
-        try {
-            Object value = ctx.getRunner().query(String.format("SELECT %s FROM %s WHERE %s = ?", template, table.getName(), table.getPk()), new ScalarHandler<>(), pk);
-            if (value != null) {
-                return String.valueOf(value);
-            }
-        } catch (SQLException e) {
-            LOG.error(e, e);
-        }
-
-        return template;
+        return queryContext.getMeanintfulValue(this);
     }
 
     public long getPk() {
