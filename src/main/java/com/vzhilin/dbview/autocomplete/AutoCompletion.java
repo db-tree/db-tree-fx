@@ -1,6 +1,7 @@
 package com.vzhilin.dbview.autocomplete;
 
 import com.google.common.collect.Lists;
+import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Popup;
@@ -20,7 +21,7 @@ public class AutoCompletion {
         List<String> vs = Lists.newArrayList("aaa", "Bbbb", "Ccccc");
 
         Popup popup = new Popup();
-        ListView<String> suggestionList = new ListView<String>();
+        ListView<String> suggestionList = new ListView<>();
         popup.getContent().add(suggestionList);
 
         node.focusedProperty().addListener((observable, oldValue, newValue) -> {
@@ -65,8 +66,11 @@ public class AutoCompletion {
             SuggestionHelper helper = new SuggestionHelper(node.getText(), caretPosition);
             List<String> list = provider.suggestions(helper.word());
 
-            suggestionList.getItems().clear();
-            suggestionList.getItems().addAll(list);
+            ObservableList<String> items = suggestionList.getItems();
+            items.clear();
+            items.addAll(list);
+            // select first row
+            suggestionList.getSelectionModel().select(0);
 
             if (list.isEmpty()) {
                 popup.hide();
