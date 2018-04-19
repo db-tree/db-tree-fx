@@ -34,11 +34,9 @@ public class AutoCompletion {
                 case ENTER:
                     String selectedItem = suggestionList.getSelectionModel().getSelectedItem();
                     if (selectedItem != null) {
-                        if (node.getText() != null && node.getText().contains(".")) {
-                            node.setText(node.getText().substring(0, node.getText().lastIndexOf('.')) + "." + selectedItem);
-                        } else {
-                            node.setText(selectedItem);
-                        }
+                        SuggestionHelper helper = new SuggestionHelper(node.getText(), node.getCaretPosition());
+
+                        node.setText(helper.select(selectedItem));
 
                         node.positionCaret(node.getText().length());
                         popup.hide();
@@ -62,20 +60,11 @@ public class AutoCompletion {
                 return;
             }
 
+            caretPosition = Math.min(caretPosition, node.getText().length());
 
-            String text = node.getText().substring(0, caretPosition);
-            if (text.contains(" ")) {
-                text = text.substring(text.lastIndexOf(' ') + 1);
-            }
+            SuggestionHelper helper = new SuggestionHelper(node.getText(), caretPosition);
+            List<String> list = provider.suggestions(helper.word());
 
-//            if (text.trim().isEmpty()) {
-//                popup.hide();
-//                return;
-//            }
-
-
-            List<String> list = provider.suggestions(text);
-            System.err.println(list);
             suggestionList.getItems().clear();
             suggestionList.getItems().addAll(list);
 

@@ -54,7 +54,7 @@ public class AutocompleteController {
             if (text.contains(".")) {
                 String[] split = text.split("\\.");
                 for (int i = 0; i < split.length; i++) {
-                    Map<String, Table> rs = root.getRelations();
+                    Map<String, Table> rs = current.getRelations();
                     String name = split[i];
                     if (!rs.containsKey(name)) {
                         break;
