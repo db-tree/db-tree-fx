@@ -1,5 +1,7 @@
 package com.vzhilin.dbview;
 
+import com.vzhilin.dbview.db.data.Row;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
@@ -7,12 +9,12 @@ import javafx.beans.value.ObservableValue;
 public class TreeTableNode {
     private StringProperty itemColumnProperty = new SimpleStringProperty();
     private StringProperty valueColumnProperty = new SimpleStringProperty();
-    private StringProperty meaningfulColumnProperty = new SimpleStringProperty();
+    private SimpleObjectProperty<Row> meaningfulColumnProperty = new SimpleObjectProperty<>();
 
-    public TreeTableNode(String column, String value, String meaningfulValue) {
+    public TreeTableNode(String column, String value, Row row) {
         itemColumnProperty.set(column);
         valueColumnProperty.set(value);
-        meaningfulColumnProperty.set(meaningfulValue);
+        meaningfulColumnProperty.set(row);
     }
 
     public ObservableValue<String> itemColumnProperty() {
@@ -23,7 +25,7 @@ public class TreeTableNode {
         return valueColumnProperty;
     }
 
-    public ObservableValue<String> meaningfulValueColumnProperty() {
+    public ObservableValue<Row> meaningfulValueColumnProperty() {
         return meaningfulColumnProperty;
     }
 }

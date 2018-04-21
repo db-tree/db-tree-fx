@@ -44,6 +44,10 @@ public class Row implements IRow {
         this.pk = pk;
     }
 
+    public QueryContext getContext() {
+        return queryContext;
+    }
+
     private void ensureLoaded() {
         try {
             if (rowData == null) {

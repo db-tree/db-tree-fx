@@ -2,8 +2,6 @@ package com.vzhilin.dbview.autocomplete;
 
 import com.google.common.collect.Maps;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -13,9 +11,6 @@ import javafx.stage.Popup;
 import javafx.stage.Window;
 import javafx.util.Callback;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -89,21 +84,21 @@ public class AutoCompletion {
 
             if (list.isEmpty()) {
                 popup.hide();
-            } //else
-//            if (!popup.isShowing()){
+            } else
+            if (!popup.isShowing()){
                 Window parent = node.getScene().getWindow();
-                double value = 31.25 * list.size() + 5;
                 popup.show(parent,
                         parent.getX() + node.localToScene(0, 0).getX() +
                                 node.getScene().getX(),
                         parent.getY() + node.localToScene(0, 0).getY() +
                                 node.getScene().getY() + TITLE_HEIGHT);
+            }
 
-                if (popup.getHeight() != value) {
-                    popup.setHeight(value);
-                    suggestionList.setPrefHeight(value);
-                }
-//            }
+            double value = 23 * list.size() + 5;
+            if (popup.getHeight() != value) {
+                popup.setHeight(value + 5);
+                suggestionList.setPrefHeight(value);
+            }
         });
     }
 

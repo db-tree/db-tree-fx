@@ -10,6 +10,7 @@ import javafx.application.Application;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -23,20 +24,16 @@ import static com.google.common.collect.Iterables.getOnlyElement;
 public class MainWindowApp extends Application {
     @Override public void start(Stage stage) throws Exception {
         Locale.setDefault(Locale.US);
-
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("/main-window.fxml"));
-
         Parent root = loader.load();
-
         Scene scene = new Scene(root, 800, 800);
-        scene.getStylesheets().add
-                (getClass().getResource("/styles/connection-settings.css").toExternalForm());
-
+        ObservableList<String> stylesheets = scene.getStylesheets();
+        stylesheets.add(getClass().getResource("/styles/connection-settings.css").toExternalForm());
+        stylesheets.add(getClass().getResource("/styles/autocomplete.css").toExternalForm());
         stage.setTitle("FXML Welcome");
         stage.setScene(scene);
         stage.show();
-
         MainWindowController controller = loader.getController();
         load(controller);
     }

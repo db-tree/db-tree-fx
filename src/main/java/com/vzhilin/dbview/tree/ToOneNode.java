@@ -45,7 +45,7 @@ public final class ToOneNode extends TreeItem<TreeTableNode> {
                         Row refRow = this.row.references().get(column);
                         Table refTable = refRow.getTable();
                         complexNodes.add(new ToOneNode(refRow, new TreeTableNode(
-                                column, String.valueOf(refRow.getField(refTable.getPk())), refRow.meaningfulValue())));
+                                column, String.valueOf(refRow.getField(refTable.getPk())), refRow)));
                     } else {
                         simpleNodes.add(new LeafNode(row, column));
                     }

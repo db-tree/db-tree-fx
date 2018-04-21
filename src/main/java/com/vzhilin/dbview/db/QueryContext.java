@@ -51,8 +51,23 @@ public final class QueryContext {
         String tableName = row.getTable().getName();
         if (parsedTemplates.containsKey(tableName)) {
             return String.valueOf(parsedTemplates.get(tableName).render(row));
+        } else
+        if (templates.containsKey(tableName)) {
+            String template = templates.get(tableName);
+            if (template == null || template.isEmpty()) {
+                return "";
+            }
+
+            MeaningParser parser = new MeaningParser();
+            parsedTemplates.put(tableName, parser.parse(template));
+            return String.valueOf(parsedTemplates.get(tableName).render(row));
         } else {
             return "";
         }
+    }
+
+    public void setTemplate(String name, String template) {
+        templates.put(name, template);
+        parsedTemplates.remove(name);
     }
 }

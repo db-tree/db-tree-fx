@@ -19,7 +19,7 @@ public final class ToManyNode extends TreeItem<TreeTableNode> {
         this.row = row;
         relation = tm;
         key = tm.getKey();
-        setValue(new TreeTableNode(String.format("(+) %s::%s (%d)", key.getName(), tm.getValue(), count), "", ""));
+        setValue(new TreeTableNode(String.format("(+) %s::%s (%d)", key.getName(), tm.getValue(), count), "", null));
     }
 
     @Override public boolean isLeaf() {
@@ -35,7 +35,7 @@ public final class ToManyNode extends TreeItem<TreeTableNode> {
 
             rs.forEach(r -> {
                 Table tb = r.getTable();
-                ch.add(new ToOneNode(r, new TreeTableNode(tb.getName(), String.valueOf(r.getField(tb.getPk())), r.meaningfulValue())));
+                ch.add(new ToOneNode(r, new TreeTableNode(tb.getName(), String.valueOf(r.getField(tb.getPk())), r)));
             });
         }
 

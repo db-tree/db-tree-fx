@@ -37,7 +37,7 @@ public class MainWindowController {
     private TreeTableColumn<TreeTableNode, String> valueColumn;
 
     @FXML
-    private TreeTableColumn<TreeTableNode, String> meaningfulValueColumn;
+    private TreeTableColumn<TreeTableNode, Row> meaningfulValueColumn;
 
     @FXML
     private Button findButton;
@@ -53,9 +53,15 @@ public class MainWindowController {
 
     @FXML
     private void initialize() {
+        treeTable.setEditable(true);
         itemColumn.setCellValueFactory(v -> v.getValue().getValue().itemColumnProperty());
         valueColumn.setCellValueFactory(v -> v.getValue().getValue().valueColumnProperty());
+//        valueColumn.setCellValueFactory(v -> v.getValue().getValue().meaningfulValueColumnProperty());
         meaningfulValueColumn.setCellValueFactory(v -> v.getValue().getValue().meaningfulValueColumnProperty());
+
+//        meaningfulValueColumn.setCellFactory(v -> new TextFieldTreeTableCell<>());
+        meaningfulValueColumn.setCellFactory(param -> new EditingCell());
+        meaningfulValueColumn.setEditable(true);
 
         treeTable.setShowRoot(false);
 
@@ -80,12 +86,12 @@ public class MainWindowController {
 
     @FXML
     private void onFindAction() throws IOException, SQLException {
-        TreeItem<TreeTableNode> newRoot = new TreeItem<>(new TreeTableNode("ROOT", "ROOT", "ROOT"));
+        TreeItem<TreeTableNode> newRoot = new TreeItem<>(new TreeTableNode("ROOT", "ROOT", null));
         QueryContext queryContext = new QueryContext(ctxProperty.getValue(), cbConnection.getValue());
         for (Row r: new RowFinder(queryContext).find(textField.getText())) {
             Table table = r.getTable();
 
-            TreeTableNode newNode = new TreeTableNode(table.getName(), String.valueOf(r.getField(table.getPk())), r.meaningfulValue());
+            TreeTableNode newNode = new TreeTableNode(table.getName(), String.valueOf(r.getField(table.getPk())), r);
             newRoot.getChildren().add(new ToOneNode(r, newNode));
         }
 
@@ -123,7 +129,7 @@ public class MainWindowController {
 
     public void show(Row r) {
         Table table = r.getTable();
-        ToOneNode root = new ToOneNode(r, new TreeTableNode(table.getName(), String.valueOf(r.getField(table.getPk())), ""));
+        ToOneNode root = new ToOneNode(r, new TreeTableNode(table.getName(), String.valueOf(r.getField(table.getPk())), r));
         treeTable.setRoot(root);
     }
 
