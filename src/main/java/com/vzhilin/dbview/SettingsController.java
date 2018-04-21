@@ -56,6 +56,7 @@ public class SettingsController {
 
     private TreeItem<SettingNode> rootNode;
     private TreeItem<SettingNode> connectionsNode;
+    private MainWindowController mainController;
 
 
     public SettingsController() {
@@ -166,10 +167,9 @@ public class SettingsController {
     @FXML
     public void onOkButton() {
         settingsCopy.apply();
-        Gson fxGson = FxGson.create();
-
         Stage stage = (Stage) okButton.getScene().getWindow();
         stage.close();
+//        mainController.refreshTreeView();
     }
 
     @FXML
@@ -214,6 +214,10 @@ public class SettingsController {
         for (ConnectionSettings cs: settings.getConnections()) {
             connectionsNode.getChildren().add(newItem(cs));
         }
+    }
+
+    public void setMainWinController(MainWindowController mainWindowController) {
+        this.mainController = mainWindowController;
     }
 
     private static class SettingNode {

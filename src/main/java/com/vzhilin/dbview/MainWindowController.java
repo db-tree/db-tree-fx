@@ -109,6 +109,8 @@ public class MainWindowController {
 
         Parent root = loader.load();
         SettingsController controller = loader.getController();
+        controller.setMainWinController(this);
+
         Stage stage = new Stage();
 
 //        controller.setMainApp(this);
@@ -164,5 +166,9 @@ public class MainWindowController {
 
         cbConnection.setValue(Iterables.getFirst(settings.getConnections(), null));
         cbConnection.itemsProperty().bind(settings.connectionsProperty());
+    }
+
+    public void refreshTreeView() {
+        treeTable.refresh();
     }
 }

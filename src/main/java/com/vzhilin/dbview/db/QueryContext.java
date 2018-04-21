@@ -6,37 +6,32 @@ import com.vzhilin.dbview.conf.Template;
 import com.vzhilin.dbview.db.data.Row;
 import com.vzhilin.dbview.db.mean.MeaningParser;
 import com.vzhilin.dbview.db.mean.exp.Expression;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.ListProperty;
 import javafx.beans.property.StringProperty;
 
 import java.util.Map;
-
-import static java.util.stream.Collectors.toMap;
+import java.util.Optional;
 
 public final class QueryContext {
     private final DbContext dbContext;
     private final ConnectionSettings connectionSettings;
-    private final Map<String, StringProperty> templates;
     private final Map<String, Expression> parsedTemplates = Maps.newLinkedHashMap();
+    private final ListProperty<Template> templates;
 
     public QueryContext(DbContext dbContext, ConnectionSettings connectionSettings) {
         this.dbContext = dbContext;
         this.connectionSettings = connectionSettings;
 
-        this.templates = connectionSettings
-                .templatesProperty()
-                .stream()
-                .collect(toMap(Template::getTableName, Template::templateProperty));
-
+        this.templates = connectionSettings.templatesProperty();
         parseTemplates();
     }
 
     private void parseTemplates() {
         MeaningParser parser = new MeaningParser();
-        for (Map.Entry<String, StringProperty> e: templates.entrySet()) {
-            String value = e.getValue().getValue();
+        for (Template t: templates) {
+            String value = t.getTemplate();
             if (!value.isEmpty()) {
-                parsedTemplates.put(e.getKey(), parser.parse(value));
+                parsedTemplates.put(t.getTableName(), parser.parse(value));
             }
         }
     }
@@ -50,20 +45,30 @@ public final class QueryContext {
     }
 
     public StringProperty getTemplateProperty(String name) {
-        if (!templates.containsKey(name)) {
-            templates.put(name, new SimpleStringProperty());
+        Optional<Template> first = findTemplate(name);
+        if (!first.isPresent()) {
+            Template newTemplate = new Template(name, "");
+            templates.add(newTemplate);
+
+            return newTemplate.templateProperty();
         }
 
-        return templates.get(name);
+        return first.get().templateProperty();
+    }
+
+    private Optional<Template> findTemplate(String name) {
+        return templates.stream().filter(t -> t.getTableName().equals(name)).findFirst();
     }
 
     public String getMeanintfulValue(Row row) {
         String tableName = row.getTable().getName();
         if (parsedTemplates.containsKey(tableName)) {
             return String.valueOf(parsedTemplates.get(tableName).render(row));
-        } else
-        if (templates.containsKey(tableName)) {
-            String template = templates.get(tableName).getValue();
+        }
+
+        Optional<Template> maybeTemplate = findTemplate(tableName);
+        if (maybeTemplate.isPresent()) {
+            String template = maybeTemplate.get().getTemplate();
             if (template == null || template.isEmpty()) {
                 return "";
             }
