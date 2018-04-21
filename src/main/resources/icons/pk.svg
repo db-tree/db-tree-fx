@@ -2,22 +2,23 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-        xmlns:dc="http://purl.org/dc/elements/1.1/"
-        xmlns:cc="http://creativecommons.org/ns#"
-        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-        xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-        width="36mm"
-        height="22mm"
-        viewBox="0 0 36 22"
-        version="1.1"
-        id="svg6275"
-        inkscape:version="0.92.3 (2405546, 2018-03-11)"
-        sodipodi:docname="pk.svg"
-        inkscape:export-filename="E:\idea-workspace\db-tree-view-fx\src\main\resources\icons\pk.png"
-        inkscape:export-xdpi="16.227777"
-        inkscape:export-ydpi="16.227777">
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="36mm"
+   height="22mm"
+   viewBox="0 0 36 22"
+   version="1.1"
+   id="svg6275"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="pk.svg"
+   inkscape:export-filename="E:\idea-workspace\db-tree-view-fx\src\main\resources\icons\pk.png"
+   inkscape:export-xdpi="16.227777"
+   inkscape:export-ydpi="16.227777">
   <defs
      id="defs6269" />
   <sodipodi:namedview
@@ -35,8 +36,8 @@
      showgrid="false"
      inkscape:window-width="1516"
      inkscape:window-height="1082"
-     inkscape:window-x="122"
-     inkscape:window-y="71"
+     inkscape:window-x="190"
+     inkscape:window-y="17"
      inkscape:window-maximized="0"
      fit-margin-top="0"
      fit-margin-left="0"
@@ -60,7 +61,7 @@
      id="layer1"
      transform="translate(0,-0.02186608)">
     <rect
-       style="fill:#46c846;fill-opacity:1;stroke:none;stroke-width:2.99131703;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#e677e9;fill-opacity:1;stroke:none;stroke-width:2.99131703;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect6139-9-1"
        width="36"
        height="22"

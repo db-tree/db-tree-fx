@@ -2,22 +2,23 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-        xmlns:dc="http://purl.org/dc/elements/1.1/"
-        xmlns:cc="http://creativecommons.org/ns#"
-        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-        xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-        width="36mm"
-        height="22mm"
-        viewBox="0 0 36 22"
-        version="1.1"
-        id="svg6275"
-        inkscape:version="0.92.3 (2405546, 2018-03-11)"
-        sodipodi:docname="fk.svg"
-        inkscape:export-filename="E:\idea-workspace\db-tree-view-fx\src\main\resources\icons\rect6139-9-1.png"
-        inkscape:export-xdpi="16.227777"
-        inkscape:export-ydpi="16.227777">
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="36mm"
+   height="22mm"
+   viewBox="0 0 36 22"
+   version="1.1"
+   id="svg6275"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="fk.svg"
+   inkscape:export-filename="E:\idea-workspace\db-tree-view-fx\src\main\resources\icons\rect6139-9-1.png"
+   inkscape:export-xdpi="16.227777"
+   inkscape:export-ydpi="16.227777">
   <defs
      id="defs6269" />
   <sodipodi:namedview
@@ -27,16 +28,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4"
-     inkscape:cx="136.86476"
-     inkscape:cy="78.937617"
+     inkscape:zoom="0.7"
+     inkscape:cx="-280.01744"
+     inkscape:cy="-5.5238613"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1516"
      inkscape:window-height="1082"
-     inkscape:window-x="122"
-     inkscape:window-y="71"
+     inkscape:window-x="167"
+     inkscape:window-y="124"
      inkscape:window-maximized="0"
      fit-margin-top="0"
      fit-margin-left="0"
@@ -50,7 +51,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -60,15 +61,15 @@
      id="layer1"
      transform="translate(0,-0.02186608)">
     <rect
-       style="fill:#ff7f2a;fill-opacity:1;stroke:none;stroke-width:2.99131703;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#07dfe8;fill-opacity:1;stroke:none;stroke-width:2.99131703;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect6139-9-1"
        width="36"
        height="22"
        x="0"
        y="0.021866079"
        ry="4.9893031"
-       inkscape:export-xdpi="27.709091"
-       inkscape:export-ydpi="27.709091" />
+       inkscape:export-xdpi="16.227777"
+       inkscape:export-ydpi="16.227777" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.75555611px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458332"

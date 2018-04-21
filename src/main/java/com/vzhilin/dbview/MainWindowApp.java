@@ -14,6 +14,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.sql.SQLException;
@@ -37,6 +38,12 @@ public class MainWindowApp extends Application {
         stage.show();
         MainWindowController controller = loader.getController();
         load(controller);
+
+        setIcon(stage);
+    }
+
+    private void setIcon(Stage stage) {
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/icons/logo.png")));
     }
 
     private void load(MainWindowController controller) {
