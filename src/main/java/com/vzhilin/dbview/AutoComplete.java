@@ -28,7 +28,7 @@ public class AutoComplete extends Application {
 
         Scene scene = new Scene(root, 800, 30);
         scene.getStylesheets().add
-                (getClass().getResource("/styles/connection-settings.css").toExternalForm());
+                (getClass().getResource("/styles/autocomplete.css").toExternalForm());
 
         stage.setTitle("FXML Welcome");
         stage.setScene(scene);

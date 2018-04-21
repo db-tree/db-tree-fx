@@ -2,6 +2,7 @@ package com.vzhilin.dbview;
 
 import com.google.common.collect.Lists;
 import com.vzhilin.dbview.autocomplete.AutoCompletion;
+import com.vzhilin.dbview.autocomplete.AutocompletionCell;
 import com.vzhilin.dbview.autocomplete.SuggestionProvider;
 import com.vzhilin.dbview.db.DbContext;
 import com.vzhilin.dbview.db.schema.Schema;
@@ -10,9 +11,10 @@ import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
@@ -20,6 +22,7 @@ public class AutocompleteController {
     private static final double TITLE_HEIGHT = 28;
     @FXML
     private TextField autocompleteField;
+
     private Scene scene;
     private DbContext ctx;
 
@@ -39,7 +42,7 @@ public class AutocompleteController {
         new AutoCompletion(new DbSuggestionProvider(ctx.getSchema())).bind(autocompleteField);
     }
 
-    private static class DbSuggestionProvider implements SuggestionProvider {
+    private static class DbSuggestionProvider implements SuggestionProvider<AutocompletionCell> {
         private final Schema schema;
         private final Table root;
 
@@ -49,7 +52,7 @@ public class AutocompleteController {
         }
 
         @Override
-        public List<String> suggestions(String text) {
+        public List<AutocompletionCell> suggestions(String text) {
             Table current = root;
             if (text.contains(".")) {
                 String[] split = text.split("\\.");
@@ -66,9 +69,23 @@ public class AutocompleteController {
                 text = text.substring(text.lastIndexOf('.') + 1);
             }
 
-
             final String finalText = text;
-            return current.getColumns().stream().filter(t -> t.startsWith(finalText)).collect(Collectors.toList());
+            Table finalCurrent = current;
+            List<String> columns = getColumns(finalCurrent);
+            return columns.stream().filter(t -> t.startsWith(finalText)).map(s -> {
+                boolean isPk = finalCurrent.getPk().equals(s);
+                boolean isFk = finalCurrent.getRelations().containsKey(s);
+                return new AutocompletionCell(s, isPk, isFk, isFk ? finalCurrent.getRelations().get(s).getName() : "");
+            }).collect(Collectors.toList());
+        }
+
+        private List<String> getColumns(Table finalCurrent) {
+            List<String> result = Lists.newArrayList();
+            result.add(finalCurrent.getPk());
+            result.addAll(finalCurrent.getRelations().keySet());
+            result.addAll(finalCurrent.getColumns().stream().
+                filter(col -> !col.equals(finalCurrent.getPk()) && !finalCurrent.getRelations().containsKey(col)).collect(Collectors.toList()));
+            return result;
         }
     }
 }
