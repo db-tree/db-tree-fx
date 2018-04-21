@@ -25,6 +25,7 @@ import static com.google.common.collect.Iterables.getOnlyElement;
 public class MainWindowApp extends Application {
     @Override public void start(Stage stage) throws Exception {
         Locale.setDefault(Locale.US);
+        setIcon(stage);
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("/main-window.fxml"));
         Parent root = loader.load();
@@ -38,8 +39,6 @@ public class MainWindowApp extends Application {
         stage.show();
         MainWindowController controller = loader.getController();
         load(controller);
-
-        setIcon(stage);
     }
 
     private void setIcon(Stage stage) {

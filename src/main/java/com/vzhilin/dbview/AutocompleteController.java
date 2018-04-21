@@ -5,6 +5,7 @@ import com.vzhilin.dbview.autocomplete.AutoCompletion;
 import com.vzhilin.dbview.autocomplete.AutocompletionCell;
 import com.vzhilin.dbview.autocomplete.SuggestionProvider;
 import com.vzhilin.dbview.db.DbContext;
+import com.vzhilin.dbview.db.data.Row;
 import com.vzhilin.dbview.db.schema.Schema;
 import com.vzhilin.dbview.db.schema.Table;
 import javafx.fxml.FXML;
@@ -37,22 +38,25 @@ public class AutocompleteController {
 
     public void setContext(DbContext ctx) {
         this.ctx = ctx;
-        DbSuggestionProvider kcaProvider = new DbSuggestionProvider(ctx.getSchema(), ctx.getSchema().getTable("OESO_KCA"));
+        DbSuggestionProvider kcaProvider = new DbSuggestionProvider(ctx.getSchema(), /* */null);
         new AutoCompletion(kcaProvider).bind(autocompleteField);
     }
 
     public static class DbSuggestionProvider implements SuggestionProvider<AutocompletionCell> {
         private final Schema schema;
         private final Table root;
+        private final Row row;
 
-        public DbSuggestionProvider(Schema schema, Table root) {
+        public DbSuggestionProvider(Schema schema, Row row) {
             this.schema = schema;
-            this.root = root;
+            this.root = row.getTable();
+            this.row = row;
         }
 
         @Override
         public List<AutocompletionCell> suggestions(String text) {
             Table current = root;
+            Row currentRow = row;
             if (text.contains(".")) {
                 String[] split = text.split("\\.");
                 for (int i = 0; i < split.length; i++) {
@@ -63,6 +67,12 @@ public class AutocompleteController {
                     }
 
                     current = rs.get(name);
+
+                    if (currentRow != null && currentRow.references().containsKey(name)) {
+                        currentRow = currentRow.references().get(name);
+                    } else {
+                        currentRow = null;
+                    }
                 }
 
                 text = text.substring(text.lastIndexOf('.') + 1);
@@ -70,11 +80,14 @@ public class AutocompleteController {
 
             final String finalText = text;
             Table finalCurrent = current;
+            Row finalCurrentRow = currentRow;
+
             List<String> columns = getColumns(finalCurrent);
-            return columns.stream().filter(t -> t.startsWith(finalText)).map(s -> {
-                boolean isPk = finalCurrent.getPk().equals(s);
-                boolean isFk = finalCurrent.getRelations().containsKey(s);
-                return new AutocompletionCell(s, isPk, isFk, isFk ? finalCurrent.getRelations().get(s).getName() : "");
+            return columns.stream().filter(t -> t.startsWith(finalText)).map(column -> {
+                boolean isPk = finalCurrent.getPk().equals(column);
+                boolean isFk = finalCurrent.getRelations().containsKey(column);
+                String rightValue = isFk ? finalCurrent.getRelations().get(column).getName() : finalCurrentRow != null ? String.valueOf(finalCurrentRow.getField(column)) : null;
+                return new AutocompletionCell(column, isPk, isFk, rightValue);
             }).collect(Collectors.toList());
         }
 

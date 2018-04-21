@@ -1,12 +1,15 @@
 package com.vzhilin.dbview.autocomplete;
 
 import com.google.common.collect.Maps;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.scene.web.PopupFeatures;
 import javafx.stage.Popup;
 import javafx.stage.Window;
 
@@ -24,8 +27,11 @@ public class AutoCompletion {
     public void bind(TextField node) {
         Popup popup = new Popup();
 
+
         ListView<AutocompletionCell> suggestionList = new ListView<>();
+        suggestionList.setPrefWidth(500);
         popup.getContent().add(suggestionList);
+
         suggestionList.setCellFactory(param -> new DefaultListCell<>());
 
         node.focusedProperty().addListener((observable, oldValue, newValue) -> {
