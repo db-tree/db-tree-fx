@@ -31,6 +31,7 @@ public class MainWindowApp extends Application {
         ObservableList<String> stylesheets = scene.getStylesheets();
         stylesheets.add(getClass().getResource("/styles/connection-settings.css").toExternalForm());
         stylesheets.add(getClass().getResource("/styles/autocomplete.css").toExternalForm());
+        stylesheets.add(getClass().getResource("/styles/main-window.css").toExternalForm());
         stage.setTitle("FXML Welcome");
         stage.setScene(scene);
         stage.show();

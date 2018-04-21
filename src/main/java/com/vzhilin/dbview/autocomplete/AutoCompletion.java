@@ -9,7 +9,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.stage.Popup;
 import javafx.stage.Window;
-import javafx.util.Callback;
 
 import java.util.List;
 import java.util.Map;

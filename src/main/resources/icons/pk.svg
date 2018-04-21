@@ -2,23 +2,22 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="36mm"
-   height="22mm"
-   viewBox="0 0 36 22"
-   version="1.1"
-   id="svg6275"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)"
-   sodipodi:docname="pk.svg"
-   inkscape:export-filename="E:\idea-workspace\db-tree-view-fx\src\main\resources\icons\pk.png"
-   inkscape:export-xdpi="16.227777"
-   inkscape:export-ydpi="16.227777">
+        xmlns:dc="http://purl.org/dc/elements/1.1/"
+        xmlns:cc="http://creativecommons.org/ns#"
+        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+        xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+        width="36mm"
+        height="22mm"
+        viewBox="0 0 36 22"
+        version="1.1"
+        id="svg6275"
+        inkscape:version="0.92.3 (2405546, 2018-03-11)"
+        sodipodi:docname="pk.svg"
+        inkscape:export-filename="E:\idea-workspace\db-tree-view-fx\src\main\resources\icons\pk.png"
+        inkscape:export-xdpi="16.227777"
+        inkscape:export-ydpi="16.227777">
   <defs
      id="defs6269" />
   <sodipodi:namedview

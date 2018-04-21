@@ -54,6 +54,7 @@ public class MainWindowController {
     @FXML
     private void initialize() {
         treeTable.setEditable(true);
+//        treeTable.setFixedCellSize(30);
         itemColumn.setCellValueFactory(v -> v.getValue().getValue().itemColumnProperty());
         valueColumn.setCellValueFactory(v -> v.getValue().getValue().valueColumnProperty());
 //        valueColumn.setCellValueFactory(v -> v.getValue().getValue().meaningfulValueColumnProperty());

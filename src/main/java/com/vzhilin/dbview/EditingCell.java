@@ -7,9 +7,10 @@ import com.vzhilin.dbview.db.data.Row;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeTableCell;
 
+import static javafx.scene.layout.Border.EMPTY;
+
 public class EditingCell extends TreeTableCell<TreeTableNode, Row> {
     private TextField meaningTextField;
-//    private final ChangeListener<String> listener = (observable, oldValue, newValue) -> System.err.println("AAA");
 
     public EditingCell() {
         itemProperty().addListener((observable, oldValue, newValue) -> setEditable(newValue != null));
@@ -24,19 +25,20 @@ public class EditingCell extends TreeTableCell<TreeTableNode, Row> {
             setGraphic(null);
             return;
         }
-
-
         QueryContext ctx = row.getContext();
         DbContext dbContext = ctx.getDbContext();
         if (meaningTextField == null) {
             meaningTextField = new TextField();
+            meaningTextField.setBorder(EMPTY);
+            meaningTextField.getStyleClass().add("table-cell");
             meaningTextField.setOnAction(event -> cancelEdit());
             meaningTextField.setText(ctx.getTemplate(row.getTable().getName()));
+//            meaningTextField.setMaxHeight(5);
+//            meaningTextField.setFont(new Font(10));
             AutocompleteController.DbSuggestionProvider provider
                 = new AutocompleteController.DbSuggestionProvider(dbContext.getSchema(), row.getTable());
             new AutoCompletion(provider).bind(meaningTextField);
         }
-
         setGraphic(meaningTextField);
         setText("");
         meaningTextField.requestFocus();
@@ -59,12 +61,7 @@ public class EditingCell extends TreeTableCell<TreeTableNode, Row> {
 
     @Override
     public void updateItem(Row item, boolean empty) {
-        Row oldItem = getItem();
         super.updateItem(item, empty);
-
-        if (oldItem != null) {
-//            oldItem.getTemplateProperty().removeListener(listener);
-        }
 
         if (empty) {
             setGraphic(null);
@@ -72,7 +69,6 @@ public class EditingCell extends TreeTableCell<TreeTableNode, Row> {
         } else {
             if (item != null) {
                 setText(item.meaningfulValue());
-//                item.getTemplateProperty().addListener(listener);
             }
 
             setGraphic(null);
