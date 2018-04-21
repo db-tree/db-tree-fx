@@ -27,13 +27,7 @@ public class AutoCompletion {
 
         ListView<AutocompletionCell> suggestionList = new ListView<>();
         popup.getContent().add(suggestionList);
-        suggestionList.setCellFactory(new Callback<ListView<AutocompletionCell>, ListCell<AutocompletionCell>>() {
-            @Override
-            public ListCell<AutocompletionCell> call(ListView<AutocompletionCell> param) {
-                ListCell<AutocompletionCell> cell = new DefaultListCell<AutocompletionCell>();
-                return cell;
-            }
-        });
+        suggestionList.setCellFactory(param -> new DefaultListCell<>());
 
         node.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) {

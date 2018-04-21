@@ -6,6 +6,8 @@ import com.vzhilin.dbview.conf.Template;
 import com.vzhilin.dbview.db.data.Row;
 import com.vzhilin.dbview.db.mean.MeaningParser;
 import com.vzhilin.dbview.db.mean.exp.Expression;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 import java.util.Map;
 
@@ -14,7 +16,7 @@ import static java.util.stream.Collectors.toMap;
 public final class QueryContext {
     private final DbContext dbContext;
     private final ConnectionSettings connectionSettings;
-    private final Map<String, String> templates;
+    private final Map<String, StringProperty> templates;
     private final Map<String, Expression> parsedTemplates = Maps.newLinkedHashMap();
 
     public QueryContext(DbContext dbContext, ConnectionSettings connectionSettings) {
@@ -24,19 +26,19 @@ public final class QueryContext {
         this.templates = connectionSettings
                 .templatesProperty()
                 .stream()
-                .collect(toMap(Template::getTableName, Template::getTemplate));
+                .collect(toMap(Template::getTableName, Template::templateProperty));
 
         parseTemplates();
     }
 
     private void parseTemplates() {
         MeaningParser parser = new MeaningParser();
-        for (Map.Entry<String, String> e: templates.entrySet()) {
-            if (e.getValue() != null && !e.getValue().isEmpty()) {
-                parsedTemplates.put(e.getKey(), parser.parse(e.getValue()));
+        for (Map.Entry<String, StringProperty> e: templates.entrySet()) {
+            String value = e.getValue().getValue();
+            if (!value.isEmpty()) {
+                parsedTemplates.put(e.getKey(), parser.parse(value));
             }
         }
-
     }
 
     public DbContext getDbContext() {
@@ -44,6 +46,14 @@ public final class QueryContext {
     }
 
     public String getTemplate(String name) {
+        return getTemplateProperty(name).getValue();
+    }
+
+    public StringProperty getTemplateProperty(String name) {
+        if (!templates.containsKey(name)) {
+            templates.put(name, new SimpleStringProperty());
+        }
+
         return templates.get(name);
     }
 
@@ -53,7 +63,7 @@ public final class QueryContext {
             return String.valueOf(parsedTemplates.get(tableName).render(row));
         } else
         if (templates.containsKey(tableName)) {
-            String template = templates.get(tableName);
+            String template = templates.get(tableName).getValue();
             if (template == null || template.isEmpty()) {
                 return "";
             }
@@ -67,7 +77,7 @@ public final class QueryContext {
     }
 
     public void setTemplate(String name, String template) {
-        templates.put(name, template);
+        getTemplateProperty(name).setValue(template);
         parsedTemplates.remove(name);
     }
 }

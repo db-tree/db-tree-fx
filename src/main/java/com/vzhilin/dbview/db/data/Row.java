@@ -8,6 +8,7 @@ import com.google.common.collect.Multimap;
 import com.vzhilin.dbview.db.DbContext;
 import com.vzhilin.dbview.db.QueryContext;
 import com.vzhilin.dbview.db.schema.Table;
+import javafx.beans.property.StringProperty;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.MapHandler;
 import org.apache.commons.dbutils.handlers.MapListHandler;
@@ -159,5 +160,9 @@ public class Row implements IRow {
 
     public long getPk() {
         return pk;
+    }
+
+    public StringProperty getTemplateProperty() {
+        return queryContext.getTemplateProperty(getTable().getName());
     }
 }

@@ -9,6 +9,7 @@ import javafx.scene.control.TreeTableCell;
 
 public class EditingCell extends TreeTableCell<TreeTableNode, Row> {
     private TextField meaningTextField;
+//    private final ChangeListener<String> listener = (observable, oldValue, newValue) -> System.err.println("AAA");
 
     public EditingCell() {
         itemProperty().addListener((observable, oldValue, newValue) -> setEditable(newValue != null));
@@ -23,9 +24,10 @@ public class EditingCell extends TreeTableCell<TreeTableNode, Row> {
             setGraphic(null);
             return;
         }
+
+
         QueryContext ctx = row.getContext();
         DbContext dbContext = ctx.getDbContext();
-
         if (meaningTextField == null) {
             meaningTextField = new TextField();
             meaningTextField.setOnAction(event -> cancelEdit());
@@ -51,11 +53,18 @@ public class EditingCell extends TreeTableCell<TreeTableNode, Row> {
             setGraphic(null);
             setText(row.meaningfulValue());
         }
+
+        getTreeTableView().refresh();
     }
 
     @Override
     public void updateItem(Row item, boolean empty) {
+        Row oldItem = getItem();
         super.updateItem(item, empty);
+
+        if (oldItem != null) {
+//            oldItem.getTemplateProperty().removeListener(listener);
+        }
 
         if (empty) {
             setGraphic(null);
@@ -63,9 +72,11 @@ public class EditingCell extends TreeTableCell<TreeTableNode, Row> {
         } else {
             if (item != null) {
                 setText(item.meaningfulValue());
+//                item.getTemplateProperty().addListener(listener);
             }
 
             setGraphic(null);
         }
+        meaningTextField = null;
     }
 }
