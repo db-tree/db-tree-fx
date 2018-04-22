@@ -1,17 +1,16 @@
 package com.vzhilin.dbview;
 
 import com.vzhilin.dbview.autocomplete.AutoCompletion;
+import com.vzhilin.dbview.autocomplete.row.RowSuggestionProvider;
 import com.vzhilin.dbview.db.QueryContext;
 import com.vzhilin.dbview.db.data.Row;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeTableCell;
 
-import static javafx.scene.layout.Border.EMPTY;
-
-public class EditingCell extends TreeTableCell<TreeTableNode, Row> {
+public class TreeTableMeaningCell extends TreeTableCell<TreeTableNode, Row> {
     private TextField meaningTextField;
 
-    public EditingCell() {
+    public TreeTableMeaningCell() {
         itemProperty().addListener((observable, oldValue, newValue) -> setEditable(newValue != null));
     }
 
@@ -27,14 +26,10 @@ public class EditingCell extends TreeTableCell<TreeTableNode, Row> {
         QueryContext ctx = row.getContext();
         if (meaningTextField == null) {
             meaningTextField = new TextField();
-            meaningTextField.setBorder(EMPTY);
             meaningTextField.getStyleClass().add("table-cell");
             meaningTextField.setOnAction(event -> cancelEdit());
             meaningTextField.setText(ctx.getTemplate(row.getTable().getName()));
-//            meaningTextField.setMaxHeight(5);
-//            meaningTextField.setFont(new Font(10));
-            AutocompleteController.DbSuggestionProvider provider
-                = new AutocompleteController.DbSuggestionProvider(row);
+            RowSuggestionProvider provider = new RowSuggestionProvider(row);
             new AutoCompletion(provider).bind(meaningTextField);
         }
         setGraphic(meaningTextField);

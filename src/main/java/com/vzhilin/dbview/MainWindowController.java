@@ -62,7 +62,7 @@ public class MainWindowController {
         meaningfulValueColumn.setCellValueFactory(v -> v.getValue().getValue().meaningfulValueColumnProperty());
 
 //        meaningfulValueColumn.setCellFactory(v -> new TextFieldTreeTableCell<>());
-        meaningfulValueColumn.setCellFactory(param -> new EditingCell());
+        meaningfulValueColumn.setCellFactory(param -> new TreeTableMeaningCell());
         meaningfulValueColumn.setEditable(true);
 
         treeTable.setShowRoot(false);
