@@ -7,10 +7,12 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class SettingsWindowApp extends Application {
     @Override public void start(Stage stage) throws Exception {
+        setIcon(stage);
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("/settings-dialog.fxml"));
 
@@ -20,14 +22,17 @@ public class SettingsWindowApp extends Application {
         Settings settings = readSettings();
         controller.setSettings(settings);
 
-
         Scene scene = new Scene(root, 800, 800);
         scene.getStylesheets().add
             (getClass().getResource("/styles/connection-settings.css").toExternalForm());
 
-        stage.setTitle("FXML Welcome");
+        stage.setTitle("Settings");
         stage.setScene(scene);
         stage.show();
+    }
+
+    private void setIcon(Stage stage) {
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/icons/logo.png")));
     }
 
     private Settings readSettings() {

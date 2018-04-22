@@ -17,6 +17,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
@@ -106,24 +107,23 @@ public class MainWindowController {
     private void onConfigAction() throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("/settings-dialog.fxml"));
-
         Parent root = loader.load();
         SettingsController controller = loader.getController();
         controller.setMainWinController(this);
-
         Stage stage = new Stage();
-
-//        controller.setMainApp(this);
+        setIcon(stage);
         controller.setSettings(settings);
-
-
         Scene scene = new Scene(root, 800, 800);
         scene.getStylesheets().add
                 (getClass().getResource("/styles/connection-settings.css").toExternalForm());
-
-        stage.setTitle("FXML Welcome");
+        stage.setTitle("Settings");
         stage.setScene(scene);
         stage.show();
+    }
+
+
+    private void setIcon(Stage stage) {
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/icons/logo.png")));
     }
 
     public void setCtx(Property<DbContext> ctxProperty) {

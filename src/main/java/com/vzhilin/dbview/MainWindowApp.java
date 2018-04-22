@@ -34,7 +34,7 @@ public class MainWindowApp extends Application {
         stylesheets.add(getClass().getResource("/styles/connection-settings.css").toExternalForm());
         stylesheets.add(getClass().getResource("/styles/autocomplete.css").toExternalForm());
         stylesheets.add(getClass().getResource("/styles/main-window.css").toExternalForm());
-        stage.setTitle("FXML Welcome");
+        stage.setTitle("DB Tree");
         stage.setScene(scene);
         stage.show();
         MainWindowController controller = loader.getController();
