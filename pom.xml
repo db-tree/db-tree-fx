@@ -99,7 +99,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>8.8.3</version>
                 <configuration>
-                    <mainClass>com.vzhilin.dbview.MainApp</mainClass>
+                    <mainClass>com.vzhilin.dbview.MainWindowApp</mainClass>
                 </configuration>
             </plugin>
             <plugin>

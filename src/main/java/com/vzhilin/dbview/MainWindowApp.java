@@ -59,6 +59,7 @@ public class MainWindowApp extends Application {
             controller.setCtx(currentContext);
             controller.show(r);
 
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
