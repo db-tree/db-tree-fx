@@ -1,5 +1,6 @@
 package com.vzhilin.dbview;
 
+import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
 import com.vzhilin.dbview.conf.ConnectionSettings;
 import com.vzhilin.dbview.conf.Settings;
@@ -213,6 +214,12 @@ public class SettingsController {
 
         for (ConnectionSettings cs: settings.getConnections()) {
             connectionsNode.getChildren().add(newItem(cs));
+        }
+
+
+        TreeItem<SettingNode> first = Iterables.getFirst(connectionsNode.getChildren(), null);
+        if (first != null) {
+            settingView.getSelectionModel().select(first);
         }
     }
 
