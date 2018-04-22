@@ -1,7 +1,6 @@
 package com.vzhilin.dbview;
 
 import com.vzhilin.dbview.autocomplete.AutoCompletion;
-import com.vzhilin.dbview.db.DbContext;
 import com.vzhilin.dbview.db.QueryContext;
 import com.vzhilin.dbview.db.data.Row;
 import javafx.scene.control.TextField;
@@ -26,7 +25,6 @@ public class EditingCell extends TreeTableCell<TreeTableNode, Row> {
             return;
         }
         QueryContext ctx = row.getContext();
-        DbContext dbContext = ctx.getDbContext();
         if (meaningTextField == null) {
             meaningTextField = new TextField();
             meaningTextField.setBorder(EMPTY);
