@@ -36,7 +36,7 @@ public class EditingCell extends TreeTableCell<TreeTableNode, Row> {
 //            meaningTextField.setMaxHeight(5);
 //            meaningTextField.setFont(new Font(10));
             AutocompleteController.DbSuggestionProvider provider
-                = new AutocompleteController.DbSuggestionProvider(dbContext.getSchema(), row);
+                = new AutocompleteController.DbSuggestionProvider(row);
             new AutoCompletion(provider).bind(meaningTextField);
         }
         setGraphic(meaningTextField);

@@ -38,17 +38,15 @@ public class AutocompleteController {
 
     public void setContext(DbContext ctx) {
         this.ctx = ctx;
-        DbSuggestionProvider kcaProvider = new DbSuggestionProvider(ctx.getSchema(), /* */null);
+        DbSuggestionProvider kcaProvider = new DbSuggestionProvider(/* */null);
         new AutoCompletion(kcaProvider).bind(autocompleteField);
     }
 
     public static class DbSuggestionProvider implements SuggestionProvider<AutocompletionCell> {
-        private final Schema schema;
         private final Table root;
         private final Row row;
 
-        public DbSuggestionProvider(Schema schema, Row row) {
-            this.schema = schema;
+        public DbSuggestionProvider(Row row) {
             this.root = row.getTable();
             this.row = row;
         }
