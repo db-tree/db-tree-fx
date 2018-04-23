@@ -38,12 +38,7 @@
       </TitledPane>
       <TitledPane animated="false" text="Template">
         <content>
-            <TableView fx:id="templateTable" prefHeight="400.0">
-              <columns>
-                <TableColumn prefWidth="75.0" text="Table" />
-                <TableColumn prefWidth="93.0" text="Template" />
-              </columns>
-            </TableView>
+            <TableView fx:id="templateTable" prefHeight="400.0"/>
         </content>
       </TitledPane>
    </children>

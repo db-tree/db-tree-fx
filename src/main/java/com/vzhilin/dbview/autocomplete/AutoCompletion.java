@@ -1,15 +1,12 @@
 package com.vzhilin.dbview.autocomplete;
 
 import com.google.common.collect.Maps;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
-import javafx.scene.web.PopupFeatures;
 import javafx.stage.Popup;
 import javafx.stage.Window;
 
@@ -135,7 +132,7 @@ public class AutoCompletion {
                 ch.add(new Label(String.valueOf(item.getValue())));
 
                 HBox.setHgrow(r, Priority.ALWAYS);
-//                setText(item == null ? "null" : item.getColumn());
+//                setConnectoinName(item == null ? "null" : item.getColumn());
 
 //                if (!butts.containsKey(item)) {
 //                    Button butt = new Button(item.getColumn());

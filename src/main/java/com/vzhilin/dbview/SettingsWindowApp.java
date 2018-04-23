@@ -10,8 +10,12 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+import java.util.Locale;
+
 public class SettingsWindowApp extends Application {
     @Override public void start(Stage stage) throws Exception {
+        Locale.setDefault(Locale.US);
+
         setIcon(stage);
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("/settings-dialog.fxml"));
@@ -43,6 +47,11 @@ public class SettingsWindowApp extends Application {
         ConnectionSettings rt00c000 = new ConnectionSettings();
 
         ra00c000.connectionNameProperty().set("RA00C000");
+        ra00c000.driverClassProperty().set("oracle.jdbc.OracleDriver");
+        ra00c000.jdbcUrlProperty().set("jdbc:oracle:thin:@localhost:1521:XE");
+        ra00c000.usernameProperty().set("voshod");
+        ra00c000.passwordProperty().set("voshod");
+
         rt00c000.connectionNameProperty().set("RT00C000");
         settings.connectionsProperty().add(ra00c000);
         settings.connectionsProperty().add(rt00c000);
