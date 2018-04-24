@@ -2,24 +2,23 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="57.28249mm"
-   height="57.230145mm"
-   viewBox="0 0 57.282487 57.230144"
-   version="1.1"
-   id="svg7387"
-   sodipodi:docname="logo_2.svg"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)"
-   inkscape:export-filename="E:\idea-workspace\db-tree-view-fx\src\main\resources\icons\logo.png"
-   inkscape:export-xdpi="23.360001"
-   inkscape:export-ydpi="23.360001">
+        xmlns:dc="http://purl.org/dc/elements/1.1/"
+        xmlns:cc="http://creativecommons.org/ns#"
+        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+        xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+        width="57.28249mm"
+        height="57.230145mm"
+        viewBox="0 0 57.282487 57.230144"
+        version="1.1"
+        id="svg7387"
+        sodipodi:docname="logo_2.svg"
+        inkscape:version="0.92.3 (2405546, 2018-03-11)"
+        inkscape:export-filename="E:\idea-workspace\db-tree-view-fx\src\main\resources\icons\logo.png"
+        inkscape:export-xdpi="23.360001"
+        inkscape:export-ydpi="23.360001">
   <defs
      id="defs7381">
     <linearGradient

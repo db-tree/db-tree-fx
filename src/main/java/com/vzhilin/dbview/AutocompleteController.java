@@ -30,6 +30,6 @@ public class AutocompleteController {
     public void setContext(DbContext ctx) {
         this.ctx = ctx;
         RowSuggestionProvider kcaProvider = new RowSuggestionProvider(/* */null);
-        new AutoCompletion(kcaProvider).bind(autocompleteField);
+        new AutoCompletion(kcaProvider, autocompleteField);
     }
 }

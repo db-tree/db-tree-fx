@@ -9,6 +9,7 @@ import javafx.scene.control.TreeTableCell;
 
 public class TreeTableMeaningCell extends TreeTableCell<TreeTableNode, Row> {
     private TextField meaningTextField;
+    private AutoCompletion autoCompletion;
 
     public TreeTableMeaningCell() {
         itemProperty().addListener((observable, oldValue, newValue) -> setEditable(newValue != null));
@@ -30,7 +31,7 @@ public class TreeTableMeaningCell extends TreeTableCell<TreeTableNode, Row> {
             meaningTextField.setOnAction(event -> cancelEdit());
             meaningTextField.setText(ctx.getTemplate(row.getTable().getName()));
             RowSuggestionProvider provider = new RowSuggestionProvider(row);
-            new AutoCompletion(provider).bind(meaningTextField);
+            autoCompletion = new AutoCompletion(provider, meaningTextField);
         }
         setGraphic(meaningTextField);
         setText("");
@@ -50,6 +51,9 @@ public class TreeTableMeaningCell extends TreeTableCell<TreeTableNode, Row> {
         }
 
         getTreeTableView().refresh();
+
+        meaningTextField = null;
+        autoCompletion.unbind();
     }
 
     @Override
@@ -66,6 +70,5 @@ public class TreeTableMeaningCell extends TreeTableCell<TreeTableNode, Row> {
 
             setGraphic(null);
         }
-        meaningTextField = null;
     }
 }

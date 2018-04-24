@@ -146,6 +146,8 @@ public class ConnectionSettingsController {
 
     private class MeaningTableCell extends TextFieldTableCell<Template, String> {
         private TextField textField;
+        private AutoCompletion autoCompletion;
+
         public MeaningTableCell() {
             super(new DefaultStringConverter());
         }
@@ -154,7 +156,7 @@ public class ConnectionSettingsController {
         public void startEdit() {
             super.startEdit();
 
-            if (textField == null) {
+            if (isEditing()) {
                 textField = new TextField();
                 textField.setOnAction(e -> cancelEdit());
 
@@ -163,7 +165,7 @@ public class ConnectionSettingsController {
 
                 Table table = getContext().getSchema().getTable(template.getTableName());
                 DbSuggestionProvider kcaProvider = new DbSuggestionProvider(table);
-                new AutoCompletion(kcaProvider).bind(textField);
+                autoCompletion = new AutoCompletion(kcaProvider, textField);
             }
 
             MeaningTableCell cell = this;
@@ -184,6 +186,9 @@ public class ConnectionSettingsController {
             MeaningTableCell cell = this;
             cell.setText(textField.getText());
             cell.setGraphic(null);
+
+            textField = null;
+            autoCompletion.unbind();
         }
 
         @Override
