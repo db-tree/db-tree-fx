@@ -7,14 +7,13 @@ import com.vzhilin.dbview.conf.ConnectionSettings;
 import com.vzhilin.dbview.conf.Template;
 import com.vzhilin.dbview.db.DbContext;
 import com.vzhilin.dbview.db.schema.Table;
+import com.vzhilin.dbview.settings.LookupTreeNode;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.paint.Color;
@@ -50,6 +49,9 @@ public class ConnectionSettingsController {
     private TableView<Template> templateTable;
 
     @FXML
+    private TreeTableView<LookupTreeNode> lookupTreeView;
+
+    @FXML
     private Label testMessageLabel;
 
     private final Executor executor = Executors.newSingleThreadExecutor();
@@ -74,6 +76,39 @@ public class ConnectionSettingsController {
 
     @FXML
     private void initialize() {
+        initTemplateTable();
+        initLookupTree();
+    }
+
+    private void initLookupTree() {
+        lookupTreeView.setEditable(true);
+        lookupTreeView.showRootProperty().setValue(false);
+
+        TreeTableColumn<LookupTreeNode, String> first = (TreeTableColumn<LookupTreeNode, String>) lookupTreeView.getColumns().get(0);
+        TreeTableColumn<LookupTreeNode, Boolean> second = (TreeTableColumn<LookupTreeNode, Boolean>) lookupTreeView.getColumns().get(1);
+
+        first.setCellValueFactory(param -> param.getValue().getValue().tableProperty());
+
+        second.setEditable(true);
+        second.setCellFactory(param -> {
+            CheckBoxTreeTableCell<LookupTreeNode, Boolean> cell = new CheckBoxTreeTableCell<>();
+            cell.setEditable(true);
+            return cell;
+        });
+        second.setCellValueFactory(param -> param.getValue().getValue().includedProperty());
+
+        LookupTreeNode kcaNode = new LookupTreeNode("OESO_KCA");
+        kcaNode.includedProperty().setValue(true);
+
+        TreeItem<LookupTreeNode> root = new TreeItem<>(kcaNode);
+        lookupTreeView.setRoot(root);
+
+        root.getChildren().add(new TreeItem<>(new LookupTreeNode("KCAID")));
+        root.getChildren().add(new TreeItem<>(new LookupTreeNode("KCAREGNUMBER")));
+        root.getChildren().add(new TreeItem<>(new LookupTreeNode("KCANAME")));
+    }
+
+    private void initTemplateTable() {
         templateTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         templateTable.setEditable(true);
 
@@ -85,11 +120,6 @@ public class ConnectionSettingsController {
 
         tableColumn.setCellValueFactory(new PropertyValueFactory<>("tableName"));
         templateColumn.setCellValueFactory(new PropertyValueFactory<>("template"));
-        templateColumn.setCellFactory(param -> {
-            return new MeaningTableCell();
-        });
-
-
         templateColumn.setCellFactory(param -> new MeaningTableCell());
     }
 
@@ -104,9 +134,10 @@ public class ConnectionSettingsController {
                 Platform.runLater(() -> {
                     testMessageLabel.setTextFill(Color.DARKGREEN);
                     testMessageLabel.setText("OK");
-                });
 
-                refreshTemplates(ctx.getSchema().allTableNames());
+                    refreshTemplates(ctx.getSchema().allTableNames());
+                    refreshLookupTree(ctx.getSchema().allTables());
+                });
             } catch (SQLException ex) {
                 Platform.runLater(() -> {
                     testMessageLabel.setTextFill(Color.RED);
@@ -114,6 +145,22 @@ public class ConnectionSettingsController {
                 });
             }
         });
+    }
+
+    private void refreshLookupTree(Set<Table> schemaTables) {
+        TreeItem<LookupTreeNode> root = new TreeItem<>(new LookupTreeNode("KCAID"));
+        ObservableList<TreeItem<LookupTreeNode>> ch = root.getChildren();
+        for (Table table: schemaTables) {
+            TreeItem<LookupTreeNode> node = new TreeItem<>(new LookupTreeNode(table.getName()));
+            ch.add(node);
+
+            for (String column: table.getColumns()) {
+                TreeItem<LookupTreeNode> columnNode = new TreeItem<>(new LookupTreeNode(column));
+                node.getChildren().add(columnNode);
+            }
+        }
+
+        lookupTreeView.setRoot(root);
     }
 
     private void refreshTemplates(Set<String> schemaTables) {

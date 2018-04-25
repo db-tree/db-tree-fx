@@ -1,22 +1,37 @@
 package com.vzhilin.dbview.conf;
 
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleListProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import com.google.common.collect.Maps;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
+import java.util.Map;
 
+/**
+ * Настройки подключений
+ */
 public class ConnectionSettings {
+    /** Имя подключения */
     private final StringProperty connectionName = new SimpleStringProperty();
+
+    /** Драйвер */
     private final StringProperty driverClass = new SimpleStringProperty();
+
+    /** Адрес подключения */
     private final StringProperty jdbcUrl = new SimpleStringProperty();
+
+    /** Имя пользователя */
     private final StringProperty username = new SimpleStringProperty();
+
+    /** Пароль */
     private final StringProperty password = new SimpleStringProperty();
 
+    /** Осмысленные значения */
     private final ListProperty<Template> templates = new SimpleListProperty<Template>(FXCollections.observableArrayList(new ArrayList<>()));
+
+    /** Колонки для поиска */
+    private final Map<String, Map<String, BooleanProperty>> lookupableColumns = Maps.newLinkedHashMap();
 
     public ConnectionSettings() {
     }
@@ -31,6 +46,27 @@ public class ConnectionSettings {
         for (Template t: cs.templates) {
             templates.add(new Template(t.getTableName(), t.getTemplate()));
         }
+    }
+
+    public Map<String, Map<String, BooleanProperty>> getLookupableColumns() {
+        return lookupableColumns;
+    }
+
+    public BooleanProperty getLookupableProperty(String tableName, String columnName) {
+        if (!lookupableColumns.containsKey(tableName)) {
+            lookupableColumns.put(tableName, Maps.newLinkedHashMap());
+        }
+
+        Map<String, BooleanProperty> mp = lookupableColumns.get(tableName);
+        if (!mp.containsKey(columnName)) {
+            mp.put(columnName, new SimpleBooleanProperty());
+        }
+
+        return mp.get(columnName);
+    }
+
+    public void addLookupableColumn(String tableName, String columnName) {
+       getLookupableProperty(tableName, columnName).set(true);
     }
 
     public String getConnectionName() {
