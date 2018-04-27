@@ -53,7 +53,9 @@ public class TreeTableMeaningCell extends TreeTableCell<TreeTableNode, Row> {
         getTreeTableView().refresh();
 
         meaningTextField = null;
-        autoCompletion.unbind();
+        if (autoCompletion != null) {
+            autoCompletion.unbind();
+        }
     }
 
     @Override

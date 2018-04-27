@@ -91,6 +91,10 @@ public class AutoCompletion {
         EventHandler<KeyEvent> handler = ke -> {
             TextField local = getNode();
             switch (ke.getCode()) {
+                case ESCAPE:
+                    suggestionList.getSelectionModel().clearSelection();
+                    popup.hide();
+                    break;
                 case ENTER:
                     AutocompletionCell selectedItem = suggestionList.getSelectionModel().getSelectedItem();
                     if (selectedItem != null) {
@@ -99,6 +103,8 @@ public class AutoCompletion {
                         node.positionCaret(local.getText().length());
                         popup.hide();
                     }
+                    break;
+                default:
                     break;
             }
         };

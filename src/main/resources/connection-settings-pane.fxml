@@ -38,7 +38,7 @@
       </TitledPane>
       <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
         <tabs>
-          <Tab text="Lookup">
+          <Tab text="Search">
             <content>
                   <TreeTableView fx:id="lookupTreeView" layoutX="34.0" layoutY="14.0" prefHeight="200.0" prefWidth="200.0"/>
             </content>
