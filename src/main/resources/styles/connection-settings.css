@@ -2,16 +2,20 @@
     -fx-background-image: url('../icons/add.png');
     -fx-background-repeat: no-repeat;
     -fx-background-position: center;
+    -fx-pref-width: 24px;
+
 }
 
 #delete-btn {
     -fx-background-image: url('../icons/delete.png');
     -fx-background-repeat: no-repeat;
     -fx-background-position: center;
+    -fx-pref-width: 24px;
 }
 
 #copy-btn {
     -fx-background-image: url('../icons/copy.png');
     -fx-background-repeat: no-repeat;
     -fx-background-position: center;
+    -fx-pref-width: 24px;
 }
