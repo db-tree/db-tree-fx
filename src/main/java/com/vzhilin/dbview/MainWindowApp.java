@@ -1,5 +1,6 @@
 package com.vzhilin.dbview;
 
+import com.google.common.base.Joiner;
 import com.vzhilin.dbview.conf.ConnectionSettings;
 import com.vzhilin.dbview.conf.Settings;
 import com.vzhilin.dbview.conf.Template;
@@ -16,7 +17,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import org.hildan.fxgson.FxGson;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.Locale;
 
@@ -37,8 +42,10 @@ public class MainWindowApp extends Application {
         stage.setTitle("DB Tree");
         stage.setScene(scene);
         stage.show();
+
         MainWindowController controller = loader.getController();
         load(controller);
+        controller.setOwnerWindow(stage);
     }
 
     private void setIcon(Stage stage) {
@@ -48,38 +55,28 @@ public class MainWindowApp extends Application {
     private void load(MainWindowController controller) {
         Settings settings = readSettings();
         controller.setSettings(settings);
+
         try {
             DbContext ctx = new DbContext("oracle.jdbc.OracleDriver", "jdbc:oracle:thin:@localhost:1521:XE", "voshod", "voshod");
             QueryContext queryContext = new QueryContext(ctx, getOnlyElement(settings.getConnections()));
-            Row r = new Row(queryContext, ctx.getSchema().getTable("OESO_KCA"), 2190);
+//            Row r = new Row(queryContext, ctx.getSchema().getTable("OESO_KCA"), 2190);
 
             Property<DbContext> currentContext = new SimpleObjectProperty<>();
             currentContext.setValue(ctx);
 
             controller.setCtx(currentContext);
-            controller.show(r);
-
-
+//            controller.show(r);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     private Settings readSettings() {
-        Settings settings = new Settings();
-        ConnectionSettings ra00c000 = new ConnectionSettings();
-        ra00c000.driverClassProperty().set("oracle.jdbc.OracleDriver");
-        ra00c000.jdbcUrlProperty().set("jdbc:oracle:thin:@localhost:1521:XE");
-        ra00c000.usernameProperty().set("voshod");
-        ra00c000.passwordProperty().set("voshod");
-
-        ListProperty<Template> templates = ra00c000.templatesProperty();
-        templates.add(new Template("OESO_KCA", "KCANAME"));
-        templates.add(new Template("OESO_PTS", "PTSID"));
-
-
-        ra00c000.connectionNameProperty().set("RA00C000");
-        settings.connectionsProperty().add(ra00c000);
-        return settings;
+        try {
+            return FxGson.create().fromJson(Joiner.on("").join(Files.readAllLines(Paths.get("db-tree.json"))), Settings.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

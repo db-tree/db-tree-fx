@@ -36,10 +36,19 @@
             </GridPane>
          </content>
       </TitledPane>
-      <TitledPane animated="false" text="Template">
-        <content>
-            <TableView fx:id="templateTable" prefHeight="400.0"/>
-        </content>
-      </TitledPane>
+      <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+        <tabs>
+          <Tab text="Lookup">
+            <content>
+                  <TreeTableView fx:id="lookupTreeView" layoutX="34.0" layoutY="14.0" prefHeight="200.0" prefWidth="200.0"/>
+            </content>
+          </Tab>
+          <Tab text="Meaninfgul">
+            <content>
+                  <TableView fx:id="templateTable" prefHeight="400.0" />
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
    </children>
 </VBox>

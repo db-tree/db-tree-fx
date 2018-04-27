@@ -76,23 +76,19 @@ public class SettingsController {
 
         // -----------------
         ReadOnlyObjectProperty<TreeItem<SettingNode>> selectedItemProperty = settingView.getSelectionModel().selectedItemProperty();
-        selectedItemProperty.addListener(new ChangeListener<TreeItem<SettingNode>>() {
-            @Override public void changed(ObservableValue<? extends TreeItem<SettingNode>> observable,
-                    TreeItem<SettingNode> oldValue, TreeItem<SettingNode> newValue) {
+        selectedItemProperty.addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                addButton.setDisable(true);
+                removeButton.setDisable(true);
+                copyButton.setDisable(true);
 
-                if (newValue == null) {
-                    addButton.setDisable(true);
-                    removeButton.setDisable(true);
-                    copyButton.setDisable(true);
-
-                    return;
-                }
-
-                SettingNode v = newValue.getValue();
-                addButton.setDisable(!(v instanceof ConnectionsNode));
-                removeButton.setDisable(!(v instanceof ConnectionSettingNode));
-                copyButton.setDisable(!(v instanceof ConnectionSettingNode));
+                return;
             }
+
+            SettingNode v = newValue.getValue();
+            addButton.setDisable(!(v instanceof ConnectionsNode));
+            removeButton.setDisable(!(v instanceof ConnectionSettingNode));
+            copyButton.setDisable(!(v instanceof ConnectionSettingNode));
         });
 
         selectedItemProperty.addListener(new ChangeListener<TreeItem<SettingNode>>() {

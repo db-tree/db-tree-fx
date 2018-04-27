@@ -18,6 +18,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
@@ -51,6 +52,8 @@ public class MainWindowController {
      */
     private Property<DbContext> ctxProperty;
     private Settings settings;
+
+    private Stage ownerWindow;
 
     @FXML
     private void initialize() {
@@ -87,7 +90,7 @@ public class MainWindowController {
     }
 
     @FXML
-    private void onFindAction() throws IOException, SQLException {
+    private void onFindAction() throws SQLException {
         TreeItem<TreeTableNode> newRoot = new TreeItem<>(new TreeTableNode("ROOT", "ROOT", null));
         QueryContext queryContext = new QueryContext(ctxProperty.getValue(), cbConnection.getValue());
         for (Row r: new RowFinder(queryContext).find(textField.getText())) {
@@ -110,7 +113,10 @@ public class MainWindowController {
         Parent root = loader.load();
         SettingsController controller = loader.getController();
         controller.setMainWinController(this);
+
         Stage stage = new Stage();
+        stage.initOwner(ownerWindow);
+        stage.initModality(Modality.WINDOW_MODAL);
         setIcon(stage);
         controller.setSettings(settings);
         Scene scene = new Scene(root, 800, 800);
@@ -118,6 +124,7 @@ public class MainWindowController {
                 (getClass().getResource("/styles/connection-settings.css").toExternalForm());
         stage.setTitle("Settings");
         stage.setScene(scene);
+
         stage.show();
     }
 
@@ -170,5 +177,9 @@ public class MainWindowController {
 
     public void refreshTreeView() {
         treeTable.refresh();
+    }
+
+    public void setOwnerWindow(Stage stage) {
+        this.ownerWindow = stage;
     }
 }

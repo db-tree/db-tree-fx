@@ -6,6 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -46,8 +47,21 @@ public class ConnectionSettings {
         for (Template t: cs.templates) {
             templates.add(new Template(t.getTableName(), t.getTemplate()));
         }
+
+        for (Map.Entry<String, Map<String, BooleanProperty>> e: cs.lookupableColumns.entrySet()) {
+            LinkedHashMap<String, BooleanProperty> m = Maps.newLinkedHashMap();
+            lookupableColumns.put(e.getKey(), m);
+
+            for (Map.Entry<String, BooleanProperty> p: e.getValue().entrySet()) {
+                m.put(p.getKey(), new SimpleBooleanProperty(p.getValue().get()));
+            }
+        }
     }
 
+    /**
+     * Table --> column --> isEnabled
+     * @return
+     */
     public Map<String, Map<String, BooleanProperty>> getLookupableColumns() {
         return lookupableColumns;
     }
