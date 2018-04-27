@@ -7,6 +7,9 @@ import com.vzhilin.dbview.db.data.Row;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeTableCell;
 
+/**
+ * Ячейка с "осмысленным значением" для дерева в главном окне
+ */
 public class TreeTableMeaningCell extends TreeTableCell<TreeTableNode, Row> {
     private TextField meaningTextField;
     private AutoCompletion autoCompletion;
@@ -68,6 +71,8 @@ public class TreeTableMeaningCell extends TreeTableCell<TreeTableNode, Row> {
         } else {
             if (item != null) {
                 setText(item.meaningfulValue());
+            } else {
+                setText(null);
             }
 
             setGraphic(null);

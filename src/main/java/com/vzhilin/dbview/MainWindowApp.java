@@ -1,14 +1,10 @@
 package com.vzhilin.dbview;
 
 import com.google.common.base.Joiner;
-import com.vzhilin.dbview.conf.ConnectionSettings;
 import com.vzhilin.dbview.conf.Settings;
-import com.vzhilin.dbview.conf.Template;
 import com.vzhilin.dbview.db.DbContext;
 import com.vzhilin.dbview.db.QueryContext;
-import com.vzhilin.dbview.db.data.Row;
 import javafx.application.Application;
-import javafx.beans.property.ListProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;

@@ -21,11 +21,17 @@ import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import org.apache.log4j.Logger;
+import org.hildan.fxgson.FxGson;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
 
 public class MainWindowController {
+    private final static Logger LOG = Logger.getLogger(MainWindowController.class);
+
     @FXML
     private ComboBox<ConnectionSettings> cbConnection;
 
@@ -65,7 +71,20 @@ public class MainWindowController {
         meaningfulValueColumn.setCellValueFactory(v -> v.getValue().getValue().meaningfulValueColumnProperty());
 
 //        meaningfulValueColumn.setCellFactory(v -> new TextFieldTreeTableCell<>());
-        meaningfulValueColumn.setCellFactory(param -> new TreeTableMeaningCell());
+        meaningfulValueColumn.setCellFactory(param -> new TreeTableMeaningCell() {
+            @Override
+            public void cancelEdit() {
+                super.cancelEdit();
+
+                try {
+                    PrintWriter pw = new PrintWriter("db-tree.json");
+                    pw.write(FxGson.create().toJson(settings));
+                    pw.close();
+                } catch (FileNotFoundException e) {
+                    LOG.error(e, e);
+                }
+            }
+        });
         meaningfulValueColumn.setEditable(true);
 
         treeTable.setShowRoot(false);

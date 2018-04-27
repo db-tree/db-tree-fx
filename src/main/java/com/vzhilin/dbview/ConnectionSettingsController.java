@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.function.Consumer;
 
 import static java.util.stream.Collectors.toSet;
 
