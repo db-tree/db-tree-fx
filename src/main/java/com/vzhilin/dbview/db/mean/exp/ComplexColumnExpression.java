@@ -31,7 +31,7 @@ public class ComplexColumnExpression implements Expression {
             } else if (!iterator.hasNext()) {
                 return new ExpressionValue(current.getField(column));
             } else {
-                throw new RuntimeException("expected: last value");
+                return new ExpressionValue("");
             }
         }
 

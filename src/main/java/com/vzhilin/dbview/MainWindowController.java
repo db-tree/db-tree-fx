@@ -64,13 +64,11 @@ public class MainWindowController {
     @FXML
     private void initialize() {
         treeTable.setEditable(true);
-//        treeTable.setFixedCellSize(30);
         itemColumn.setCellValueFactory(v -> v.getValue().getValue().itemColumnProperty());
+        itemColumn.setSortable(false);
         valueColumn.setCellValueFactory(v -> v.getValue().getValue().valueColumnProperty());
-//        valueColumn.setCellValueFactory(v -> v.getValue().getValue().meaningfulValueColumnProperty());
+        valueColumn.setSortable(false);
         meaningfulValueColumn.setCellValueFactory(v -> v.getValue().getValue().meaningfulValueColumnProperty());
-
-//        meaningfulValueColumn.setCellFactory(v -> new TextFieldTreeTableCell<>());
         meaningfulValueColumn.setCellFactory(param -> new TreeTableMeaningCell() {
             @Override
             public void cancelEdit() {
@@ -85,6 +83,7 @@ public class MainWindowController {
                 }
             }
         });
+        meaningfulValueColumn.setSortable(false);
         meaningfulValueColumn.setEditable(true);
 
         treeTable.setShowRoot(false);
