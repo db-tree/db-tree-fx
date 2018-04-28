@@ -22,21 +22,46 @@ import java.util.Map;
 
 import static java.lang.String.format;
 
+/**
+ * Строка таблицы
+ */
 public class Row implements IRow {
+    /** Логгер */
     private final static Logger LOG = Logger.getLogger(Row.class);
+
+    /** Контекст БД */
     private final DbContext ctx;
+
+    /** QueryRunner */
     private final QueryRunner runner;
 
+    /** Таблица */
     private final Table table;
+
+    /** Первичный ключ*/
     private final long pk;
+
+    /** Контекст запроса */
     private final QueryContext queryContext;
 
+    /** Колонки */
     private Map<String, Object> rowData = null;
+
+    /** Прямые ссылки */
+    private Map<String, Row> references = null;
+
+    /** Обратные ссылки */
     private Multimap<Map.Entry<Table, String>, Row> invRows = null;
 
-    private Map<String, Row> references = null;
+    /** Количество обратных ссылок */
     private Map<Map.Entry<Table, String>, Long> invReferencesCount = null;
 
+    /**
+     * Строка таблицы
+     * @param queryContext контекст запрос
+     * @param table таблица
+     * @param pk первичный ключ
+     */
     public Row(QueryContext queryContext, Table table, long pk) {
         this.queryContext = queryContext;
         this.ctx = queryContext.getDbContext();
