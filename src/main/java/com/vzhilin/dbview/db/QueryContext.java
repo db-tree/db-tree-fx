@@ -26,16 +26,6 @@ public final class QueryContext {
         parseTemplates();
     }
 
-    private void parseTemplates() {
-        MeaningParser parser = new MeaningParser();
-        for (Template t: templates) {
-            String value = t.getTemplate();
-            if (!value.isEmpty()) {
-                parsedTemplates.put(t.getTableName(), parser.parse(value));
-            }
-        }
-    }
-
     public DbContext getDbContext() {
         return dbContext;
     }
@@ -54,10 +44,6 @@ public final class QueryContext {
         }
 
         return first.get().templateProperty();
-    }
-
-    private Optional<Template> findTemplate(String name) {
-        return templates.stream().filter(t -> t.getTableName().equals(name)).findFirst();
     }
 
     public String getMeanintfulValue(Row row) {
@@ -84,5 +70,21 @@ public final class QueryContext {
     public void setTemplate(String name, String template) {
         getTemplateProperty(name).setValue(template);
         parsedTemplates.remove(name);
+    }
+
+    private void parseTemplates() {
+        MeaningParser parser = new MeaningParser();
+        for (Template t: templates) {
+            String value = t.getTemplate();
+            if (!value.isEmpty()) {
+                parsedTemplates.put(t.getTableName(), parser.parse(value));
+            }
+        }
+    }
+
+
+
+    private Optional<Template> findTemplate(String name) {
+        return templates.stream().filter(t -> t.getTableName().equals(name)).findFirst();
     }
 }

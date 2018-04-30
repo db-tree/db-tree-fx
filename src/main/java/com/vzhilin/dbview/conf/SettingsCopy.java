@@ -58,6 +58,7 @@ public class SettingsCopy {
         }
     }
 
+
     private void writeMeaningful(ConnectionSettings orig, ConnectionSettings modif) {
         Map<String, Map<String, BooleanProperty>> om = orig.getLookupableColumns();
         Map<String, Map<String, BooleanProperty>> mm = modif.getLookupableColumns();

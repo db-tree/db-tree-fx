@@ -80,7 +80,11 @@ public class ConnectionSettings {
     }
 
     public void addLookupableColumn(String tableName, String columnName) {
-       getLookupableProperty(tableName, columnName).set(true);
+       addLookupableColumn(tableName, columnName, false);
+    }
+
+    public void addLookupableColumn(String tableName, String columnName, boolean value) {
+        getLookupableProperty(tableName, columnName).set(value);
     }
 
     public String getConnectionName() {

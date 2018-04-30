@@ -61,6 +61,8 @@ public class ConnectionSettingsController {
 
     private DbContext currentContext;
 
+    private ConnectionSettings settings;
+
     private void updateContext() {
         try {
             currentContext = new DbContext(driverClass.getText(), jdbcUrl.getText(), username.getText(), password.getText());
@@ -160,6 +162,31 @@ public class ConnectionSettingsController {
         Map<String, TreeItem<LookupTreeNode>> nodeMap = Maps.newLinkedHashMap();
         ObservableList<TreeItem<LookupTreeNode>> ch = lookupTreeView.getRoot().getChildren();
         ch.forEach(table -> nodeMap.put(table.getValue().tableProperty().getValue(), table));
+
+        for (String tableName: tableMap.keySet()) {
+            if (!nodeMap.containsKey(tableName)) {
+                TreeItem<LookupTreeNode> newItem = new TreeItem<>(new LookupTreeNode(tableName));
+                nodeMap.put(tableName, newItem);
+                lookupTreeView.getRoot().getChildren().add(newItem);
+            }
+
+            Map<String, TreeItem<LookupTreeNode>> cols = Maps.newLinkedHashMap();
+            nodeMap.get(tableName).getChildren().forEach(table -> cols.put(table.getValue().tableProperty().getValue(), table));
+
+            for (String columnName: tableMap.get(tableName).getColumns()) {
+                if (!cols.containsKey(columnName)) {
+                    boolean included = columnName.equals(tableMap.get(tableName).getPk());
+                    settings.addLookupableColumn(tableName, columnName, included);
+
+                    LookupTreeNode newNode = new LookupTreeNode(columnName);
+                    newNode.includedProperty().set(included);
+                    TreeItem<LookupTreeNode> newItem = new TreeItem<>(newNode);
+                    cols.put(columnName, newItem);
+
+                    nodeMap.get(tableName).getChildren().add(newItem);
+                }
+            }
+        }
     }
 
     private void refreshTemplates(Set<String> schemaTables) {
@@ -190,6 +217,8 @@ public class ConnectionSettingsController {
         password.textProperty().addListener(changeListener);
 
         bindTree(settings.getLookupableColumns());
+
+        this.settings = settings;
     }
 
     private void bindTree(Map<String, Map<String, BooleanProperty>> settings) {

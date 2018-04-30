@@ -166,6 +166,7 @@ public class SettingsController {
         Stage stage = (Stage) okButton.getScene().getWindow();
         stage.close();
         mainController.refreshTreeView();
+        settings.save();
     }
 
     @FXML

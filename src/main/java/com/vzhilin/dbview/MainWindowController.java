@@ -12,7 +12,6 @@ import com.vzhilin.dbview.tree.ToOneNode;
 import javafx.beans.property.Property;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -23,11 +22,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.apache.log4j.Logger;
-import org.hildan.fxgson.FxGson;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 
 public class MainWindowController {
@@ -75,13 +71,7 @@ public class MainWindowController {
             public void cancelEdit() {
                 super.cancelEdit();
 
-                try {
-                    PrintWriter pw = new PrintWriter("db-tree.json");
-                    pw.write(FxGson.create().toJson(settings));
-                    pw.close();
-                } catch (FileNotFoundException e) {
-                    LOG.error(e, e);
-                }
+                settings.save();
             }
         });
         meaningfulValueColumn.setSortable(false);

@@ -25,6 +25,37 @@ public class AutoCompletion {
     private final SuggestionProvider<AutocompletionCell> provider;
     private final TextField node;
 
+    public AutoCompletion(SuggestionProvider<AutocompletionCell> suggestionProvider, TextField node) {
+        this.node = node;
+        this.provider = suggestionProvider;
+        popup.getContent().add(suggestionList);
+        suggestionList.setPrefWidth(500);
+        suggestionList.setCellFactory(param -> new DefaultListCell());
+        EventHandler<KeyEvent> handler = ke -> {
+            TextField local = getNode();
+            switch (ke.getCode()) {
+                case ESCAPE:
+                    suggestionList.getSelectionModel().clearSelection();
+                    popup.hide();
+                    break;
+                case ENTER:
+                    AutocompletionCell selectedItem = suggestionList.getSelectionModel().getSelectedItem();
+                    if (selectedItem != null) {
+                        SuggestionHelper helper = new SuggestionHelper(local.getText(), local.getCaretPosition());
+                        node.setText(helper.select(selectedItem.getColumn()));
+                        node.positionCaret(local.getText().length());
+                        popup.hide();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        };
+        suggestionList.setOnKeyPressed(handler);
+        node.focusedProperty().addListener(focusedListener);
+        node.textProperty().addListener(stringChangeListener);
+    }
+
     private final ChangeListener<Boolean> focusedListener = (observable, oldValue, newValue) -> {
         if (!newValue) {
             popup.hide();
@@ -81,39 +112,6 @@ public class AutoCompletion {
     private SuggestionProvider<AutocompletionCell> getProvider() {
         return provider;
     }
-
-    public AutoCompletion(SuggestionProvider<AutocompletionCell> suggestionProvider, TextField node) {
-        this.node = node;
-        this.provider = suggestionProvider;
-        popup.getContent().add(suggestionList);
-        suggestionList.setPrefWidth(500);
-        suggestionList.setCellFactory(param -> new DefaultListCell());
-        EventHandler<KeyEvent> handler = ke -> {
-            TextField local = getNode();
-            switch (ke.getCode()) {
-                case ESCAPE:
-                    suggestionList.getSelectionModel().clearSelection();
-                    popup.hide();
-                    break;
-                case ENTER:
-                    AutocompletionCell selectedItem = suggestionList.getSelectionModel().getSelectedItem();
-                    if (selectedItem != null) {
-                        SuggestionHelper helper = new SuggestionHelper(local.getText(), local.getCaretPosition());
-                        node.setText(helper.select(selectedItem.getColumn()));
-                        node.positionCaret(local.getText().length());
-                        popup.hide();
-                    }
-                    break;
-                default:
-                    break;
-            }
-        };
-        suggestionList.setOnKeyPressed(handler);
-
-        node.focusedProperty().addListener(focusedListener);
-        node.textProperty().addListener(stringChangeListener);
-    }
-
 
     private TextField getNode() {
         return node;
