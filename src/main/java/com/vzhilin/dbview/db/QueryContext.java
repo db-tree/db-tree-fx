@@ -82,9 +82,11 @@ public final class QueryContext {
         }
     }
 
-
-
     private Optional<Template> findTemplate(String name) {
         return templates.stream().filter(t -> t.getTableName().equals(name)).findFirst();
+    }
+
+    public ConnectionSettings getSettings() {
+        return connectionSettings;
     }
 }

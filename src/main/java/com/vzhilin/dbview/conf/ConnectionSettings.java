@@ -138,5 +138,9 @@ public class ConnectionSettings {
     @Override public String toString() {
         return connectionName.get();
     }
+
+    public boolean isLookupable(String tableName, String columnName) {
+        return lookupableColumns.containsKey(tableName) && lookupableColumns.get(tableName).containsKey(columnName) && lookupableColumns.get(tableName).get(columnName).getValue();
+    }
 }
 
