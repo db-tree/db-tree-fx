@@ -70,4 +70,8 @@ public final class ToOneNode extends TreeItem<TreeTableNode> {
 
         return super.getChildren();
     }
+
+    public Row getRow() {
+        return row;
+    }
 }

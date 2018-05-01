@@ -35,7 +35,7 @@ public final class ToManyNode extends TreeItem<TreeTableNode> {
 
             rs.forEach(r -> {
                 Table tb = r.getTable();
-                ch.add(new ToOneNode(r, new TreeTableNode(tb.getName(), String.valueOf(r.getField(tb.getPk())), r)));
+                ch.add(new ToOneNode(r, new TreeTableNode(tb.getPk(), String.valueOf(r.getField(tb.getPk())), r)));
             });
         }
 

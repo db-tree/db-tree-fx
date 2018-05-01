@@ -12,12 +12,17 @@ import com.vzhilin.dbview.tree.ToOneNode;
 import javafx.beans.property.Property;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -63,6 +68,38 @@ public class MainWindowController {
         treeTable.setEditable(true);
         itemColumn.setCellValueFactory(v -> v.getValue().getValue().itemColumnProperty());
         itemColumn.setSortable(false);
+        itemColumn.setCellFactory(new Callback<TreeTableColumn<TreeTableNode, String>, TreeTableCell<TreeTableNode, String>>() {
+            @Override
+            public TreeTableCell<TreeTableNode, String> call(TreeTableColumn<TreeTableNode, String> param) {
+                return new TreeTableCell<TreeTableNode, String> () {
+                      @Override protected void updateItem(String item, boolean empty) {
+//                        if (item == getItem()) return;
+
+                        super.updateItem(item, empty);
+
+                        if (item == null) {
+                            super.setText(null);
+                            super.setGraphic(null);
+                        } else {
+                            HBox hBox = new HBox();
+                            ObservableList<Node> ch = hBox.getChildren();
+                            ch.add(new Label(item));
+                            Region r = new Region();
+                            ch.add(r);
+
+                            TreeItem<TreeTableNode> treeItem = getTreeTableRow().getTreeItem();
+                            HBox.setHgrow(r, Priority.ALWAYS);
+                            if (treeItem instanceof ToOneNode) {
+                                Row row = ((ToOneNode) treeItem).getRow();
+                                ch.add(new Label(row.getTable().getName()));
+                            }
+                            setGraphic(hBox);
+                        }
+                    }
+                };
+            }
+        });
+
         valueColumn.setCellValueFactory(v -> v.getValue().getValue().valueColumnProperty());
         valueColumn.setSortable(false);
         meaningfulValueColumn.setCellValueFactory(v -> v.getValue().getValue().meaningfulValueColumnProperty());
@@ -105,7 +142,7 @@ public class MainWindowController {
         for (Row r: new RowFinder(queryContext).find(textField.getText())) {
             Table table = r.getTable();
 
-            TreeTableNode newNode = new TreeTableNode(table.getName(), String.valueOf(r.getField(table.getPk())), r);
+            TreeTableNode newNode = new TreeTableNode(table.getPk(), String.valueOf(r.getField(table.getPk())), r);
             newRoot.getChildren().add(new ToOneNode(r, newNode));
         }
 
@@ -146,7 +183,7 @@ public class MainWindowController {
 
     public void show(Row r) {
         Table table = r.getTable();
-        ToOneNode root = new ToOneNode(r, new TreeTableNode(table.getName(), String.valueOf(r.getField(table.getPk())), r));
+        ToOneNode root = new ToOneNode(r, new TreeTableNode(table.getPk(), String.valueOf(r.getField(table.getPk())), r));
         treeTable.setRoot(root);
     }
 
