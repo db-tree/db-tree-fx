@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public final class ToOneNode extends TreeItem<TreeTableNode> {
+public final class ToOneNode extends BasicTreeItem {
     private boolean loaded = false;
 
     private final TreeTableNode node;

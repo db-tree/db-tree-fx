@@ -9,7 +9,7 @@ import javafx.scene.control.TreeItem;
 import java.util.Collection;
 import java.util.Map;
 
-public final class ToManyNode extends TreeItem<TreeTableNode> {
+public final class ToManyNode extends BasicTreeItem {
     private final Row row;
     private final Table key;
     private final Map.Entry<Table, String> relation;
