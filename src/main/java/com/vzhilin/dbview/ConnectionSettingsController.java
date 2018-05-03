@@ -14,6 +14,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -86,12 +87,16 @@ public class ConnectionSettingsController {
     }
 
     private void initLookupTree() {
+        lookupTreeView.setColumnResizePolicy(TreeTableView.CONSTRAINED_RESIZE_POLICY);
         lookupTreeView.setEditable(true);
         lookupTreeView.showRootProperty().setValue(false);
 
         TreeTableColumn<LookupTreeNode, Boolean> enabledColumn = new TreeTableColumn<>("Enabled");
+        enabledColumn.setPrefWidth(80);
+        enabledColumn.setMaxWidth(80);
+        enabledColumn.setMinWidth(60);
         TreeTableColumn<LookupTreeNode, String> tableColumn = new TreeTableColumn<>("Column");
-        tableColumn.setMinWidth(400);
+
         lookupTreeView.getColumns().add(tableColumn);
         lookupTreeView.getColumns().add(enabledColumn);
 
@@ -101,6 +106,7 @@ public class ConnectionSettingsController {
         enabledColumn.setCellFactory(param -> {
             CheckBoxTreeTableCell<LookupTreeNode, Boolean> cell = new CheckBoxTreeTableCell<>();
             cell.setEditable(true);
+            cell.setAlignment(Pos.CENTER);
             return cell;
         });
         tableColumn.setCellValueFactory(param -> param.getValue().getValue().tableProperty());
