@@ -24,6 +24,10 @@ public final class ParsedTemplate {
     }
 
     public ExpressionValue render(Row row) {
-        return expression.render(row);
+        if (expression != null) {
+            return expression.render(row);
+        } else {
+            return new ExpressionValue(errorMessage);
+        }
     }
 }

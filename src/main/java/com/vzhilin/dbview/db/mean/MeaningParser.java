@@ -85,7 +85,7 @@ public final class MeaningParser {
                     throw new ColumnNotFound(local, c);
                 }
 
-                if (!it.hasNext() && !local.getRelations().containsKey(c)) {
+                if (it.hasNext() && !local.getRelations().containsKey(c)) {
                     throw new NotForeignKey(local, c);
                 }
 

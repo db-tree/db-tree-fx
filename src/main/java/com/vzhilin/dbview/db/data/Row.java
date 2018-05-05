@@ -35,14 +35,14 @@ public class Row implements IRow {
     /** QueryRunner */
     private final QueryRunner runner;
 
+    /** Контекст запроса */
+    private final QueryContext queryContext;
+
     /** Таблица */
     private final Table table;
 
     /** Первичный ключ*/
     private final long pk;
-
-    /** Контекст запроса */
-    private final QueryContext queryContext;
 
     /** Колонки */
     private Map<String, Object> rowData = null;
@@ -178,10 +178,10 @@ public class Row implements IRow {
         return rowData.get(column);
     }
 
-    @Override
-    public String meaningfulValue() {
-        return queryContext.getMeanintfulValue(this);
-    }
+//    @Override
+//    public String meaningfulValue() {
+//        return queryContext.getMeanintfulValue(this);
+//    }
 
     public long getPk() {
         return pk;

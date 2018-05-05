@@ -25,10 +25,4 @@ public interface IRow {
      * @return field
      */
     Object getField(String column);
-
-    /**
-     *
-     * @return
-     */
-    String meaningfulValue();
 }

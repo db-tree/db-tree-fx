@@ -88,7 +88,7 @@ public final class QueryContext {
 
     public void setTemplate(String name, String template) {
         getTemplateProperty(name).setValue(template);
-        parsedTemplates.remove(name);
+        parsedTemplates.remove(dbContext.getSchema().getTable(name));
     }
 
     private void parseTemplates() {

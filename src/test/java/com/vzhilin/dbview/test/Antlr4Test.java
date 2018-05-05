@@ -56,7 +56,7 @@ public class Antlr4Test {
     public void test() {
         Table kcaTable = ctx.getSchema().getTable("OESO_KCA");
         Row r = new Row(qc, kcaTable, 2190);
-        String meaningfulValue = r.meaningfulValue();
+        String meaningfulValue = qc.getMeanintfulValue(r);
         System.err.println(meaningfulValue);
 
         String textExpression = "KCAREGNUMBER + ': ' + KCANAME + ' -- ' + KCASTATUSID";

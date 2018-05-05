@@ -50,7 +50,7 @@ public class TreeTableMeaningCell extends TreeTableCell<TreeTableNode, Row> {
             row.getContext().setTemplate(row.getTable().getName(), meaningTextField.getText());
 
             setGraphic(null);
-            setText(row.meaningfulValue());
+            setText(row.getContext().getMeanintfulValue(row));
         }
 
         getTreeTableView().refresh();
@@ -70,7 +70,7 @@ public class TreeTableMeaningCell extends TreeTableCell<TreeTableNode, Row> {
             setText(null);
         } else {
             if (item != null) {
-                setText(item.meaningfulValue());
+                setText(item.getContext().getMeanintfulValue(item));
             } else {
                 setText(null);
             }
