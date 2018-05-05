@@ -12,7 +12,7 @@ public class ColumnExpression implements Expression {
     @Override
     public ExpressionValue render(Row row) {
         if (row.getTable().getRelations().containsKey(column)) {
-            return new ExpressionValue((Row) row.references().get(column));
+            return new ExpressionValue(row.references().get(column));
         } else {
             return new ExpressionValue(row.getField(column));
         }

@@ -16,16 +16,12 @@ public class ComplexColumnExpression implements Expression {
     @Override
     public ExpressionValue render(Row row) {
         Row current = row;
-
         for (Iterator<String> iterator = columns.iterator(); iterator.hasNext(); ) {
-
             String column = iterator.next();
             if (current == null) {
                 return null;
             }
-
             Map<String, Row> refs = current.references();
-
             if (refs.containsKey(column)) {
                 current = refs.get(column);
             } else if (!iterator.hasNext()) {
@@ -34,7 +30,6 @@ public class ComplexColumnExpression implements Expression {
                 return new ExpressionValue("");
             }
         }
-
         return new ExpressionValue(current);
     }
 }

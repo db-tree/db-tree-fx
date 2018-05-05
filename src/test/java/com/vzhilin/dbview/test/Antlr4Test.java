@@ -8,6 +8,7 @@ import com.vzhilin.dbview.db.QueryContext;
 import com.vzhilin.dbview.db.data.Row;
 import com.vzhilin.dbview.db.mean.MeaningParser;
 import com.vzhilin.dbview.db.mean.exp.Expression;
+import com.vzhilin.dbview.db.mean.exp.ParsedTemplate;
 import com.vzhilin.dbview.db.schema.Table;
 import javafx.beans.property.ListProperty;
 import org.junit.Before;
@@ -60,7 +61,7 @@ public class Antlr4Test {
 
         String textExpression = "KCAREGNUMBER + ': ' + KCANAME + ' -- ' + KCASTATUSID";
         MeaningParser parser = new MeaningParser();
-        Expression result = parser.parse(textExpression);
+        ParsedTemplate result = parser.parse(kcaTable, textExpression);
 
         System.err.println(result.render(r));
     }

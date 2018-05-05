@@ -2,7 +2,11 @@ package com.vzhilin.dbview;
 
 import com.vzhilin.dbview.autocomplete.AutoCompletion;
 import com.vzhilin.dbview.autocomplete.row.RowSuggestionProvider;
+import com.vzhilin.dbview.conf.ConnectionSettings;
 import com.vzhilin.dbview.db.DbContext;
+import com.vzhilin.dbview.db.QueryContext;
+import com.vzhilin.dbview.db.data.Row;
+import com.vzhilin.dbview.db.schema.Table;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
@@ -29,7 +33,9 @@ public class AutocompleteController {
 
     public void setContext(DbContext ctx) {
         this.ctx = ctx;
-        RowSuggestionProvider kcaProvider = new RowSuggestionProvider(/* */null);
+        Table kca = ctx.getSchema().getTable("OESO_KCA");
+        QueryContext qc = new QueryContext(ctx, new ConnectionSettings());
+        RowSuggestionProvider kcaProvider = new RowSuggestionProvider(new Row(qc, kca, 2190));
         new AutoCompletion(kcaProvider, autocompleteField);
     }
 }
