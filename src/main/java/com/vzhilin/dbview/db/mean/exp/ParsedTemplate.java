@@ -4,6 +4,7 @@ import com.vzhilin.dbview.db.data.Row;
 import com.vzhilin.dbview.db.schema.Table;
 
 public final class ParsedTemplate {
+    private final boolean valid;
     private final Table table;
     private final String line;
     private final Expression expression;
@@ -14,6 +15,7 @@ public final class ParsedTemplate {
         this.line = line;
         this.expression = expression;
         this.errorMessage = "";
+        this.valid = true;
     }
 
     public ParsedTemplate(Table table, String line, String errorMessage) {
@@ -21,6 +23,7 @@ public final class ParsedTemplate {
         this.line = line;
         this.errorMessage = errorMessage;
         this.expression = null;
+        this.valid = false;
     }
 
     public ExpressionValue render(Row row) {
@@ -29,5 +32,13 @@ public final class ParsedTemplate {
         } else {
             return new ExpressionValue(errorMessage);
         }
+    }
+
+    public String getError() {
+        return errorMessage;
+    }
+
+    public boolean isValid() {
+        return valid;
     }
 }

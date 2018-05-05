@@ -9,7 +9,8 @@ import com.vzhilin.dbview.db.mean.exp.exceptions.ColumnNotFound;
 import com.vzhilin.dbview.db.mean.exp.exceptions.NotForeignKey;
 import com.vzhilin.dbview.db.mean.exp.exceptions.ParseException;
 import com.vzhilin.dbview.db.schema.Table;
-import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.util.Iterator;
@@ -27,11 +28,29 @@ public final class MeaningParser {
             MeaningfulLexer lexer = new MeaningfulLexer(fromString(textLine));
             CommonTokenStream tokenStream = new CommonTokenStream(lexer);
             MeaningfulParser parser = new MeaningfulParser(tokenStream);
+            parser.setErrorHandler(new DefaultErrorStrategy() {
+                @Override
+                public void recover(Parser recognizer, RecognitionException e) {
+                    throw new ParseCancellationException(e);
+                }
+
+                @Override
+                public Token recoverInline(Parser recognizer) throws RecognitionException {
+                    InputMismatchException e = new InputMismatchException(recognizer);
+                    for (ParserRuleContext context = recognizer.getContext(); context != null; context = context.getParent()) {
+                        context.exception = e;
+                    }
+
+                    throw new ParseCancellationException(e);
+                }
+            });
             MeaningfulParser.ProgramContext tree = parser.program();
             MeaningfulBaseVisitor<Expression> visitor = new DefaultVisitor(table);
             return new ParsedTemplate(table, textLine, visitor.visit(tree));
         } catch (ParseException e) {
             return new ParsedTemplate(table, textLine, e.getMessage());
+        } catch (ParseCancellationException e) {
+            return new ParsedTemplate(table, textLine, "syntax error");
         }
     }
 

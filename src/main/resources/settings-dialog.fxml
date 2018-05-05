@@ -17,9 +17,9 @@
    <top>
       <FlowPane hgap="5.0" prefHeight="0.0" prefWidth="200.0" vgap="5.0" BorderPane.alignment="CENTER">
          <children>
-            <Button id="add-btn" fx:id="addButton" mnemonicParsing="false" onAction="#onAddButton" />
-            <Button id="delete-btn" fx:id="removeButton" mnemonicParsing="false" onAction="#onRemoveButton" />
-            <Button id="copy-btn" fx:id="copyButton" mnemonicParsing="false" onAction="#onCopyButton" />
+            <Button styleClass="add-btn" fx:id="addButton" mnemonicParsing="false" onAction="#onAddButton" />
+            <Button styleClass="delete-btn" fx:id="removeButton" mnemonicParsing="false" onAction="#onRemoveButton" />
+            <Button styleClass="copy-btn" fx:id="copyButton" mnemonicParsing="false" onAction="#onCopyButton" />
          </children>
          <BorderPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

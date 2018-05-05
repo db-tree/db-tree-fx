@@ -4,8 +4,12 @@ import com.vzhilin.dbview.autocomplete.AutoCompletion;
 import com.vzhilin.dbview.autocomplete.row.RowSuggestionProvider;
 import com.vzhilin.dbview.db.QueryContext;
 import com.vzhilin.dbview.db.data.Row;
+import com.vzhilin.dbview.db.mean.exp.ParsedTemplate;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeTableCell;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 
 /**
  * Ячейка с "осмысленным значением" для дерева в главном окне
@@ -50,7 +54,7 @@ public class TreeTableMeaningCell extends TreeTableCell<TreeTableNode, Row> {
             row.getContext().setTemplate(row.getTable().getName(), meaningTextField.getText());
 
             setGraphic(null);
-            setText(row.getContext().getMeanintfulValue(row));
+            setTextForItem(row);
         }
 
         getTreeTableView().refresh();
@@ -69,13 +73,37 @@ public class TreeTableMeaningCell extends TreeTableCell<TreeTableNode, Row> {
             setGraphic(null);
             setText(null);
         } else {
-            if (item != null) {
-                setText(item.getContext().getMeanintfulValue(item));
+            setGraphic(null);
+            setTextForItem(item);
+        }
+    }
+
+    private void setTextForItem(Row row) {
+        if (row == null) {
+            setText("");
+            return;
+        }
+
+        ParsedTemplate pt = row.getContext().getParsedTemplate(row.getTable());
+        if (pt == null) {
+            setText("");
+        } else {
+            if (pt.isValid()) {
+                setText(String.valueOf(pt.render(row).getValue()));
             } else {
                 setText(null);
-            }
+                HBox hBox = new HBox();
 
-            setGraphic(null);
+                Region r = new Region();
+                r.setMaxWidth(16);
+                r.setMinWidth(16);
+                r.getStyleClass().add("validation-failure");
+                hBox.getChildren().add(r);
+                Label label = new Label(pt.getError());
+                label.getStyleClass().add("validation-message");
+                hBox.getChildren().add(label);
+                setGraphic(hBox);
+            }
         }
     }
 }

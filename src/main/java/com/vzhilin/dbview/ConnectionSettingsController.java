@@ -7,10 +7,14 @@ import com.vzhilin.dbview.autocomplete.table.DbSuggestionProvider;
 import com.vzhilin.dbview.conf.ConnectionSettings;
 import com.vzhilin.dbview.conf.Template;
 import com.vzhilin.dbview.db.DbContext;
+import com.vzhilin.dbview.db.mean.MeaningParser;
+import com.vzhilin.dbview.db.mean.exp.ParsedTemplate;
 import com.vzhilin.dbview.db.schema.Table;
 import com.vzhilin.dbview.settings.LookupTreeNode;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -18,9 +22,9 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
-import javafx.util.converter.DefaultStringConverter;
 import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
@@ -110,16 +114,24 @@ public class ConnectionSettingsController {
             return cell;
         });
         tableColumn.setCellValueFactory(param -> param.getValue().getValue().tableProperty());
-//
-//        LookupTreeNode kcaNode = new LookupTreeNode("OESO_KCA");
-//        kcaNode.includedProperty().setValue(true);
-//
-//        TreeItem<LookupTreeNode> root = new TreeItem<>(kcaNode);
-//        lookupTreeView.setRoot(root);
-//
-//        root.getChildren().add(new TreeItem<>(new LookupTreeNode("KCAID")));
-//        root.getChildren().add(new TreeItem<>(new LookupTreeNode("KCAREGNUMBER")));
-//        root.getChildren().add(new TreeItem<>(new LookupTreeNode("KCANAME")));
+    }
+
+    public final class TemplateCell {
+        private final Table table;
+        private final StringProperty text;
+
+        public TemplateCell(Template template) {
+            this.table = getContext().getSchema().getTable(template.getTableName());
+            this.text = template.templateProperty();
+        }
+
+        public String getText() {
+            return text.get();
+        }
+
+        public Table getTable() {
+            return table;
+        }
     }
 
     private void initTemplateTable() {
@@ -128,12 +140,11 @@ public class ConnectionSettingsController {
 
         ObservableList<TableColumn<Template, ?>> columns = templateTable.getColumns();
         TableColumn<Template, String> tableColumn = new TableColumn<>("Table");
-        TableColumn<Template, String> templateColumn = new TableColumn<>("Meaningful");
+        TableColumn<Template, TemplateCell> templateColumn = new TableColumn<>("Meaningful");
         columns.add(tableColumn);
         columns.add(templateColumn);
-
         tableColumn.setCellValueFactory(new PropertyValueFactory<>("tableName"));
-        templateColumn.setCellValueFactory(new PropertyValueFactory<>("template"));
+        templateColumn.setCellValueFactory(param -> new SimpleObjectProperty<>(new TemplateCell(param.getValue())));
         templateColumn.setCellFactory(param -> new MeaningTableCell());
     }
 
@@ -251,12 +262,21 @@ public class ConnectionSettingsController {
         lookupTreeView.setRoot(root);
     }
 
-    private class MeaningTableCell extends TextFieldTableCell<Template, String> {
+    private class MeaningTableCell extends TableCell<Template, TemplateCell> {
         private TextField textField;
         private AutoCompletion autoCompletion;
 
         public MeaningTableCell() {
-            super(new DefaultStringConverter());
+
+        }
+
+        @Override
+        public void updateIndex(int i) {
+            if (isEditing()) {
+                cancelEdit();
+            }
+
+            super.updateIndex(i);
         }
 
         @Override
@@ -264,21 +284,11 @@ public class ConnectionSettingsController {
             super.startEdit();
 
             if (isEditing()) {
-                textField = new TextField();
-                textField.setOnAction(e -> cancelEdit());
-
-                Template template = (Template) getTableRow().getItem();
-                textField.textProperty().bindBidirectional(template.templateProperty());
-
-                Table table = getContext().getSchema().getTable(template.getTableName());
-                DbSuggestionProvider kcaProvider = new DbSuggestionProvider(table);
-                autoCompletion = new AutoCompletion(kcaProvider, textField);
+                bindTextField();
             }
 
-            MeaningTableCell cell = this;
-            cell.setText(null);
-
-            cell.setGraphic(textField);
+            setText(null);
+            setGraphic(textField);
             textField.selectAll();
 
             // requesting focus so that key input can immediately go into the
@@ -286,32 +296,73 @@ public class ConnectionSettingsController {
             textField.requestFocus();
         }
 
+        private void bindTextField() {
+            textField = new TextField();
+            textField.setOnAction(e -> cancelEdit());
+
+            Template template = (Template) getTableRow().getItem();
+            textField.textProperty().bindBidirectional(template.templateProperty());
+
+            Table table = getContext().getSchema().getTable(template.getTableName());
+            DbSuggestionProvider kcaProvider = new DbSuggestionProvider(table);
+            autoCompletion = new AutoCompletion(kcaProvider, textField);
+        }
+
         @Override
         public void cancelEdit() {
             super.cancelEdit();
 
-            MeaningTableCell cell = this;
-            cell.setText(textField.getText());
-            cell.setGraphic(null);
+            setGraphic(null);
+            setTextForItem(getItem());
 
             textField = null;
             autoCompletion.unbind();
         }
 
         @Override
-        public void updateItem(String item, boolean empty) {
+        public void updateItem(TemplateCell item, boolean empty) {
             super.updateItem(item, empty);
-            MeaningTableCell cell = this;
 
-            if (cell.isEmpty()) {
-                cell.setText(null);
-                cell.setGraphic(null);
+            if (isEmpty()) {
+                setText(null);
+                setGraphic(null);
             } else {
-                if (cell.isEditing()) {
-                    cell.setText(null);
-                    cell.setGraphic(textField);
+                if (isEditing()) {
+                    setText(null);
+                    setGraphic(textField);
+                } else {
+                    setGraphic(null);
+                    setTextForItem(item);
                 }
             }
+        }
+
+        private void setTextForItem(TemplateCell item) {
+            if ("".equals(item.getText())) {
+                setText("");
+            } else {
+                ParsedTemplate exp = parse(item.getTable(), item.getText());
+                if (exp.isValid()) {
+                    setText(item.getText());
+                } else {
+                    setText(null);
+                    HBox hBox = new HBox();
+
+                    Region r = new Region();
+                    r.setMaxWidth(16);
+                    r.setMinWidth(16);
+                    r.getStyleClass().add("validation-failure");
+                    hBox.getChildren().add(r);
+                    Label label = new Label(exp.getError());
+                    label.getStyleClass().add("validation-message");
+                    hBox.getChildren().add(label);
+                    setGraphic(hBox);
+                }
+            }
+        }
+
+        private ParsedTemplate parse(Table table, String text) {
+            return new MeaningParser().parse(table, text);
         }
     }
 }

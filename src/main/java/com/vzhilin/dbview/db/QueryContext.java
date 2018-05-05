@@ -5,11 +5,9 @@ import com.vzhilin.dbview.conf.ConnectionSettings;
 import com.vzhilin.dbview.conf.Template;
 import com.vzhilin.dbview.db.data.Row;
 import com.vzhilin.dbview.db.mean.MeaningParser;
-import com.vzhilin.dbview.db.mean.exp.Expression;
 import com.vzhilin.dbview.db.mean.exp.ParsedTemplate;
 import com.vzhilin.dbview.db.mean.exp.exceptions.ParseException;
 import com.vzhilin.dbview.db.schema.Table;
-import javafx.beans.property.ListProperty;
 import javafx.beans.property.StringProperty;
 import org.apache.log4j.Logger;
 
@@ -56,27 +54,36 @@ public final class QueryContext {
         return first.get().templateProperty();
     }
 
-    public String getMeanintfulValue(Row row) {
-        if (parsedTemplates.containsKey(row.getTable())) {
-            return String.valueOf(parsedTemplates.get(row.getTable()).render(row));
+    public ParsedTemplate getParsedTemplate(Table table) {
+        if (parsedTemplates.containsKey(table)) {
+            parsedTemplates.get(table);
         }
-        Optional<Template> maybeTemplate = findTemplate(row.getTable().getName());
+
+        Optional<Template> maybeTemplate = findTemplate(table.getName());
         if (maybeTemplate.isPresent()) {
             String template = maybeTemplate.get().getTemplate();
             if (template == null || template.isEmpty()) {
-                return "";
+                return null;
             }
 
             MeaningParser parser = new MeaningParser();
             try {
-                ParsedTemplate ex = parser.parse(row.getTable(), template);
-                parsedTemplates.put(row.getTable(), ex);
-                return String.valueOf(parsedTemplates.get(row.getTable()).render(row));
+                ParsedTemplate ex = parser.parse(table, template);
+                parsedTemplates.put(table, ex);
+                return ex;
             } catch (ParseException e) {
                 LOG.error(e, e);
             }
+        }
 
-            return "";
+        return null;
+    }
+
+
+    public String getMeanintfulValue(Row row) {
+        ParsedTemplate pt = getParsedTemplate(row.getTable());
+        if (pt != null) {
+            return String.valueOf(pt.render(row));
         } else {
             return "";
         }
