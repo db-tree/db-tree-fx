@@ -69,16 +69,16 @@ public class ConnectionSettingsController {
     private ConnectionSettings settings;
 
     private void updateContext() {
-        try {
-            currentContext = new DbContext(driverClass.getText(), jdbcUrl.getText(), username.getText(), password.getText());
-        } catch (SQLException e) {
-            LOG.error(e, e);
-        }
+        currentContext = null;
     }
 
     private DbContext getContext() {
         if (currentContext == null) {
-            updateContext();
+            try {
+                currentContext = new DbContext(driverClass.getText(), jdbcUrl.getText(), username.getText(), password.getText());
+            } catch (SQLException e) {
+                LOG.error(e, e);
+            }
         }
 
         return currentContext;
