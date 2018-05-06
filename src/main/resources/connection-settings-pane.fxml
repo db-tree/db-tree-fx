@@ -30,7 +30,7 @@
                   <TextField fx:id="jdbcUrl" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <TextField fx:id="username" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                   <TextField fx:id="password" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                  <Button fx:id="testButton" mnemonicParsing="false" onAction="#onTestButton" prefHeight="25.0" prefWidth="125.0" text="Test" GridPane.rowIndex="5" />
+                  <Button fx:id="connectButton" mnemonicParsing="false" onAction="#onTestButton" prefHeight="25.0" prefWidth="125.0" text="Connect" GridPane.rowIndex="5" />
                   <Label fx:id="testMessageLabel" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                </children>
             </GridPane>
