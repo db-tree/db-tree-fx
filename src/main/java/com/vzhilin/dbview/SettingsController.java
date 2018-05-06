@@ -37,9 +37,6 @@ public class SettingsController {
     private Button cancelButton;
 
     @FXML
-    private Button applyButton;
-
-    @FXML
     private Button addButton;
 
     @FXML

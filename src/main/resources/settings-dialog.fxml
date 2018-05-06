@@ -30,7 +30,6 @@
       <FlowPane alignment="CENTER_RIGHT" columnHalignment="RIGHT" hgap="5.0" maxHeight="0.0" prefHeight="200.0" prefWidth="200.0" rowValignment="TOP" vgap="5.0" BorderPane.alignment="TOP_RIGHT">
          <children>
             <Button fx:id="okButton" mnemonicParsing="false" onAction="#onOkButton" text="Ok" />
-            <Button fx:id="applyButton" mnemonicParsing="false" text="Apply" />
             <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelButton" text="Cancel" />
          </children>
          <opaqueInsets>
