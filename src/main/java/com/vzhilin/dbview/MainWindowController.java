@@ -9,7 +9,6 @@ import com.vzhilin.dbview.db.data.Row;
 import com.vzhilin.dbview.db.data.RowFinder;
 import com.vzhilin.dbview.db.schema.Table;
 import com.vzhilin.dbview.tree.ToOneNode;
-import javafx.beans.property.Property;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
@@ -19,6 +18,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -96,6 +96,8 @@ public class MainWindowController {
 
         valueColumn.setCellValueFactory(v -> v.getValue().getValue().valueColumnProperty());
         valueColumn.setSortable(false);
+        valueColumn.setEditable(true);
+        valueColumn.setCellFactory(param -> new TextFieldTreeTableCell<>());
         meaningfulValueColumn.setCellValueFactory(v -> v.getValue().getValue().meaningfulValueColumnProperty());
         meaningfulValueColumn.setCellFactory(param -> new TreeTableMeaningCell() {
             @Override
