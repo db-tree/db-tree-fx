@@ -95,19 +95,19 @@ public class ConnectionSettingsController {
         lookupTreeView.setEditable(true);
         lookupTreeView.showRootProperty().setValue(false);
 
-        TreeTableColumn<LookupTreeNode, Boolean> enabledColumn = new TreeTableColumn<>("Enabled");
-        enabledColumn.setPrefWidth(80);
-        enabledColumn.setMaxWidth(80);
-        enabledColumn.setMinWidth(60);
+        TreeTableColumn<LookupTreeNode, Boolean> selectedColumn = new TreeTableColumn<>("Selected");
+        selectedColumn.setPrefWidth(80);
+        selectedColumn.setMaxWidth(80);
+        selectedColumn.setMinWidth(60);
         TreeTableColumn<LookupTreeNode, String> tableColumn = new TreeTableColumn<>("Column");
 
         lookupTreeView.getColumns().add(tableColumn);
-        lookupTreeView.getColumns().add(enabledColumn);
+        lookupTreeView.getColumns().add(selectedColumn);
 
-        enabledColumn.setCellValueFactory(param -> param.getValue().getValue().includedProperty());
+        selectedColumn.setCellValueFactory(param -> param.getValue().getValue().includedProperty());
 
-        enabledColumn.setEditable(true);
-        enabledColumn.setCellFactory(param -> {
+        selectedColumn.setEditable(true);
+        selectedColumn.setCellFactory(param -> {
             CheckBoxTreeTableCell<LookupTreeNode, Boolean> cell = new CheckBoxTreeTableCell<>();
             cell.setEditable(true);
             cell.setAlignment(Pos.CENTER);
