@@ -21,6 +21,7 @@ import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.Locale;
 
+import static com.google.common.collect.Iterables.getFirst;
 import static com.google.common.collect.Iterables.getOnlyElement;
 
 public class MainWindowApp extends Application {
@@ -54,14 +55,8 @@ public class MainWindowApp extends Application {
 
         try {
             DbContext ctx = new DbContext("oracle.jdbc.OracleDriver", "jdbc:oracle:thin:@localhost:1521:XE", "voshod", "voshod");
-            QueryContext queryContext = new QueryContext(ctx, getOnlyElement(settings.getConnections()));
-//            Row r = new Row(queryContext, ctx.getSchema().getTable("OESO_KCA"), 2190);
-
             Property<DbContext> currentContext = new SimpleObjectProperty<>();
             currentContext.setValue(ctx);
-
-            controller.setCtx(currentContext);
-//            controller.show(r);
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -55,10 +55,6 @@ public class MainWindowController {
     @FXML
     private TextField textField;
 
-    /**
-     *
-     */
-    private Property<DbContext> ctxProperty;
     private Settings settings;
 
     private Stage ownerWindow;
@@ -73,8 +69,6 @@ public class MainWindowController {
             public TreeTableCell<TreeTableNode, String> call(TreeTableColumn<TreeTableNode, String> param) {
                 return new TreeTableCell<TreeTableNode, String> () {
                       @Override protected void updateItem(String item, boolean empty) {
-//                        if (item == getItem()) return;
-
                         super.updateItem(item, empty);
 
                         if (item == null) {
@@ -139,7 +133,9 @@ public class MainWindowController {
     @FXML
     private void onFindAction() throws SQLException {
         TreeItem<TreeTableNode> newRoot = new TreeItem<>(new TreeTableNode("ROOT", "ROOT", null));
-        QueryContext queryContext = new QueryContext(ctxProperty.getValue(), cbConnection.getValue());
+        ConnectionSettings connection = cbConnection.getValue();
+
+        QueryContext queryContext = new QueryContext(new DbContext(connection.getDriverClass(), connection.getJdbcUrl(), connection.getUsername(), connection.getPassword()), connection);
         for (Row r: new RowFinder(queryContext).find(textField.getText())) {
             Table table = r.getTable();
 
@@ -176,10 +172,6 @@ public class MainWindowController {
 
     private void setIcon(Stage stage) {
         stage.getIcons().add(new Image(getClass().getResourceAsStream("/icons/logo.png")));
-    }
-
-    public void setCtx(Property<DbContext> ctxProperty) {
-        this.ctxProperty = ctxProperty;
     }
 
     public void show(Row r) {

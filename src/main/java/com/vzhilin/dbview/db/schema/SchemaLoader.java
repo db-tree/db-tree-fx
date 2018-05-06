@@ -19,9 +19,6 @@ public final class SchemaLoader {
     /** логгер */
     private static final Logger LOGGER = Logger.getLogger(SchemaLoader.class);
 
-    /** Схема БД */
-    private static final String VOSHOD = "VOSHOD";
-
     public SchemaLoader() { }
 
     /**
@@ -35,16 +32,13 @@ public final class SchemaLoader {
 
         try {
             conn = ds.getConnection();
+            String user = conn.getMetaData().getUserName();
             Schema sc = new Schema();
             DatabaseMetaData md = conn.getMetaData();
+            List<String> tables = loadTablesList(sc, md, user);
 
-            Set<String> patterns = Sets.newHashSet("OESO_%");
-            for (String pattern: patterns) {
-                List<String> tables = loadTablesList(sc, md, pattern);
-
-                fillColumns(sc, md, pattern);
-                fillRelations(sc, md, tables);
-            }
+            fillColumns(sc, md, user);
+            fillRelations(sc, md, tables, user);
 
             return sc;
         } finally {
@@ -58,7 +52,7 @@ public final class SchemaLoader {
         }
     }
 
-    private void fillRelations(Schema sc, DatabaseMetaData md, List<String> tables) throws SQLException {
+    private void fillRelations(Schema sc, DatabaseMetaData md, List<String> tables, String user) throws SQLException {
         for (String table: tables) {
             if (!sc.hasTable(table)) {
                 LOGGER.warn("таблица не найдена: " + table);
@@ -67,7 +61,7 @@ public final class SchemaLoader {
 
             final Table tb = sc.getTable(table);
 
-            ResultSet rs = md.getImportedKeys(null, VOSHOD, table);
+            ResultSet rs = md.getImportedKeys(null, user, table);
             while (rs.next()) {
                 String pktableName = rs.getString(3);
                 String fkcolumnName = rs.getString(8);
@@ -88,8 +82,8 @@ public final class SchemaLoader {
         }
     }
 
-    private void fillColumns(Schema sc, DatabaseMetaData md, String pattern) throws SQLException {
-        ResultSet rs = md.getColumns(null, VOSHOD, pattern, null);
+    private void fillColumns(Schema sc, DatabaseMetaData md, String user) throws SQLException {
+        ResultSet rs = md.getColumns(null, user, null, null);
         while (rs.next()) {
             String table = rs.getString(3);
             String name = rs.getString(4);
@@ -102,9 +96,9 @@ public final class SchemaLoader {
         rs.close();
     }
 
-    private List<String> loadTablesList(Schema sc, DatabaseMetaData md, String pattern) throws SQLException {
+    private List<String> loadTablesList(Schema sc, DatabaseMetaData md, String user) throws SQLException {
         List<String> tables = Lists.newLinkedList();
-        ResultSet rs = md.getTables(null, VOSHOD, pattern, null);
+        ResultSet rs = md.getTables(null, user, null, null);
         while (rs.next()) {
             if ("TABLE".equals(rs.getString(4))) {
                 final String name = rs.getString(3);
@@ -115,7 +109,7 @@ public final class SchemaLoader {
 
         int tablesCount = 0;
         for (String table: tables) {
-            rs = md.getPrimaryKeys(null, VOSHOD, table);
+            rs = md.getPrimaryKeys(null, user, table);
             if (rs.next()) {
                 String pkName = rs.getString(4);
                 sc.addTable(new Table(table, pkName, tablesCount++));
