@@ -97,6 +97,7 @@ public class MainWindowController {
         valueColumn.setCellValueFactory(v -> v.getValue().getValue().valueColumnProperty());
         valueColumn.setSortable(false);
         valueColumn.setEditable(true);
+        valueColumn.setStyle( "-fx-alignment: CENTER-RIGHT;");
         valueColumn.setCellFactory(param -> new TextFieldTreeTableCell<>());
         meaningfulValueColumn.setCellValueFactory(v -> v.getValue().getValue().meaningfulValueColumnProperty());
         meaningfulValueColumn.setCellFactory(param -> new TreeTableMeaningCell() {

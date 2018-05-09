@@ -120,7 +120,7 @@ public class SettingsController {
                     }
 
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LOG.error(e, e);
                 }
             }
         });
@@ -171,7 +171,10 @@ public class SettingsController {
             copy.connectionNameProperty().set(s.getConnectionName() + " (" + i + ")");
         }
 
-//        selectedItem.getParent().getChildren().add(newItem(copy));
+        String newName = copy.getConnectionName();
+        ObservableList<TreeItem<SettingNode>> ch = selectedItem.getParent().getChildren();
+        settingView.getSelectionModel().select(ch.filtered(n -> newName.equals(((ConnectionSettingNode) n.getValue())
+            .settings.getConnectionName())).get(0));
     }
 
     @FXML
