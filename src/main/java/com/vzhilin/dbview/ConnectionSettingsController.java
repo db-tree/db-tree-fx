@@ -106,7 +106,20 @@ public class ConnectionSettingsController {
 
         selectedColumn.setEditable(true);
         selectedColumn.setCellFactory(param -> {
-            CheckBoxTreeTableCell<LookupTreeNode, Boolean> cell = new CheckBoxTreeTableCell<>();
+            CheckBoxTreeTableCell<LookupTreeNode, Boolean> cell = new CheckBoxTreeTableCell<LookupTreeNode, Boolean> () {
+                @Override
+                public void updateItem(Boolean item, boolean empty) {
+                    super.updateItem(item, empty);
+
+                    TreeTableRow<LookupTreeNode> row = getTreeTableRow();
+                    if (row != null && row.getTreeItem() != null) {
+                        LookupTreeNode v = row.getTreeItem().getValue();
+                        if (v.isTable()) {
+                            setGraphic(null);
+                        }
+                    }
+                }
+            };
             cell.setEditable(true);
             cell.setAlignment(Pos.CENTER);
             return cell;
@@ -184,7 +197,7 @@ public class ConnectionSettingsController {
 
         for (String tableName: tableMap.keySet()) {
             if (!nodeMap.containsKey(tableName)) {
-                TreeItem<LookupTreeNode> newItem = new TreeItem<>(new LookupTreeNode(tableName));
+                TreeItem<LookupTreeNode> newItem = new TreeItem<>(new LookupTreeNode(tableName, true));
                 nodeMap.put(tableName, newItem);
                 lookupTreeView.getRoot().getChildren().add(newItem);
             }
@@ -197,7 +210,7 @@ public class ConnectionSettingsController {
                     boolean included = columnName.equals(tableMap.get(tableName).getPk());
                     settings.addLookupableColumn(tableName, columnName, included);
 
-                    LookupTreeNode newNode = new LookupTreeNode(columnName);
+                    LookupTreeNode newNode = new LookupTreeNode(columnName, false);
                     newNode.includedProperty().set(included);
                     TreeItem<LookupTreeNode> newItem = new TreeItem<>(newNode);
                     cols.put(columnName, newItem);
@@ -246,11 +259,11 @@ public class ConnectionSettingsController {
     }
 
     private void bindTree(Map<String, Map<String, BooleanProperty>> settings) {
-        TreeItem<LookupTreeNode> root = new TreeItem<>(new LookupTreeNode("ROOT"));
+        TreeItem<LookupTreeNode> root = new TreeItem<>(new LookupTreeNode("ROOT", true));
         ObservableList<TreeItem<LookupTreeNode>> ch = root.getChildren();
 
         for (String table: settings.keySet()) {
-            TreeItem<LookupTreeNode> tableNode = new TreeItem<>(new LookupTreeNode(table));
+            TreeItem<LookupTreeNode> tableNode = new TreeItem<>(new LookupTreeNode(table, true));
             ch.add(tableNode);
 
             Map<String, BooleanProperty> columns = settings.get(table);
@@ -258,7 +271,7 @@ public class ConnectionSettingsController {
             for (String column: columns.keySet()) {
                 BooleanProperty val = columns.get(column);
 
-                LookupTreeNode newNode = new LookupTreeNode(column);
+                LookupTreeNode newNode = new LookupTreeNode(column, false);
                 TreeItem<LookupTreeNode> columnNode = new TreeItem<>(newNode);
                 tableNode.getChildren().add(columnNode);
 
