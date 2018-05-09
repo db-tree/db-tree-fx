@@ -39,4 +39,8 @@ public class Settings {
             LOG.error(e, e);
         }
     }
+
+    public ConnectionSettings getConnection(String connectionName) {
+        return connections.filtered(c -> c.getConnectionName().equals(connectionName)).get(0);
+    }
 }

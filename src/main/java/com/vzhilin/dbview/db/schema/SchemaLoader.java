@@ -1,7 +1,6 @@
 package com.vzhilin.dbview.db.schema;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import org.apache.log4j.Logger;
 
 import javax.sql.DataSource;
@@ -10,7 +9,6 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Загружает из базы информацию о таблицах

@@ -15,7 +15,6 @@ import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -30,6 +29,7 @@ import org.apache.log4j.Logger;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -64,24 +64,18 @@ public class ConnectionSettingsController {
 
     private final Executor executor = Executors.newSingleThreadExecutor();
 
-    private DbContext currentContext;
-
     private ConnectionSettings settings;
+    private ApplicationContext appContext;
 
-    private void updateContext() {
-        currentContext = null;
-    }
 
     private DbContext getContext() {
-        if (currentContext == null) {
-            try {
-                currentContext = new DbContext(driverClass.getText(), jdbcUrl.getText(), username.getText(), password.getText());
-            } catch (SQLException e) {
-                LOG.error(e, e);
-            }
+        try {
+            return appContext.getQueryContext(driverClass.getText(), jdbcUrl.getText(), username.getText(), password.getText());
+        } catch (ExecutionException e) {
+            LOG.error(e, e);
         }
 
-        return currentContext;
+        return null;
     }
 
     @FXML
@@ -114,6 +108,10 @@ public class ConnectionSettingsController {
             return cell;
         });
         tableColumn.setCellValueFactory(param -> param.getValue().getValue().tableProperty());
+    }
+
+    public void setAppContext(ApplicationContext appContext) {
+        this.appContext = appContext;
     }
 
     public final class TemplateCell {
@@ -149,7 +147,7 @@ public class ConnectionSettingsController {
     }
 
     @FXML
-    private void onTestButton() throws SQLException {
+    private void onTestButton() {
         testMessageLabel.setTextFill(Color.BLACK);
         testMessageLabel.setText("Connecting...");
 
@@ -225,14 +223,6 @@ public class ConnectionSettingsController {
         username.textProperty().bindBidirectional(settings.usernameProperty());
         password.textProperty().bindBidirectional(settings.passwordProperty());
         templateTable.itemsProperty().bindBidirectional(settings.templatesProperty());
-
-        ChangeListener<String> changeListener = (observable, oldValue, newValue) -> updateContext();
-        connectionName.textProperty().addListener(changeListener);
-        driverClass.textProperty().addListener(changeListener);
-        jdbcUrl.textProperty().addListener(changeListener);
-        username.textProperty().addListener(changeListener);
-        password.textProperty().addListener(changeListener);
-
         bindTree(settings.getLookupableColumns());
 
         this.settings = settings;

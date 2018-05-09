@@ -2,11 +2,7 @@ package com.vzhilin.dbview;
 
 import com.google.common.base.Joiner;
 import com.vzhilin.dbview.conf.Settings;
-import com.vzhilin.dbview.db.DbContext;
-import com.vzhilin.dbview.db.QueryContext;
 import javafx.application.Application;
-import javafx.beans.property.Property;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -18,11 +14,7 @@ import org.hildan.fxgson.FxGson;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.sql.SQLException;
 import java.util.Locale;
-
-import static com.google.common.collect.Iterables.getFirst;
-import static com.google.common.collect.Iterables.getOnlyElement;
 
 public class MainWindowApp extends Application {
     @Override public void start(Stage stage) throws Exception {
@@ -39,7 +31,6 @@ public class MainWindowApp extends Application {
         stage.setTitle("DB Tree");
         stage.setScene(scene);
         stage.show();
-
         MainWindowController controller = loader.getController();
         load(controller);
         controller.setOwnerWindow(stage);
@@ -52,14 +43,7 @@ public class MainWindowApp extends Application {
     private void load(MainWindowController controller) {
         Settings settings = readSettings();
         controller.setSettings(settings);
-
-        try {
-            DbContext ctx = new DbContext("oracle.jdbc.OracleDriver", "jdbc:oracle:thin:@localhost:1521:XE", "voshod", "voshod");
-            Property<DbContext> currentContext = new SimpleObjectProperty<>();
-            currentContext.setValue(ctx);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        controller.setAppContext(new ApplicationContext(settings));
     }
 
     private Settings readSettings() {

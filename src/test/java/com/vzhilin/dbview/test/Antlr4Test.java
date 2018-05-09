@@ -7,7 +7,6 @@ import com.vzhilin.dbview.db.DbContext;
 import com.vzhilin.dbview.db.QueryContext;
 import com.vzhilin.dbview.db.data.Row;
 import com.vzhilin.dbview.db.mean.MeaningParser;
-import com.vzhilin.dbview.db.mean.exp.Expression;
 import com.vzhilin.dbview.db.mean.exp.ParsedTemplate;
 import com.vzhilin.dbview.db.schema.Table;
 import javafx.beans.property.ListProperty;

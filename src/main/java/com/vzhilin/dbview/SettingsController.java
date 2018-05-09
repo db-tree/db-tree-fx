@@ -54,6 +54,7 @@ public class SettingsController {
     private TreeItem<SettingNode> rootNode;
     private TreeItem<SettingNode> connectionsNode;
     private MainWindowController mainController;
+    private ApplicationContext appContext;
 
 
     public SettingsController() {
@@ -108,6 +109,7 @@ public class SettingsController {
 
                         Parent root = loader.load();
                         ConnectionSettingsController controller = loader.getController();
+                        controller.setAppContext(appContext);
                         controller.setConnectoinName(newValue.getValue().toString());
                         controller.bindSettings(settings);
 
@@ -186,19 +188,17 @@ public class SettingsController {
         this.settingsCopy = new SettingsCopy(src);
         this.settings = settingsCopy.getCopy();
 
-        settings.connectionsProperty().addListener(new ListChangeListener<ConnectionSettings>() {
-            @Override public void onChanged(Change<? extends ConnectionSettings> c) {
-                while (c.next()) {
-                    for (ConnectionSettings newSettings: c.getAddedSubList()) {
-                        connectionsNode.getChildren().add(newItem(newSettings));
-                    }
+        settings.connectionsProperty().addListener((ListChangeListener<ConnectionSettings>) c -> {
+            while (c.next()) {
+                for (ConnectionSettings newSettings: c.getAddedSubList()) {
+                    connectionsNode.getChildren().add(newItem(newSettings));
+                }
 
-                    for (ConnectionSettings removedSettings: c.getRemoved()) {
-                        for (TreeItem<SettingNode> ch: connectionsNode.getChildren()) {
-                            if (((ConnectionSettingNode) ch.getValue()).getSettings() == removedSettings) {
-                                connectionsNode.getChildren().remove(ch);
-                                break;
-                            }
+                for (ConnectionSettings removedSettings: c.getRemoved()) {
+                    for (TreeItem<SettingNode> ch: connectionsNode.getChildren()) {
+                        if (((ConnectionSettingNode) ch.getValue()).getSettings() == removedSettings) {
+                            connectionsNode.getChildren().remove(ch);
+                            break;
                         }
                     }
                 }
@@ -218,6 +218,10 @@ public class SettingsController {
 
     public void setMainWinController(MainWindowController mainWindowController) {
         this.mainController = mainWindowController;
+    }
+
+    public void setAppContext(ApplicationContext appContext) {
+        this.appContext = appContext;
     }
 
     private static class SettingNode {

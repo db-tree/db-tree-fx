@@ -3,7 +3,6 @@ package com.vzhilin.dbview;
 import com.google.common.collect.Iterables;
 import com.vzhilin.dbview.conf.ConnectionSettings;
 import com.vzhilin.dbview.conf.Settings;
-import com.vzhilin.dbview.db.DbContext;
 import com.vzhilin.dbview.db.QueryContext;
 import com.vzhilin.dbview.db.data.Row;
 import com.vzhilin.dbview.db.data.RowFinder;
@@ -30,6 +29,7 @@ import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.concurrent.ExecutionException;
 
 public class MainWindowController {
     private final static Logger LOG = Logger.getLogger(MainWindowController.class);
@@ -58,6 +58,9 @@ public class MainWindowController {
     private Settings settings;
 
     private Stage ownerWindow;
+
+    /** Контекст приложения */
+    private ApplicationContext appContext;
 
     @FXML
     private void initialize() {
@@ -103,7 +106,6 @@ public class MainWindowController {
             @Override
             public void cancelEdit() {
                 super.cancelEdit();
-
                 settings.save();
             }
         });
@@ -133,11 +135,11 @@ public class MainWindowController {
     }
 
     @FXML
-    private void onFindAction() throws SQLException {
+    private void onFindAction() throws SQLException, ExecutionException {
         TreeItem<TreeTableNode> newRoot = new TreeItem<>(new TreeTableNode("ROOT", "ROOT", null));
         ConnectionSettings connection = cbConnection.getValue();
 
-        QueryContext queryContext = new QueryContext(new DbContext(connection.getDriverClass(), connection.getJdbcUrl(), connection.getUsername(), connection.getPassword()), connection);
+        QueryContext queryContext = appContext.getQueryContext(connection.getConnectionName());
         for (Row r: new RowFinder(queryContext).find(textField.getText())) {
             Table table = r.getTable();
 
@@ -158,6 +160,7 @@ public class MainWindowController {
         Parent root = loader.load();
         SettingsController controller = loader.getController();
         controller.setMainWinController(this);
+        controller.setAppContext(appContext);
         Stage stage = new Stage();
         stage.initOwner(ownerWindow);
         stage.initModality(Modality.WINDOW_MODAL);
@@ -171,15 +174,8 @@ public class MainWindowController {
         stage.show();
     }
 
-
     private void setIcon(Stage stage) {
         stage.getIcons().add(new Image(getClass().getResourceAsStream("/icons/logo.png")));
-    }
-
-    public void show(Row r) {
-        Table table = r.getTable();
-        ToOneNode root = new ToOneNode(r, new TreeTableNode(table.getPk(), String.valueOf(r.getField(table.getPk())), r));
-        treeTable.setRoot(root);
     }
 
     public void setSettings(Settings settings) {
@@ -220,5 +216,13 @@ public class MainWindowController {
 
     public void setOwnerWindow(Stage stage) {
         this.ownerWindow = stage;
+    }
+
+    public void setAppContext(ApplicationContext appContext) {
+        this.appContext = appContext;
+    }
+
+    public ApplicationContext getAppContext() {
+        return appContext;
     }
 }
