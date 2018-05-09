@@ -1,6 +1,7 @@
 package com.vzhilin.dbview;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import com.vzhilin.dbview.conf.ConnectionSettings;
 import com.vzhilin.dbview.conf.Settings;
 import com.vzhilin.dbview.conf.SettingsCopy;
@@ -20,6 +21,7 @@ import javafx.stage.Stage;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.util.Set;
 
 public class SettingsController {
     private final static Logger LOG = Logger.getLogger(SettingsController.class);
@@ -156,7 +158,20 @@ public class SettingsController {
 
     @FXML
     public void onCopyButton() {
+        Set<String> names = Sets.newHashSet();
+        settings.getConnections().forEach(c -> names.add(c.getConnectionName()));
 
+        TreeItem<SettingNode> selectedItem = settingView.getSelectionModel().getSelectedItem();
+        ConnectionSettings s = ((ConnectionSettingNode) selectedItem.getValue()).getSettings();
+
+        ConnectionSettings copy = new ConnectionSettings(s);
+        settings.getConnections().add(copy);
+        int i = 1;
+        while (names.contains(copy.getConnectionName())) {
+            copy.connectionNameProperty().set(s.getConnectionName() + " (" + i + ")");
+        }
+
+//        selectedItem.getParent().getChildren().add(newItem(copy));
     }
 
     @FXML

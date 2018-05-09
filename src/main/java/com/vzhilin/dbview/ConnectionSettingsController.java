@@ -115,11 +115,11 @@ public class ConnectionSettingsController {
     }
 
     public final class TemplateCell {
-        private final Table table;
+        private final String table;
         private final StringProperty text;
 
         public TemplateCell(Template template) {
-            this.table = getContext().getSchema().getTable(template.getTableName());
+            this.table = template.getTableName();
             this.text = template.templateProperty();
         }
 
@@ -127,7 +127,7 @@ public class ConnectionSettingsController {
             return text.get();
         }
 
-        public Table getTable() {
+        public String getTable() {
             return table;
         }
     }
@@ -278,24 +278,31 @@ public class ConnectionSettingsController {
             }
 
             setText(null);
-            setGraphic(textField);
-            textField.selectAll();
 
-            // requesting focus so that key input can immediately go into the
-            // TextField (see RT-28132)
-            textField.requestFocus();
+            if (textField != null) {
+                setGraphic(textField);
+                textField.selectAll();
+
+                // requesting focus so that key input can immediately go into the
+                // TextField (see RT-28132)
+                textField.requestFocus();
+            }
         }
 
         private void bindTextField() {
-            textField = new TextField();
-            textField.setOnAction(e -> cancelEdit());
+            DbContext context = getContext();
+            if (context != null) {
+                textField = new TextField();
+                textField.setOnAction(e -> cancelEdit());
 
-            Template template = (Template) getTableRow().getItem();
-            textField.textProperty().bindBidirectional(template.templateProperty());
+                Template template = (Template) getTableRow().getItem();
+                textField.textProperty().bindBidirectional(template.templateProperty());
 
-            Table table = getContext().getSchema().getTable(template.getTableName());
-            DbSuggestionProvider kcaProvider = new DbSuggestionProvider(table);
-            autoCompletion = new AutoCompletion(kcaProvider, textField);
+
+                Table table = context.getSchema().getTable(template.getTableName());
+                DbSuggestionProvider kcaProvider = new DbSuggestionProvider(table);
+                autoCompletion = new AutoCompletion(kcaProvider, textField);
+            }
         }
 
         @Override
@@ -305,8 +312,10 @@ public class ConnectionSettingsController {
             setGraphic(null);
             setTextForItem(getItem());
 
-            textField = null;
-            autoCompletion.unbind();
+            if (textField != null) {
+                textField = null;
+                autoCompletion.unbind();
+            }
         }
 
         @Override
@@ -331,22 +340,25 @@ public class ConnectionSettingsController {
             if ("".equals(item.getText())) {
                 setText("");
             } else {
-                ParsedTemplate exp = parse(item.getTable(), item.getText());
-                if (exp.isValid()) {
-                    setText(item.getText());
-                } else {
-                    setText(null);
-                    HBox hBox = new HBox();
+                String tableName = item.getTable();
+                if (getContext() != null) {
+                    ParsedTemplate exp = parse(getContext().getSchema().getTable(tableName), item.getText());
+                    if (exp.isValid()) {
+                        setText(item.getText());
+                    } else {
+                        setText(null);
+                        HBox hBox = new HBox();
 
-                    Region r = new Region();
-                    r.setMaxWidth(16);
-                    r.setMinWidth(16);
-                    r.getStyleClass().add("validation-failure");
-                    hBox.getChildren().add(r);
-                    Label label = new Label(exp.getError());
-                    label.getStyleClass().add("validation-message");
-                    hBox.getChildren().add(label);
-                    setGraphic(hBox);
+                        Region r = new Region();
+                        r.setMaxWidth(16);
+                        r.setMinWidth(16);
+                        r.getStyleClass().add("validation-failure");
+                        hBox.getChildren().add(r);
+                        Label label = new Label(exp.getError());
+                        label.getStyleClass().add("validation-message");
+                        hBox.getChildren().add(label);
+                        setGraphic(hBox);
+                    }
                 }
             }
         }
