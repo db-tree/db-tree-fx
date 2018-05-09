@@ -62,6 +62,8 @@ public class MainWindowController {
     @FXML
     private void initialize() {
         treeTable.setEditable(true);
+        treeTable.setShowRoot(false);
+        treeTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         itemColumn.setCellValueFactory(v -> v.getValue().getValue().itemColumnProperty());
         itemColumn.setSortable(false);
         itemColumn.setCellFactory(new Callback<TreeTableColumn<TreeTableNode, String>, TreeTableCell<TreeTableNode, String>>() {
@@ -109,8 +111,6 @@ public class MainWindowController {
         });
         meaningfulValueColumn.setSortable(false);
         meaningfulValueColumn.setEditable(true);
-
-        treeTable.setShowRoot(false);
 
         cbConnection.setCellFactory(new Callback<ListView<ConnectionSettings>, ListCell<ConnectionSettings>>() {
             @Override
