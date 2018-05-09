@@ -37,9 +37,7 @@ public class AutoComplete extends Application {
         AutocompleteController controller = (AutocompleteController) loader.getController();
         controller.setScene(scene);
 
-        DbContext ctx = new DbContext("oracle.jdbc.OracleDriver", "jdbc:oracle:thin:@localhost:1521:XE", "voshod", "voshod");
+        DbContext ctx = new DbContext("oracle.jdbc.OracleDriver", "jdbc:oracle:thin:@localhost:1521:XE", "voshod", "voshod", "");
         controller.setContext(ctx);
-
-
     }
 }

@@ -63,22 +63,29 @@ public class SettingsCopy {
         Map<String, Map<String, BooleanProperty>> om = orig.getLookupableColumns();
         Map<String, Map<String, BooleanProperty>> mm = modif.getLookupableColumns();
 
+        Set<String> forRemove = Sets.newLinkedHashSet();
         for (String table: Sets.union(om.keySet(), mm.keySet())) {
-            if (!om.containsKey(table)) {
-                om.put(table, Maps.newLinkedHashMap());
-            }
-
-            Map<String, BooleanProperty> oom = om.get(table);
-            Map<String, BooleanProperty> mmm = mm.get(table);
-
-            for (String column: Sets.union(oom.keySet(), mmm.keySet())) {
-                if (!oom.containsKey(column)) {
-                    oom.put(column, new SimpleBooleanProperty());
+            if (!mm.containsKey(table)) {
+                forRemove.add(table);
+            } else {
+                if (!om.containsKey(table)) {
+                    om.put(table, Maps.newLinkedHashMap());
                 }
 
-                oom.get(column).set(mmm.get(column).getValue());
+                Map<String, BooleanProperty> oom = om.get(table);
+                Map<String, BooleanProperty> mmm = mm.get(table);
+
+                for (String column: Sets.union(oom.keySet(), mmm.keySet())) {
+                    if (!oom.containsKey(column)) {
+                        oom.put(column, new SimpleBooleanProperty());
+                    }
+
+                    oom.get(column).set(mmm.get(column).getValue());
+                }
             }
         }
+
+        forRemove.forEach(om::remove);
     }
 
     private void writeTemplates(ConnectionSettings orig, ConnectionSettings modif) {
@@ -88,12 +95,21 @@ public class SettingsCopy {
         Map<String, Template> dirtyMap =
                 modif.templatesProperty().stream().collect(Collectors.toMap(Template::getTableName, t -> t));
 
+        Set<String> forRemove = Sets.newLinkedHashSet();
         for (String name: Sets.union(origMap.keySet(), dirtyMap.keySet())) {
             if (origMap.containsKey(name)) {
-                origMap.get(name).templateProperty().setValue(dirtyMap.get(name).getTemplate());
+                if (dirtyMap.containsKey(name)) {
+                    origMap.get(name).templateProperty().setValue(dirtyMap.get(name).getTemplate());
+                } else {
+                    forRemove.add(name);
+                }
             } else {
                 orig.templatesProperty().add(new Template(name, dirtyMap.get(name).getTemplate()));
             }
+        }
+
+        for (String name: forRemove) {
+            origMap.remove(name);
         }
     }
 
@@ -103,6 +119,7 @@ public class SettingsCopy {
         orig.jdbcUrlProperty().set(modif.getJdbcUrl());
         orig.usernameProperty().set(modif.getUsername());
         orig.passwordProperty().set(modif.getPassword());
+        orig.tableNamePatternProperty().set(modif.getTableNamePattern());
     }
 
     public Settings getCopy() {

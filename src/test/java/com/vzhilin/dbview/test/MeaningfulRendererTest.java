@@ -25,7 +25,7 @@ public class MeaningfulRendererTest {
     public void setUp() throws SQLException {
         Locale.setDefault(Locale.US);
 
-        ctx = new DbContext("oracle.jdbc.OracleDriver", "jdbc:oracle:thin:@localhost:1521:XE", "voshod", "voshod");
+        ctx = new DbContext("oracle.jdbc.OracleDriver", "jdbc:oracle:thin:@localhost:1521:XE", "voshod", "voshod", "");
         settings = readSettings();
         qc = new QueryContext(ctx, getOnlyElement(settings.getConnections()));
     }

@@ -7,6 +7,7 @@ import com.vzhilin.dbview.db.data.Row;
 import com.vzhilin.dbview.db.mean.MeaningParser;
 import com.vzhilin.dbview.db.mean.exp.ParsedTemplate;
 import com.vzhilin.dbview.db.mean.exp.exceptions.ParseException;
+import com.vzhilin.dbview.db.schema.Schema;
 import com.vzhilin.dbview.db.schema.Table;
 import javafx.beans.property.StringProperty;
 import org.apache.log4j.Logger;
@@ -100,11 +101,12 @@ public final class QueryContext {
 
     private void parseTemplates() {
         MeaningParser parser = new MeaningParser();
+        Schema schema = getDbContext().getSchema();
         for (Template t: connectionSettings.templatesProperty()) {
             String value = t.getTemplate();
-            if (!value.isEmpty()) {
+            if (!value.isEmpty() && schema.hasTable(t.getTableName())) {
                 try {
-                    parsedTemplates.put(getDbContext().getSchema().getTable(t.getTableName()), parser.parse(dbContext.getSchema().getTable(t.getTableName()), value));
+                    parsedTemplates.put(schema.getTable(t.getTableName()), parser.parse(dbContext.getSchema().getTable(t.getTableName()), value));
                 } catch (ParseException e) {
                     LOG.error(e, e);
                 }

@@ -22,10 +22,10 @@ public class ApplicationContext {
 
     public QueryContext getQueryContext(String connectionName) throws ExecutionException {
         ConnectionSettings connection = settings.getConnection(connectionName);
-        return new QueryContext(contextCache.getContext(connection.getDriverClass(), connection.getJdbcUrl(), connection.getUsername(), connection.getPassword()), connection);
+        return new QueryContext(contextCache.getContext(connection.getDriverClass(), connection.getJdbcUrl(), connection.getUsername(), connection.getPassword(), connection.getTableNamePattern()), connection);
     }
 
-    public DbContext getQueryContext(String driverClazz, String jdbcUrlText, String usernameText, String password) throws ExecutionException {
-        return contextCache.getContext(driverClazz, jdbcUrlText, usernameText, password);
+    public DbContext getQueryContext(String driverClazz, String jdbcUrlText, String usernameText, String password, String pattern) throws ExecutionException {
+        return contextCache.getContext(driverClazz, jdbcUrlText, usernameText, password, pattern);
     }
 }

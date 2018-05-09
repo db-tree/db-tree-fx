@@ -17,13 +17,13 @@ public final class ContextCache {
                 .build(new CacheLoader<ContextKey, DbContext>() {
                     @Override
                     public DbContext load(ContextKey dsKey) throws Exception {
-                        return new DbContext(dsKey.driverClazz, dsKey.jdbcUrl, dsKey.login, dsKey.password);
+                        return new DbContext(dsKey.driverClazz, dsKey.jdbcUrl, dsKey.login, dsKey.password, dsKey.pattern);
                     }
                 });
     }
 
-    public DbContext getContext(String driverClazz, String jdbcUrl, String login, String password) throws ExecutionException {
-        return cache.get(new ContextKey(driverClazz, jdbcUrl, login, password));
+    public DbContext getContext(String driverClazz, String jdbcUrl, String login, String password, String pattern) throws ExecutionException {
+        return cache.get(new ContextKey(driverClazz, jdbcUrl, login, password, pattern));
     }
 
     private final static class ContextKey {
@@ -31,12 +31,14 @@ public final class ContextCache {
         private final String jdbcUrl;
         private final String login;
         private final String password;
+        private final String pattern;
 
-        public ContextKey(String driverClazz, String jdbcUrl, String login, String password) {
+        public ContextKey(String driverClazz, String jdbcUrl, String login, String password, String pattern) {
             this.driverClazz = driverClazz;
             this.jdbcUrl = jdbcUrl;
             this.login = login;
             this.password = password;
+            this.pattern = pattern;
         }
 
         @Override
@@ -46,7 +48,8 @@ public final class ContextCache {
             ContextKey contextKey = (ContextKey) o;
             return Objects.equals(driverClazz, contextKey.driverClazz) &&
                     Objects.equals(jdbcUrl, contextKey.jdbcUrl) &&
-                    Objects.equals(login, contextKey.login);
+                    Objects.equals(login, contextKey.login) &&
+                    Objects.equals(pattern, contextKey.pattern);
         }
 
         @Override

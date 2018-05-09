@@ -9,6 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import org.apache.log4j.BasicConfigurator;
 import org.hildan.fxgson.FxGson;
 
 import java.io.IOException;
@@ -18,6 +19,7 @@ import java.util.Locale;
 
 public class MainWindowApp extends Application {
     @Override public void start(Stage stage) throws Exception {
+        BasicConfigurator.configure();
         Locale.setDefault(Locale.US);
         setIcon(stage);
         FXMLLoader loader = new FXMLLoader();

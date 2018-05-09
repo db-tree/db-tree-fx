@@ -9,6 +9,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Загружает из базы информацию о таблицах
@@ -16,16 +17,20 @@ import java.util.List;
 public final class SchemaLoader {
     /** логгер */
     private static final Logger LOGGER = Logger.getLogger(SchemaLoader.class);
+    private final Pattern pattern;
+    private final DataSource ds;
 
-    public SchemaLoader() { }
+    public SchemaLoader(DataSource ds, String pattern) {
+        this.ds = ds;
+        this.pattern = Pattern.compile(pattern == null || pattern.trim().isEmpty() ? ".*" : pattern);
+    }
 
     /**
      * Загружает из базы информацию о таблицах
-     * @param ds DataSource
      * @return Schema
      * @throws SQLException ошибка SQL
      */
-    public Schema load(DataSource ds) throws SQLException {
+    public Schema load() throws SQLException {
         Connection conn = null;
 
         try {
@@ -100,7 +105,10 @@ public final class SchemaLoader {
         while (rs.next()) {
             if ("TABLE".equals(rs.getString(4))) {
                 final String name = rs.getString(3);
-                tables.add(name);
+
+                if (pattern.matcher(name).matches()) {
+                    tables.add(name);
+                }
             }
         }
         rs.close();

@@ -28,6 +28,9 @@ public class ConnectionSettings {
     /** Пароль */
     private final StringProperty password = new SimpleStringProperty();
 
+    /** regexp для имен таблиц */
+    private final StringProperty tableNamePatternProperty = new SimpleStringProperty();
+
     /** Осмысленные значения */
     private final ListProperty<Template> templates = new SimpleListProperty<Template>(FXCollections.observableArrayList(new ArrayList<>()));
 
@@ -43,6 +46,7 @@ public class ConnectionSettings {
         jdbcUrl.set(cs.getJdbcUrl());
         username.set(cs.getUsername());
         password.set(cs.getPassword());
+        tableNamePatternProperty.set(cs.getTableNamePattern());
 
         for (Template t: cs.templates) {
             templates.add(new Template(t.getTableName(), t.getTemplate()));
@@ -141,6 +145,14 @@ public class ConnectionSettings {
 
     public boolean isLookupable(String tableName, String columnName) {
         return lookupableColumns.containsKey(tableName) && lookupableColumns.get(tableName).containsKey(columnName) && lookupableColumns.get(tableName).get(columnName).getValue();
+    }
+
+    public StringProperty tableNamePatternProperty() {
+        return tableNamePatternProperty;
+    }
+
+    public String getTableNamePattern() {
+        return tableNamePatternProperty.get();
     }
 }
 

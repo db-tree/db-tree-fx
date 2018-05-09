@@ -11,7 +11,7 @@ public final class DbContext {
     private Schema schema;
     private QueryRunner runner;
 
-    public DbContext(String driverClazz, String jdbcUrl, String login, String password) throws SQLException {
+    public DbContext(String driverClazz, String jdbcUrl, String login, String password, String pattern) throws SQLException {
         BasicDataSource ds = new BasicDataSource();
         ds.setDriverClassName(driverClazz);
         ds.setUrl(jdbcUrl);
@@ -19,7 +19,7 @@ public final class DbContext {
         ds.setPassword(password);
 
         runner = new QueryRunner(ds);
-        schema = new SchemaLoader().load(ds);
+        schema = new SchemaLoader(ds, pattern).load();
     }
 
     public Schema getSchema() {

@@ -27,6 +27,7 @@ import javafx.scene.paint.Color;
 import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -54,6 +55,9 @@ public class ConnectionSettingsController {
     private TextField password;
 
     @FXML
+    private TextField tableNamePattern;
+
+    @FXML
     private TableView<Template> templateTable;
 
     @FXML
@@ -70,7 +74,7 @@ public class ConnectionSettingsController {
 
     private DbContext getContext() {
         try {
-            return appContext.getQueryContext(driverClass.getText(), jdbcUrl.getText(), username.getText(), password.getText());
+            return appContext.getQueryContext(driverClass.getText(), jdbcUrl.getText(), username.getText(), password.getText(), tableNamePattern.getText());
         } catch (ExecutionException e) {
             LOG.error(e, e);
         }
@@ -153,7 +157,7 @@ public class ConnectionSettingsController {
 
         executor.execute(() -> {
             try {
-                DbContext ctx = new DbContext(driverClass.getText(), jdbcUrl.getText(), username.getText(), password.getText());
+                DbContext ctx = new DbContext(driverClass.getText(), jdbcUrl.getText(), username.getText(), password.getText(), tableNamePattern.getText());
                 Platform.runLater(() -> {
                     testMessageLabel.setTextFill(Color.DARKGREEN);
                     testMessageLabel.setText("OK");
@@ -202,14 +206,26 @@ public class ConnectionSettingsController {
                 }
             }
         }
+
+
+        for (String tableName: Sets.difference(nodeMap.keySet(), tableMap.keySet())) {
+            TreeItem<LookupTreeNode> n = nodeMap.get(tableName);
+            n.getParent().getChildren().remove(n);
+
+            settings.getLookupableColumns().remove(tableName);
+        }
     }
 
     private void refreshTemplates(Set<String> schemaTables) {
         ObservableList<Template> items = templateTable.getItems();
         Set<String> existingTables = items.stream().map(Template::getTableName).collect(toSet());
-        for (String name: Sets.difference(schemaTables, existingTables)) {
+        Sets.SetView<String> newTables = Sets.difference(schemaTables, existingTables);
+        for (String name: newTables) {
             items.add(new Template(name, ""));
         }
+
+        Sets.SetView<String> removedTables = Sets.difference(existingTables, schemaTables);
+        templateTable.getItems().removeIf(item -> removedTables.contains(item.getTableName()));
     }
 
     public void setConnectoinName(String connectionName) {
@@ -222,6 +238,7 @@ public class ConnectionSettingsController {
         jdbcUrl.textProperty().bindBidirectional(settings.jdbcUrlProperty());
         username.textProperty().bindBidirectional(settings.usernameProperty());
         password.textProperty().bindBidirectional(settings.passwordProperty());
+        tableNamePattern.textProperty().bindBidirectional(settings.tableNamePatternProperty());
         templateTable.itemsProperty().bindBidirectional(settings.templatesProperty());
         bindTree(settings.getLookupableColumns());
 
