@@ -50,9 +50,6 @@ public class MainWindowController {
     private TreeTableColumn<TreeTableNode, Row> meaningfulValueColumn;
 
     @FXML
-    private Button findButton;
-
-    @FXML
     private TextField textField;
 
     private Settings settings;
