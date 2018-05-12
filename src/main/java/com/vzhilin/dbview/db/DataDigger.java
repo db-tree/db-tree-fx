@@ -23,6 +23,7 @@ import static java.lang.String.format;
 
 public class DataDigger implements Closeable {
     private final static Logger LOG = Logger.getLogger(DataDigger.class);
+    public static final EmptyIterator EMPTY_ITERATOR = new EmptyIterator();
     private final QueryContext queryContext;
     private final Schema schema;
     private final List<RowIterator> openedIterators = Lists.newArrayList();
@@ -47,6 +48,10 @@ public class DataDigger implements Closeable {
                     }
                 }
             }
+        }
+
+        if (queries.isEmpty()) {
+            return () -> EMPTY_ITERATOR;
         }
 
         Object[] params = Lists.newArrayList(Iterators.limit(Iterators.cycle(text), queries.size())).toArray();
@@ -146,6 +151,18 @@ public class DataDigger implements Closeable {
             } catch (SQLException e) {
                 LOG.error(e, e);
             }
+        }
+    }
+
+    private static class EmptyIterator implements Iterator<Row> {
+        @Override
+        public boolean hasNext() {
+            return false;
+        }
+
+        @Override
+        public Row next() {
+            return null;
         }
     }
 }
