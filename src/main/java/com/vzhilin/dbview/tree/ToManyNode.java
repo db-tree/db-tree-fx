@@ -1,12 +1,13 @@
 package com.vzhilin.dbview.tree;
 
+import com.vzhilin.dbview.Paging;
 import com.vzhilin.dbview.TreeTableNode;
 import com.vzhilin.dbview.db.data.Row;
 import com.vzhilin.dbview.db.schema.Table;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 
-import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 
 public final class ToManyNode extends BasicTreeItem {
@@ -30,13 +31,8 @@ public final class ToManyNode extends BasicTreeItem {
         if (!wasLoaded) {
             wasLoaded = true;
 
-            ObservableList<TreeItem<TreeTableNode>> ch = super.getChildren();
-            Collection<Row> rs = row.inverseReferences().get(relation);
-
-            rs.forEach(r -> {
-                Table tb = r.getTable();
-                ch.add(new ToOneNode(r, new TreeTableNode(tb.getPk(), String.valueOf(r.getField(tb.getPk())), r)));
-            });
+            Iterator<Row> it = row.getInverseReference(relation).iterator();
+            new Paging().addNodes(it,  super.getChildren());
         }
 
         return super.getChildren();

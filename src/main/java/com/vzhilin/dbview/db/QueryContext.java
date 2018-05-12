@@ -12,13 +12,14 @@ import com.vzhilin.dbview.db.schema.Table;
 import javafx.beans.property.StringProperty;
 import org.apache.log4j.Logger;
 
+import java.io.Closeable;
 import java.util.Map;
 import java.util.Optional;
 
 /**
  * Контекст выполнения запроса
  */
-public final class QueryContext {
+public final class QueryContext implements Closeable {
     /** Логгер */
     private final static Logger LOG = Logger.getLogger(QueryContext.class);
 
@@ -30,10 +31,12 @@ public final class QueryContext {
 
     /** table --> exp */
     private final Map<Table, ParsedTemplate> parsedTemplates = Maps.newLinkedHashMap();
+    private final DataDigger dd;
 
     public QueryContext(DbContext dbContext, ConnectionSettings connectionSettings) {
         this.dbContext = dbContext;
         this.connectionSettings = connectionSettings;
+        this.dd = new DataDigger(this);
         parseTemplates();
     }
 
@@ -80,7 +83,6 @@ public final class QueryContext {
         return null;
     }
 
-
     public String getMeanintfulValue(Row row) {
         ParsedTemplate pt = getParsedTemplate(row.getTable());
         if (pt != null) {
@@ -116,5 +118,14 @@ public final class QueryContext {
 
     private Optional<Template> findTemplate(String name) {
         return connectionSettings.templatesProperty().stream().filter(t -> t.getTableName().equals(name)).findFirst();
+    }
+
+    @Override
+    public void close() {
+        dd.close();
+    }
+
+    public DataDigger getDataDigger() {
+        return dd;
     }
 }

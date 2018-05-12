@@ -133,6 +133,10 @@ public class Row implements IRow {
         return invReferencesCount;
     }
 
+    public Iterable<Row> getInverseReference(Map.Entry<Table, String> relation) {
+        return queryContext.getDataDigger().inverseReferences(this, relation.getKey(), relation.getValue());
+    }
+
     public Multimap<Map.Entry<Table, String>, Row> inverseReferences()  {
         try {
             if (invRows == null) {
@@ -161,6 +165,7 @@ public class Row implements IRow {
 
         return invRows;
     }
+
 
     @Override public String toString() {
         return table + ": " + pk;

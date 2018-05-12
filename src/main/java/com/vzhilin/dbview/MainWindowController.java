@@ -5,8 +5,6 @@ import com.vzhilin.dbview.conf.ConnectionSettings;
 import com.vzhilin.dbview.conf.Settings;
 import com.vzhilin.dbview.db.QueryContext;
 import com.vzhilin.dbview.db.data.Row;
-import com.vzhilin.dbview.db.data.RowFinder;
-import com.vzhilin.dbview.db.schema.Table;
 import com.vzhilin.dbview.tree.ToOneNode;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -29,6 +27,7 @@ import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 
 public class MainWindowController {
@@ -66,35 +65,7 @@ public class MainWindowController {
         treeTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         itemColumn.setCellValueFactory(v -> v.getValue().getValue().itemColumnProperty());
         itemColumn.setSortable(false);
-        itemColumn.setCellFactory(new Callback<TreeTableColumn<TreeTableNode, String>, TreeTableCell<TreeTableNode, String>>() {
-            @Override
-            public TreeTableCell<TreeTableNode, String> call(TreeTableColumn<TreeTableNode, String> param) {
-                return new TreeTableCell<TreeTableNode, String> () {
-                      @Override protected void updateItem(String item, boolean empty) {
-                        super.updateItem(item, empty);
-
-                        if (item == null) {
-                            super.setText(null);
-                            super.setGraphic(null);
-                        } else {
-                            HBox hBox = new HBox();
-                            ObservableList<Node> ch = hBox.getChildren();
-                            ch.add(new Label(item));
-                            Region r = new Region();
-                            ch.add(r);
-
-                            TreeItem<TreeTableNode> treeItem = getTreeTableRow().getTreeItem();
-                            HBox.setHgrow(r, Priority.ALWAYS);
-                            if (treeItem instanceof ToOneNode) {
-                                Row row = ((ToOneNode) treeItem).getRow();
-                                ch.add(new Label(row.getTable().getName()));
-                            }
-                            setGraphic(hBox);
-                        }
-                    }
-                };
-            }
-        });
+        itemColumn.setCellFactory(param -> new ItemTreeTableCell());
 
         valueColumn.setCellValueFactory(v -> v.getValue().getValue().valueColumnProperty());
         valueColumn.setSortable(false);
@@ -129,7 +100,6 @@ public class MainWindowController {
                 };
             }
         });
-
     }
 
     @FXML
@@ -137,17 +107,15 @@ public class MainWindowController {
         TreeItem<TreeTableNode> newRoot = new TreeItem<>(new TreeTableNode("ROOT", "ROOT", null));
         ConnectionSettings connection = cbConnection.getValue();
 
-        QueryContext queryContext = appContext.getQueryContext(connection.getConnectionName());
-        for (Row r: new RowFinder(queryContext).find(textField.getText())) {
-            Table table = r.getTable();
+        QueryContext queryContext = appContext.newQueryContext(connection.getConnectionName());
+        ObservableList<TreeItem<TreeTableNode>> ch = newRoot.getChildren();
 
-            TreeTableNode newNode = new TreeTableNode(table.getPk(), String.valueOf(r.getField(table.getPk())), r);
-            newRoot.getChildren().add(new ToOneNode(r, newNode));
-        }
+        Iterator<Row> it = queryContext.getDataDigger().find(textField.getText()).iterator();
+        new Paging().addNodes(it, ch);
 
         treeTable.setRoot(newRoot);
-        if (newRoot.getChildren().size() == 1) {
-            newRoot.getChildren().get(0).setExpanded(true);
+        if (ch.size() == 1) {
+            ch.get(0).setExpanded(true);
         }
     }
 
@@ -222,5 +190,40 @@ public class MainWindowController {
 
     public ApplicationContext getAppContext() {
         return appContext;
+    }
+
+    private static class ItemTreeTableCell extends TreeTableCell<TreeTableNode, String> {
+        @Override protected void updateItem(String item, boolean empty) {
+          super.updateItem(item, empty);
+
+          if (item == null || empty) {
+              super.setText(null);
+              super.setGraphic(null);
+          } else {
+              TreeItem<TreeTableNode> treeItem = getTreeTableRow().getTreeItem();
+              if (treeItem instanceof ToOneNode) {
+                  HBox hBox = new HBox();
+                  ObservableList<Node> ch = hBox.getChildren();
+                  ch.add(new Label(item));
+                  Region r = new Region();
+                  HBox.setHgrow(r, Priority.ALWAYS);
+                  ch.add(r);
+                  Row row = ((ToOneNode) treeItem).getRow();
+                  ch.add(new Label(row.getTable().getName()));
+
+                  setGraphic(hBox);
+              } else
+              if (treeItem instanceof LoadMoreNode){
+                  HBox hBox = new HBox();
+                  ObservableList<Node> ch = hBox.getChildren();
+                  Button loadMoreButton = new Button("More...");
+                  loadMoreButton.setOnAction(((LoadMoreNode) treeItem).onClickAction());
+                  ch.add(loadMoreButton);
+                  setGraphic(hBox);
+              } else {
+                  setGraphic(new Label(item));
+              }
+          }
+      }
     }
 }

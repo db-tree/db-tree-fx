@@ -27,7 +27,6 @@ import javafx.scene.paint.Color;
 import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -74,7 +73,7 @@ public class ConnectionSettingsController {
 
     private DbContext getContext() {
         try {
-            return appContext.getQueryContext(driverClass.getText(), jdbcUrl.getText(), username.getText(), password.getText(), tableNamePattern.getText());
+            return appContext.newQueryContext(driverClass.getText(), jdbcUrl.getText(), username.getText(), password.getText(), tableNamePattern.getText());
         } catch (ExecutionException e) {
             LOG.error(e, e);
         }
