@@ -13,6 +13,7 @@ import javafx.beans.property.StringProperty;
 import org.apache.log4j.Logger;
 
 import java.io.Closeable;
+import java.sql.Connection;
 import java.util.Map;
 import java.util.Optional;
 

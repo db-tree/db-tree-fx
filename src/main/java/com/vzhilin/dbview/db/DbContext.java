@@ -4,10 +4,16 @@ import com.vzhilin.dbview.db.schema.Schema;
 import com.vzhilin.dbview.db.schema.SchemaLoader;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.ResultSetHandler;
 
+import javax.sql.DataSource;
+import java.io.Closeable;
+import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 
-public final class DbContext {
+public final class DbContext implements Closeable {
+    private final Connection connection;
     private Schema schema;
     private QueryRunner runner;
 
@@ -17,8 +23,9 @@ public final class DbContext {
         ds.setUrl(jdbcUrl);
         ds.setUsername(login);
         ds.setPassword(password);
+        connection = ds.getConnection();
 
-        runner = new QueryRunner(ds);
+        runner = new WrappedQueryRunner(connection);
         schema = new SchemaLoader(ds, pattern).load();
     }
 
@@ -28,5 +35,41 @@ public final class DbContext {
 
     public QueryRunner getRunner() {
         return runner;
+    }
+
+    @Override
+    public void close() throws IOException {
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Connection getConnection() {
+        return connection;
+    }
+
+    private class WrappedQueryRunner extends QueryRunner {
+        private final Connection conn;
+
+        public WrappedQueryRunner(Connection connection) {
+            this.conn = connection;
+        }
+
+        @Override
+        public <T> T query(String sql, ResultSetHandler<T> rsh, Object... params) throws SQLException {
+            return super.query(connection, sql, rsh, params);
+        }
+
+        @Override
+        public <T> T query(String sql, ResultSetHandler<T> rsh) throws SQLException {
+            return super.query(connection, sql, rsh);
+        }
+
+        @Override
+        public DataSource getDataSource() {
+            throw new UnsupportedOperationException();
+        }
     }
 }

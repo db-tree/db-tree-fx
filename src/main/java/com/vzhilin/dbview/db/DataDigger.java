@@ -90,7 +90,6 @@ public class DataDigger implements Closeable {
     }
 
     private static class RowIterator implements Iterator<Row>, Closeable {
-        private final DataSource ds;
         private final Connection conn;
         private final PreparedStatement st;
         private final ResultSet rs;
@@ -98,10 +97,9 @@ public class DataDigger implements Closeable {
         private boolean hasNext;
 
         public RowIterator(QueryContext qc, String query, Object... params) {
-            this.ds = qc.getDbContext().getRunner().getDataSource();
             this.qc = qc;
             try {
-                conn = ds.getConnection();
+                conn = qc.getDbContext().getConnection();
                 st = conn.prepareStatement(query);
                 for (int i = 0; i < params.length; i++) {
                     st.setObject(i + 1, params[i]);
@@ -147,7 +145,6 @@ public class DataDigger implements Closeable {
                 hasNext = false;
                 rs.close();
                 st.close();
-                conn.close();
             } catch (SQLException e) {
                 LOG.error(e, e);
             }
