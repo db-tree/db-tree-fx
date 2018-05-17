@@ -32,9 +32,6 @@ public class Row implements IRow {
     /** Контекст БД */
     private final DbContext ctx;
 
-    /** QueryRunner */
-    private final QueryRunner runner;
-
     /** Контекст запроса */
     private final QueryContext queryContext;
 
@@ -65,7 +62,6 @@ public class Row implements IRow {
     public Row(QueryContext queryContext, Table table, long pk) {
         this.queryContext = queryContext;
         this.ctx = queryContext.getDbContext();
-        this.runner = ctx.getRunner();
         this.table = table;
         this.pk = pk;
     }
@@ -79,11 +75,15 @@ public class Row implements IRow {
             if (rowData == null) {
                 String columns = Joiner.on(',').join(table.getColumns());
                 String query = format("SELECT %s from %s where %s = ?", columns, table.getName(), table.getPk());
-                rowData = runner.query(query, new MapHandler(), pk);
+                rowData = getRunner().query(query, new MapHandler(), pk);
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
+    }
+
+    protected QueryRunner getRunner() {
+        return ctx.getRunner();
     }
 
     /**
@@ -120,7 +120,7 @@ public class Row implements IRow {
                     String tableName = table.getName();
                     String query = format("SELECT COUNT(1) as C FROM %s WHERE %s = %d", tableName, e.getValue(), pk);
 
-                    for (Map<String, Object> m: runner.query(query, new MapListHandler())) {
+                    for (Map<String, Object> m: getRunner().query(query, new MapListHandler())) {
                         long count = ((BigDecimal) m.get("C")).longValue();
                         invReferencesCount.put(e, count);
                     }
@@ -150,7 +150,7 @@ public class Row implements IRow {
                 }
 
                 String q = Joiner.on(" UNION ALL ").join(queries);
-                for (Map<String, Object> m: runner.query(q, new MapListHandler(), Collections.nCopies(queries.size(), pk).toArray())) {
+                for (Map<String, Object> m: getRunner().query(q, new MapListHandler(), Collections.nCopies(queries.size(), pk).toArray())) {
                     String tb = (String) m.get("TABLE_NAME");
                     String col = (String) m.get("COLUMN_NAME");
                     long pk = ((BigDecimal) m.get("PK")).longValue();

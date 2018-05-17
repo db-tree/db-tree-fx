@@ -46,11 +46,11 @@ public final class MeaningParser {
             });
             MeaningfulParser.ProgramContext tree = parser.program();
             MeaningfulBaseVisitor<Expression> visitor = new DefaultVisitor(table);
-            return new ParsedTemplate(table, textLine, visitor.visit(tree));
+            return new ParsedTemplate(visitor.visit(tree));
         } catch (ParseException e) {
-            return new ParsedTemplate(table, textLine, e.getMessage());
+            return new ParsedTemplate(e.getMessage());
         } catch (ParseCancellationException e) {
-            return new ParsedTemplate(table, textLine, "syntax error");
+            return new ParsedTemplate("syntax error");
         }
     }
 
