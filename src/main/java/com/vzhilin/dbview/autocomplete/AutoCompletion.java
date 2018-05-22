@@ -3,6 +3,7 @@ package com.vzhilin.dbview.autocomplete;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -89,6 +90,11 @@ public class AutoCompletion {
         items.addAll(list);
         // select first row
         suggestionList.getSelectionModel().select(0);
+        double value = 23 * list.size() + 5;
+        if (popup.getHeight() != value) {
+            popup.setHeight(value + 5);
+            suggestionList.setPrefHeight(value);
+        }
 
         if (list.isEmpty()) {
             popup.hide();
@@ -100,12 +106,6 @@ public class AutoCompletion {
                             scene.getX(),
                     parent.getY() + local.localToScene(0, 0).getY() +
                             scene.getY() + TITLE_HEIGHT);
-        }
-
-        double value = 23 * list.size() + 5;
-        if (popup.getHeight() != value) {
-            popup.setHeight(value + 5);
-            suggestionList.setPrefHeight(value);
         }
     };
 
@@ -136,6 +136,7 @@ public class AutoCompletion {
                 setGraphic(null);
             } else {
                 HBox hBox = new HBox();
+                hBox.setSpacing(5);
                 ObservableList<Node> ch = hBox.getChildren();
                 Region r2 = new Region();
                 r2.setMaxWidth(26);
@@ -147,11 +148,14 @@ public class AutoCompletion {
                     r2.getStyleClass().add("pk-region");
                 }
                 ch.add(r2);
-                ch.add(new Label(item.getColumn()));
+                Label fieldLabel = new Label(item.getColumn());
+                ch.add(fieldLabel);
                 Region r = new Region();
                 ch.add(r);
 
-                ch.add(new Label(String.valueOf(item.getValue())));
+                Label valueLabel = new Label(String.valueOf(item.getValue()));
+                ch.add(valueLabel);
+                valueLabel.setMaxWidth(300);
 
                 HBox.setHgrow(r, Priority.ALWAYS);
                 setGraphic(hBox);
