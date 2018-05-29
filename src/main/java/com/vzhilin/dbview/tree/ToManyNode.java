@@ -37,4 +37,12 @@ public final class ToManyNode extends BasicTreeItem {
 
         return super.getChildren();
     }
+
+    public Map.Entry<Table, String> getRelation() {
+        return relation;
+    }
+
+    public Row getRow() {
+        return row;
+    }
 }

@@ -5,10 +5,14 @@ import com.vzhilin.dbview.conf.ConnectionSettings;
 import com.vzhilin.dbview.conf.Settings;
 import com.vzhilin.dbview.db.QueryContext;
 import com.vzhilin.dbview.db.data.Row;
+import com.vzhilin.dbview.db.export.DataExport;
 import com.vzhilin.dbview.tree.ToOneNode;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -17,6 +21,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -60,6 +65,35 @@ public class MainWindowController {
 
     @FXML
     private void initialize() {
+//        ContextMenu contextMenu = new ContextMenu();
+
+
+
+        treeTable.setRowFactory(new Callback<TreeTableView<TreeTableNode>, TreeTableRow<TreeTableNode>>() {
+            @Override
+            public TreeTableRow<TreeTableNode> call(TreeTableView<TreeTableNode> param) {
+                TreeTableRow<TreeTableNode> row = new TreeTableRow<TreeTableNode>();
+
+                MenuItem exportItem = new MenuItem("Build query");
+                exportItem.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        ObservableList<TreeItem<TreeTableNode>> selectedItems = treeTable.getSelectionModel().getSelectedItems();
+                        new DataExport().export(selectedItems);
+                    }
+                });
+
+                ContextMenu rowMenu = new ContextMenu(exportItem);
+
+                // only display context menu for non-null items:
+                row.contextMenuProperty().bind(
+                        Bindings.when(Bindings.isNotNull(row.itemProperty()))
+                                .then(rowMenu)
+                                .otherwise((ContextMenu)null));
+                return row;
+            }
+        });
+
         treeTable.setEditable(true);
         treeTable.setShowRoot(false);
         treeTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
