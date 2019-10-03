@@ -10,14 +10,13 @@ import java.util.Map;
 
 public final class ToManyNode extends BasicTreeItem {
     private final Row row;
-    private final Table key;
     private final Map.Entry<Table, String> relation;
     private boolean wasLoaded;
 
     public ToManyNode(Map.Entry<Table, String> tm, long count, Row row) {
         this.row = row;
         relation = tm;
-        key = tm.getKey();
+        Table key = tm.getKey();
         setValue(new TreeTableNode(String.format("(+) %s::%s (%d)", key.getName(), tm.getValue(), count), "", null));
     }
 
