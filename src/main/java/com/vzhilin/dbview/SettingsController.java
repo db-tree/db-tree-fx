@@ -51,8 +51,6 @@ public class SettingsController {
 
     private SettingsCopy settingsCopy;
 
-    private SettingsWindowApp mainApp;
-
     private TreeItem<SettingNode> rootNode;
     private TreeItem<SettingNode> connectionsNode;
     private MainWindowController mainController;
@@ -196,10 +194,6 @@ public class SettingsController {
         addButton.setDisable(true);
         removeButton.setDisable(true);
         copyButton.setDisable(true);
-    }
-
-    public void setMainApp(SettingsWindowApp mainApp) {
-        this.mainApp = mainApp;
     }
 
     public void setSettings(Settings src) {
