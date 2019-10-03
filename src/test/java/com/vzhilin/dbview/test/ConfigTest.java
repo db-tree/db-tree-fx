@@ -3,9 +3,9 @@ package com.vzhilin.dbview.test;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
-import com.vzhilin.dbview.conf.ConnectionSettings;
-import com.vzhilin.dbview.conf.Settings;
-import com.vzhilin.dbview.conf.Template;
+import com.vzhilin.dbview.ui.conf.ConnectionSettings;
+import com.vzhilin.dbview.ui.conf.Settings;
+import com.vzhilin.dbview.ui.conf.Template;
 import javafx.beans.property.ListProperty;
 import org.hildan.fxgson.FxGson;
 

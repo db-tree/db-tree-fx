@@ -1,6 +1,6 @@
 package com.vzhilin.dbview.test;
 
-import com.vzhilin.dbview.autocomplete.SuggestionHelper;
+import com.vzhilin.dbview.ui.autocomplete.SuggestionHelper;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;

@@ -1,8 +1,8 @@
 package com.vzhilin.dbview.db;
 
 import com.google.common.collect.Maps;
-import com.vzhilin.dbview.conf.ConnectionSettings;
-import com.vzhilin.dbview.conf.Template;
+import com.vzhilin.dbview.ui.conf.ConnectionSettings;
+import com.vzhilin.dbview.ui.conf.Template;
 import com.vzhilin.dbview.db.data.Row;
 import com.vzhilin.dbview.db.mean.MeaningParser;
 import com.vzhilin.dbview.db.mean.exp.ParsedTemplate;
@@ -13,7 +13,6 @@ import javafx.beans.property.StringProperty;
 import org.apache.log4j.Logger;
 
 import java.io.Closeable;
-import java.sql.Connection;
 import java.util.Map;
 import java.util.Optional;
 

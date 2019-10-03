@@ -1,7 +1,9 @@
 package com.vzhilin.dbview;
 
 import com.google.common.base.Joiner;
-import com.vzhilin.dbview.conf.Settings;
+import com.vzhilin.dbview.ui.ApplicationContext;
+import com.vzhilin.dbview.ui.MainWindowController;
+import com.vzhilin.dbview.ui.conf.Settings;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;

@@ -1,8 +1,8 @@
 package com.vzhilin.dbview.test;
 
-import com.vzhilin.dbview.conf.ConnectionSettings;
-import com.vzhilin.dbview.conf.Settings;
-import com.vzhilin.dbview.conf.Template;
+import com.vzhilin.dbview.ui.conf.ConnectionSettings;
+import com.vzhilin.dbview.ui.conf.Settings;
+import com.vzhilin.dbview.ui.conf.Template;
 import com.vzhilin.dbview.db.DbContext;
 import com.vzhilin.dbview.db.QueryContext;
 import com.vzhilin.dbview.db.data.Row;
