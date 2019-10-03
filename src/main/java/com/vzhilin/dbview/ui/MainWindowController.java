@@ -65,10 +65,6 @@ public class MainWindowController {
 
     @FXML
     private void initialize() {
-//        ContextMenu contextMenu = new ContextMenu();
-
-
-
         treeTable.setRowFactory(new Callback<TreeTableView<TreeTableNode>, TreeTableRow<TreeTableNode>>() {
             @Override
             public TreeTableRow<TreeTableNode> call(TreeTableView<TreeTableNode> param) {
@@ -247,11 +243,11 @@ public class MainWindowController {
 
                   setGraphic(hBox);
               } else
-              if (treeItem instanceof LoadMoreNode){
+              if (treeItem instanceof Paging.PagingItem){
                   HBox hBox = new HBox();
                   ObservableList<Node> ch = hBox.getChildren();
                   Button loadMoreButton = new Button("More...");
-                  loadMoreButton.setOnAction(((LoadMoreNode) treeItem).onClickAction());
+                  loadMoreButton.setOnAction((Paging.PagingItem) treeItem);
                   ch.add(loadMoreButton);
                   setGraphic(hBox);
               } else {

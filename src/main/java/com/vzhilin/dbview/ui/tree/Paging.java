@@ -2,35 +2,23 @@ package com.vzhilin.dbview.ui.tree;
 
 import com.vzhilin.dbview.db.data.Row;
 import com.vzhilin.dbview.db.schema.Table;
-import com.vzhilin.dbview.ui.tree.LoadMoreNode;
-import com.vzhilin.dbview.ui.tree.ToOneNode;
-import com.vzhilin.dbview.ui.tree.TreeTableNode;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.TreeItem;
 
 import java.util.Iterator;
-import java.util.concurrent.atomic.AtomicReference;
 
 public final class Paging {
-    private final static int PAGE_SIZE = 1000;
+    private final static int PAGE_SIZE = 200;
 
     public void addNodes(Iterator<Row> it, ObservableList<TreeItem<TreeTableNode>> ch) {
         add(it, ch);
 
         if (it.hasNext()) {
-            AtomicReference<LoadMoreNode> loadMore = new AtomicReference<>();
-
-            LoadMoreNode newNode = new LoadMoreNode(event -> {
-                ch.remove(loadMore.get());
-                add(it, ch);
-
-                if (it.hasNext()) {
-                    ch.add(loadMore.get());
-                }
-            });
-            loadMore.set(newNode);
+            PagingItem newNode = new PagingItem(ch, it);
             newNode.setValue(new TreeTableNode("","", null));
-            ch.add(loadMore.get());
+            ch.add(newNode);
         }
     }
 
@@ -40,6 +28,25 @@ public final class Paging {
             Table table = r.getTable();
             TreeTableNode newNode = new TreeTableNode(table.getPk(), String.valueOf(r.getField(table.getPk())), r);
             ch.add(new ToOneNode(r, newNode));
+        }
+    }
+
+    public final class PagingItem extends TreeItem<TreeTableNode> implements EventHandler<ActionEvent> {
+        private final ObservableList<TreeItem<TreeTableNode>> ch;
+        private final Iterator<Row> it;
+
+        private PagingItem(ObservableList<TreeItem<TreeTableNode>> ch, Iterator<Row> it) {
+            this.ch = ch;
+            this.it = it;
+        }
+
+        @Override
+        public void handle(ActionEvent event) {
+            ch.remove(this);
+            add(it, ch);
+            if (it.hasNext()) {
+                ch.add(this);
+            }
         }
     }
 }
