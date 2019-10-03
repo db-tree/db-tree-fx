@@ -1,8 +1,10 @@
-package com.vzhilin.dbview.ui;
+package com.vzhilin.dbview.ui.tree;
 
 import com.vzhilin.dbview.db.data.Row;
 import com.vzhilin.dbview.db.schema.Table;
+import com.vzhilin.dbview.ui.tree.LoadMoreNode;
 import com.vzhilin.dbview.ui.tree.ToOneNode;
+import com.vzhilin.dbview.ui.tree.TreeTableNode;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 

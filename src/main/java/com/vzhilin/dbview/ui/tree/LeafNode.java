@@ -1,6 +1,5 @@
 package com.vzhilin.dbview.ui.tree;
 
-import com.vzhilin.dbview.ui.TreeTableNode;
 import com.vzhilin.dbview.db.data.Row;
 
 public final class LeafNode extends BasicTreeItem {

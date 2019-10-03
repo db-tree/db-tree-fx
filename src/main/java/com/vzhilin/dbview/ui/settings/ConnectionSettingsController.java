@@ -1,7 +1,8 @@
-package com.vzhilin.dbview.ui;
+package com.vzhilin.dbview.ui.settings;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.vzhilin.dbview.ui.ApplicationContext;
 import com.vzhilin.dbview.ui.autocomplete.AutoCompletion;
 import com.vzhilin.dbview.ui.autocomplete.table.DbSuggestionProvider;
 import com.vzhilin.dbview.ui.conf.ConnectionSettings;
@@ -10,7 +11,6 @@ import com.vzhilin.dbview.db.DbContext;
 import com.vzhilin.dbview.db.mean.MeaningParser;
 import com.vzhilin.dbview.db.mean.exp.ParsedTemplate;
 import com.vzhilin.dbview.db.schema.Table;
-import com.vzhilin.dbview.ui.settings.LookupTreeNode;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;

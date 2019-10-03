@@ -1,8 +1,9 @@
-package com.vzhilin.dbview.ui;
+package com.vzhilin.dbview.ui.settings;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-import com.sun.scenario.Settings;
+import com.vzhilin.dbview.ui.ApplicationContext;
+import com.vzhilin.dbview.ui.MainWindowController;
 import com.vzhilin.dbview.ui.conf.ConnectionSettings;
 import com.vzhilin.dbview.ui.conf.Settings;
 import com.vzhilin.dbview.ui.conf.SettingsCopy;

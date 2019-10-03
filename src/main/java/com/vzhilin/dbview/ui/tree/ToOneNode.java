@@ -1,6 +1,5 @@
 package com.vzhilin.dbview.ui.tree;
 
-import com.vzhilin.dbview.ui.TreeTableNode;
 import com.vzhilin.dbview.db.data.Row;
 import com.vzhilin.dbview.db.schema.Table;
 import javafx.collections.ObservableList;

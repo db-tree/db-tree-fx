@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.VBox?>
-<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.vzhilin.dbview.ui.AutocompleteController">
-   <children>
-      <TextField fx:id="autocompleteField" prefHeight="25.0" prefWidth="549.0" />
-   </children>
-</VBox>

@@ -1,4 +1,4 @@
-package com.vzhilin.dbview.ui;
+package com.vzhilin.dbview.ui.tree;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;

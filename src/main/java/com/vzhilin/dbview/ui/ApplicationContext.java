@@ -17,10 +17,6 @@ public class ApplicationContext {
         this.settings = settings;
     }
 
-    public ContextCache getContextCache() {
-        return contextCache;
-    }
-
     public QueryContext newQueryContext(String connectionName) throws ExecutionException {
         ConnectionSettings connection = settings.getConnection(connectionName);
 

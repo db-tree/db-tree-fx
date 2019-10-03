@@ -5,7 +5,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.vzhilin.dbview.ui.TreeTableNode;
+import com.vzhilin.dbview.ui.tree.TreeTableNode;
 import com.vzhilin.dbview.db.schema.Table;
 import com.vzhilin.dbview.ui.tree.LeafNode;
 import com.vzhilin.dbview.ui.tree.ToManyNode;

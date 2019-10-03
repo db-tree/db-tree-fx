@@ -1,4 +1,4 @@
-package com.vzhilin.dbview.ui;
+package com.vzhilin.dbview.ui.tree;
 
 import com.vzhilin.dbview.ui.autocomplete.AutoCompletion;
 import com.vzhilin.dbview.ui.autocomplete.row.RowSuggestionProvider;
