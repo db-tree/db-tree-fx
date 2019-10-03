@@ -26,7 +26,7 @@ public class SettingsWindowApp extends Application {
         Settings settings = readSettings();
         controller.setSettings(settings);
 
-        Scene scene = new Scene(root, 800, 800);
+        Scene scene = new Scene(root, 800, 400);
         scene.getStylesheets().add
             (getClass().getResource("/styles/connection-settings.css").toExternalForm());
 

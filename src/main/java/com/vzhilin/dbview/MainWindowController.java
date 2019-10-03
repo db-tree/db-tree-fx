@@ -166,7 +166,7 @@ public class MainWindowController {
         stage.initModality(Modality.WINDOW_MODAL);
         setIcon(stage);
         controller.setSettings(settings);
-        Scene scene = new Scene(root, 800, 800);
+        Scene scene = new Scene(root, 800, 500);
         scene.getStylesheets().add(getClass().getResource("/styles/connection-settings.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/styles/autocomplete.css").toExternalForm());
         stage.setTitle("Settings");
