@@ -59,8 +59,7 @@ public class SettingsController {
     private ApplicationContext appContext;
 
 
-    public SettingsController() {
-    }
+    public SettingsController() { }
 
     @FXML
     private void initialize() {
@@ -73,15 +72,12 @@ public class SettingsController {
         rootNode.setExpanded(true);
         connectionsNode.setExpanded(true);
 
-
-        // -----------------
         ReadOnlyObjectProperty<TreeItem<SettingNode>> selectedItemProperty = settingView.getSelectionModel().selectedItemProperty();
         selectedItemProperty.addListener((observable, oldValue, newValue) -> {
             if (newValue == null) {
                 addButton.setDisable(true);
                 removeButton.setDisable(true);
                 copyButton.setDisable(true);
-
                 return;
             }
 
@@ -130,11 +126,8 @@ public class SettingsController {
 
     private TreeItem<SettingNode> newItem(ConnectionSettings settings) {
         TreeItem<SettingNode> item = new TreeItem<>(new ConnectionSettingNode(settings));
-        settings.connectionNameProperty().addListener(new ChangeListener<String>() {
-            @Override public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                item.valueProperty().setValue(new ConnectionSettingNode(settings));
-            }
-        });
+        settings.connectionNameProperty().addListener(
+            (observable, oldValue, newValue) -> item.valueProperty().setValue(new ConnectionSettingNode(settings)));
 
         return item;
     }
@@ -242,22 +235,22 @@ public class SettingsController {
 
     }
 
-    private static class RootNode extends SettingNode {
+    private final static class RootNode extends SettingNode {
         @Override public String toString() {
             return "Settings";
         }
     }
 
-    private static class ConnectionsNode extends SettingNode {
+    private final static class ConnectionsNode extends SettingNode {
         @Override public String toString() {
             return "Connections";
         }
     }
 
-    private static class ConnectionSettingNode extends SettingNode {
+    private final static class ConnectionSettingNode extends SettingNode {
         private final ConnectionSettings settings;
 
-        public ConnectionSettingNode(ConnectionSettings settings) {
+        private ConnectionSettingNode(ConnectionSettings settings) {
             this.settings = settings;
         }
 

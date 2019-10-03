@@ -11,8 +11,9 @@ import javafx.scene.control.TreeItem;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class Paging {
-    private final int PAGE_SIZE = 1000;
+public final class Paging {
+    private final static int PAGE_SIZE = 1000;
+
     public void addNodes(Iterator<Row> it, ObservableList<TreeItem<TreeTableNode>> ch) {
         add(it, ch);
 
