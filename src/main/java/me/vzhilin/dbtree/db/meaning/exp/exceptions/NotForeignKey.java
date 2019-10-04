@@ -1,4 +1,4 @@
-package me.vzhilin.dbtree.db.mean.exp.exceptions;
+package me.vzhilin.dbtree.db.meaning.exp.exceptions;
 
 import me.vzhilin.dbtree.db.schema.Table;
 

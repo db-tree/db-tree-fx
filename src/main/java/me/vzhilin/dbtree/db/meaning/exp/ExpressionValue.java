@@ -1,4 +1,4 @@
-package me.vzhilin.dbtree.db.mean.exp;
+package me.vzhilin.dbtree.db.meaning.exp;
 
 
 import me.vzhilin.dbtree.db.data.Row;

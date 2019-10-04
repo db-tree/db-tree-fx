@@ -1,13 +1,13 @@
-package me.vzhilin.dbtree.db.mean;
+package me.vzhilin.dbtree.db.meaning;
 
 import com.google.common.collect.Lists;
 import me.vzhilin.dbtree.antlr4.MeaningfulBaseVisitor;
 import me.vzhilin.dbtree.antlr4.MeaningfulLexer;
 import me.vzhilin.dbtree.antlr4.MeaningfulParser;
-import me.vzhilin.dbtree.db.mean.exp.*;
-import me.vzhilin.dbtree.db.mean.exp.exceptions.ColumnNotFound;
-import me.vzhilin.dbtree.db.mean.exp.exceptions.NotForeignKey;
-import me.vzhilin.dbtree.db.mean.exp.exceptions.ParseException;
+import me.vzhilin.dbtree.db.meaning.exp.*;
+import me.vzhilin.dbtree.db.meaning.exp.exceptions.ColumnNotFound;
+import me.vzhilin.dbtree.db.meaning.exp.exceptions.NotForeignKey;
+import me.vzhilin.dbtree.db.meaning.exp.exceptions.ParseException;
 import me.vzhilin.dbtree.db.schema.Table;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
