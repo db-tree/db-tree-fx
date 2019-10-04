@@ -8,7 +8,6 @@ import com.google.common.collect.Multimap;
 import com.vzhilin.dbview.db.DbContext;
 import com.vzhilin.dbview.db.QueryContext;
 import com.vzhilin.dbview.db.schema.Table;
-import javafx.beans.property.StringProperty;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.MapHandler;
 import org.apache.commons.dbutils.handlers.MapListHandler;
@@ -25,7 +24,7 @@ import static java.lang.String.format;
 /**
  * Строка таблицы
  */
-public class Row implements IRow {
+public class Row {
     /** Логгер */
     private final static Logger LOG = Logger.getLogger(Row.class);
 
@@ -91,7 +90,6 @@ public class Row implements IRow {
      * @return
      * @throws SQLException
      */
-    @Override
     public Map<String, Row> references()  {
         ensureLoaded();
 
@@ -109,7 +107,6 @@ public class Row implements IRow {
         return references;
     }
 
-    @Override
     public Map<Map.Entry<Table, String>, Long> inverseReferencesCount() {
         try {
             if (invReferencesCount == null) {
@@ -171,28 +168,16 @@ public class Row implements IRow {
         return table + ": " + pk;
     }
 
-    @Override
     public Table getTable() {
         return table;
     }
 
-    @Override
     public Object getField(String column) {
         ensureLoaded();
-
         return rowData.get(column);
     }
 
-//    @Override
-//    public String meaningfulValue() {
-//        return queryContext.getMeanintfulValue(this);
-//    }
-
     public long getPk() {
         return pk;
-    }
-
-    public StringProperty getTemplateProperty() {
-        return queryContext.getTemplateProperty(getTable().getName());
     }
 }

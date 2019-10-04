@@ -6,7 +6,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 
-public class TreeTableNode {
+public final class TreeTableNode {
     private StringProperty itemColumnProperty = new SimpleStringProperty();
     private StringProperty valueColumnProperty = new SimpleStringProperty();
     private SimpleObjectProperty<Row> meaningfulColumnProperty = new SimpleObjectProperty<>();
