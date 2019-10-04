@@ -8,7 +8,7 @@ import me.vzhilin.dbview.ui.conf.Settings;
 
 import java.util.concurrent.ExecutionException;
 
-public class ApplicationContext {
+public final class ApplicationContext {
     private final ContextCache contextCache = new ContextCache();
     private final Settings settings;
     private QueryContext queryContext;

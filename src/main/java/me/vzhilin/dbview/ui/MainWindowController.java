@@ -34,7 +34,6 @@ import me.vzhilin.dbview.ui.tree.TreeTableNode;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 
@@ -136,7 +135,7 @@ public class MainWindowController {
     }
 
     @FXML
-    private void onFindAction() throws SQLException, ExecutionException {
+    private void onFindAction() throws ExecutionException {
         TreeItem<TreeTableNode> newRoot = new TreeItem<>(new TreeTableNode("ROOT", "ROOT", null));
         ConnectionSettings connection = cbConnection.getValue();
 
@@ -219,10 +218,6 @@ public class MainWindowController {
 
     public void setAppContext(ApplicationContext appContext) {
         this.appContext = appContext;
-    }
-
-    public ApplicationContext getAppContext() {
-        return appContext;
     }
 
     private static class ItemTreeTableCell extends TreeTableCell<TreeTableNode, String> {

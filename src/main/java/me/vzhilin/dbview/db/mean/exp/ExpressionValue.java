@@ -11,12 +11,7 @@ public final class ExpressionValue {
     public ExpressionValue(Object value) {
         isRow  = value instanceof Row;
         this.row = isRow ? (Row) value : null;
-
         this.value = value;
-    }
-
-    boolean isRow() {
-        return isRow;
     }
 
     public Row getRow() {

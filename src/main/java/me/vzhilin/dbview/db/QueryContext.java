@@ -37,7 +37,7 @@ public final class QueryContext implements Closeable {
         this.dbContext = dbContext;
         this.connectionSettings = connectionSettings;
         this.dd = new DataDigger(this);
-        parseTemplates(connectionSettings);
+        parseTemplates();
     }
 
     public DbContext getDbContext() {
@@ -83,7 +83,7 @@ public final class QueryContext implements Closeable {
         return null;
     }
 
-    public String getMeanintfulValue(Row row) {
+    public String getMeaningfulValue(Row row) {
         ParsedTemplate pt = getParsedTemplate(row.getTable());
         if (pt != null) {
             return String.valueOf(pt.render(row));
@@ -101,7 +101,7 @@ public final class QueryContext implements Closeable {
         parsedTemplates.remove(dbContext.getSchema().getTable(name));
     }
 
-    private void parseTemplates(ConnectionSettings connectionSettings) {
+    private void parseTemplates() {
         MeaningParser parser = new MeaningParser();
         Schema schema = getDbContext().getSchema();
         for (Template t: this.connectionSettings.templatesProperty()) {

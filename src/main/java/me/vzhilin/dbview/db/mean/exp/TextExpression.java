@@ -2,7 +2,7 @@ package me.vzhilin.dbview.db.mean.exp;
 
 import me.vzhilin.dbview.db.data.Row;
 
-public class TextExpression implements Expression {
+public final class TextExpression implements Expression {
     private String text;
 
     public TextExpression(String text) {

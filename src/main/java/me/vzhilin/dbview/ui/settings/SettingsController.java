@@ -25,7 +25,7 @@ import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.util.Set;
 
-public class SettingsController {
+public final class SettingsController {
     private final static Logger LOG = Logger.getLogger(SettingsController.class);
 
     @FXML

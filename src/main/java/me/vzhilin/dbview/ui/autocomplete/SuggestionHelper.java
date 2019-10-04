@@ -1,6 +1,6 @@
 package me.vzhilin.dbview.ui.autocomplete;
 
-public class SuggestionHelper {
+public final class SuggestionHelper {
     private final String text;
     private final int caret;
 

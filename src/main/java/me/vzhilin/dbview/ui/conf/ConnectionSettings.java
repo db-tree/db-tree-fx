@@ -3,7 +3,6 @@ package me.vzhilin.dbview.ui.conf;
 import com.google.common.collect.Maps;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -12,7 +11,7 @@ import java.util.Map;
 /**
  * Настройки подключений
  */
-public class ConnectionSettings {
+public final class ConnectionSettings {
     /** Имя подключения */
     private final StringProperty connectionName = new SimpleStringProperty();
 
@@ -129,10 +128,6 @@ public class ConnectionSettings {
 
     public StringProperty passwordProperty() {
         return password;
-    }
-
-    public ObservableList<Template> getTemplates() {
-        return templates.get();
     }
 
     public ListProperty<Template> templatesProperty() {

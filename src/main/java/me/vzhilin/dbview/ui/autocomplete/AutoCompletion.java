@@ -18,7 +18,7 @@ import javafx.stage.Window;
 
 import java.util.List;
 
-public class AutoCompletion {
+public final class AutoCompletion {
     private static final double TITLE_HEIGHT = 28;
     private final ListView<AutocompletionCell> suggestionList = new ListView<>();
     private final Popup popup = new Popup();

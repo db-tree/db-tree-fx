@@ -35,7 +35,7 @@ public class MeaningfulRendererTest {
 
         Table kcaTable = ctx.getSchema().getTable("OESO_KCA");
         Row r = new Row(qc, kcaTable, 2190);
-        String meaningfulValue = qc.getMeanintfulValue(r);
+        String meaningfulValue = qc.getMeaningfulValue(r);
         System.err.println(meaningfulValue);
 
     }

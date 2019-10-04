@@ -6,7 +6,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 
-public class LookupTreeNode {
+public final class LookupTreeNode {
     private final StringProperty tableOrColumnProperty = new SimpleStringProperty();
     private final BooleanProperty includedProperty = new SimpleBooleanProperty();
     private final boolean isTable;

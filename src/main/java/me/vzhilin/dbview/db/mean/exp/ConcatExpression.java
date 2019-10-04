@@ -15,7 +15,7 @@ public final class ConcatExpression implements Expression {
     public ExpressionValue render(Row row) {
         StringBuilder sb = new StringBuilder();
         for (Expression exp: expressions) {
-            sb.append(String.valueOf(exp.render(row)));
+            sb.append(exp.render(row));
         }
 
         return new ExpressionValue(sb.toString());

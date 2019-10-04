@@ -219,7 +219,6 @@ public class ConnectionSettingsController {
             }
         }
 
-
         for (String tableName: Sets.difference(nodeMap.keySet(), tableMap.keySet())) {
             TreeItem<LookupTreeNode> n = nodeMap.get(tableName);
             n.getParent().getChildren().remove(n);
