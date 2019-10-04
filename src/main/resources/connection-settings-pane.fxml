@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox prefHeight="658.0" prefWidth="492.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.vzhilin.dbview.ui.settings.ConnectionSettingsController">
+<VBox prefHeight="658.0" prefWidth="492.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.vzhilin.dbview.ui.settings.ConnectionSettingsController">
    <children>
       <TitledPane text="JDBC Settings" VBox.vgrow="NEVER">
          <content>

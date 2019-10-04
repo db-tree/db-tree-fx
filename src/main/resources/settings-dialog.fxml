@@ -3,7 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane prefHeight="828.0" prefWidth="1048.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.vzhilin.dbview.ui.settings.SettingsController">
+<BorderPane prefHeight="828.0" prefWidth="1048.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.vzhilin.dbview.ui.settings.SettingsController">
    <center>
       <StackPane fx:id="stackPane">
          <children>
