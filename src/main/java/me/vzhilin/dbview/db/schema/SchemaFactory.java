@@ -14,13 +14,13 @@ import java.util.regex.Pattern;
 /**
  * Загружает из базы информацию о таблицах
  */
-public final class SchemaLoader {
+public final class SchemaFactory {
     /** логгер */
-    private static final Logger LOGGER = Logger.getLogger(SchemaLoader.class);
+    private static final Logger LOGGER = Logger.getLogger(SchemaFactory.class);
     private final Pattern pattern;
     private final DataSource ds;
 
-    public SchemaLoader(DataSource ds, String pattern) {
+    public SchemaFactory(DataSource ds, String pattern) {
         this.ds = ds;
         this.pattern = Pattern.compile(pattern == null || pattern.trim().isEmpty() ? ".*" : pattern);
     }

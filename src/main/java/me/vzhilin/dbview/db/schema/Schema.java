@@ -3,12 +3,9 @@ package me.vzhilin.dbview.db.schema;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Sets;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -39,29 +36,6 @@ public final class Schema {
      * Конструктор по умолчанию
      */
     public Schema() {
-    }
-
-    /**
-     * Конструктор копирования
-     * @param schema прототип
-     */
-    public Schema(Schema schema) {
-        int tableCount = 0;
-        for (Table protoTable: schema.allTables()) {
-            Table table = new Table(protoTable.getName(), protoTable.getPk(), ++tableCount);
-            addTable(table);
-
-            for (String column: protoTable.getColumns()) {
-                table.addColumn(column, protoTable.getDataType(column));
-            }
-        }
-
-        for (Table protoTable: schema.allTables()) {
-            for (Map.Entry<String, Table> e: protoTable.getRelations().entrySet()) {
-                String column = e.getKey();
-                getTable(protoTable.getName()).addRelation(column, getTable(e.getValue().getName()));
-            }
-        }
     }
 
     /**
@@ -114,21 +88,5 @@ public final class Schema {
         }
 
         pw.flush();
-    }
-
-    /**
-     * Конвертирует имя таблицы (String) в Table
-     * @param tableNames имена таблиц
-     * @return таблицы
-     */
-    public Collection<Table> getTables(Collection<String> tableNames) {
-        Set<Table> result = Sets.newLinkedHashSet();
-        for (String name: tableNames) {
-            if (hasTable(name)) {
-                result.add(getTable(name));
-            }
-        }
-
-        return result;
     }
 }

@@ -1,7 +1,7 @@
 package me.vzhilin.dbview.db;
 
 import me.vzhilin.dbview.db.schema.Schema;
-import me.vzhilin.dbview.db.schema.SchemaLoader;
+import me.vzhilin.dbview.db.schema.SchemaFactory;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
@@ -26,7 +26,7 @@ public final class DbContext implements Closeable {
         connection = ds.getConnection();
 
         runner = new WrappedQueryRunner(connection);
-        schema = new SchemaLoader(ds, pattern).load();
+        schema = new SchemaFactory(ds, pattern).load();
     }
 
     public Schema getSchema() {
@@ -50,21 +50,21 @@ public final class DbContext implements Closeable {
         return connection;
     }
 
-    private class WrappedQueryRunner extends QueryRunner {
+    private final static class WrappedQueryRunner extends QueryRunner {
         private final Connection conn;
 
-        public WrappedQueryRunner(Connection connection) {
+        private WrappedQueryRunner(Connection connection) {
             this.conn = connection;
         }
 
         @Override
         public <T> T query(String sql, ResultSetHandler<T> rsh, Object... params) throws SQLException {
-            return super.query(connection, sql, rsh, params);
+            return super.query(conn, sql, rsh, params);
         }
 
         @Override
         public <T> T query(String sql, ResultSetHandler<T> rsh) throws SQLException {
-            return super.query(connection, sql, rsh);
+            return super.query(conn, sql, rsh);
         }
 
         @Override
