@@ -1,15 +1,15 @@
 package me.vzhilin.dbview.db;
 
 import com.google.common.collect.Maps;
-import me.vzhilin.dbview.ui.conf.ConnectionSettings;
-import me.vzhilin.dbview.ui.conf.Template;
+import javafx.beans.property.StringProperty;
 import me.vzhilin.dbview.db.data.Row;
 import me.vzhilin.dbview.db.mean.MeaningParser;
 import me.vzhilin.dbview.db.mean.exp.ParsedTemplate;
 import me.vzhilin.dbview.db.mean.exp.exceptions.ParseException;
 import me.vzhilin.dbview.db.schema.Schema;
 import me.vzhilin.dbview.db.schema.Table;
-import javafx.beans.property.StringProperty;
+import me.vzhilin.dbview.ui.conf.ConnectionSettings;
+import me.vzhilin.dbview.ui.conf.Template;
 import org.apache.log4j.Logger;
 
 import java.io.Closeable;

@@ -1,9 +1,9 @@
 package me.vzhilin.dbview.ui.autocomplete.table;
 
 import com.google.common.collect.Lists;
+import me.vzhilin.dbview.db.schema.Table;
 import me.vzhilin.dbview.ui.autocomplete.AutocompletionCell;
 import me.vzhilin.dbview.ui.autocomplete.SuggestionProvider;
-import me.vzhilin.dbview.db.schema.Table;
 
 import java.util.List;
 import java.util.Map;

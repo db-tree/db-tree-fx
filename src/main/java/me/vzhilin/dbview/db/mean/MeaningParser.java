@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import me.vzhilin.dbview.antlr4.MeaningfulBaseVisitor;
 import me.vzhilin.dbview.antlr4.MeaningfulLexer;
 import me.vzhilin.dbview.antlr4.MeaningfulParser;
-import com.vzhilin.dbview.db.mean.exp.*;
 import me.vzhilin.dbview.db.mean.exp.*;
 import me.vzhilin.dbview.db.mean.exp.exceptions.ColumnNotFound;
 import me.vzhilin.dbview.db.mean.exp.exceptions.NotForeignKey;

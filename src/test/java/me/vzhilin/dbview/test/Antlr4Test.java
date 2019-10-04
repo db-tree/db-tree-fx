@@ -1,15 +1,15 @@
 package me.vzhilin.dbview.test;
 
-import me.vzhilin.dbview.ui.conf.ConnectionSettings;
-import me.vzhilin.dbview.ui.conf.Settings;
-import me.vzhilin.dbview.ui.conf.Template;
+import javafx.beans.property.ListProperty;
 import me.vzhilin.dbview.db.DbContext;
 import me.vzhilin.dbview.db.QueryContext;
 import me.vzhilin.dbview.db.data.Row;
 import me.vzhilin.dbview.db.mean.MeaningParser;
 import me.vzhilin.dbview.db.mean.exp.ParsedTemplate;
 import me.vzhilin.dbview.db.schema.Table;
-import javafx.beans.property.ListProperty;
+import me.vzhilin.dbview.ui.conf.ConnectionSettings;
+import me.vzhilin.dbview.ui.conf.Settings;
+import me.vzhilin.dbview.ui.conf.Template;
 import org.junit.Before;
 import org.junit.Test;
 

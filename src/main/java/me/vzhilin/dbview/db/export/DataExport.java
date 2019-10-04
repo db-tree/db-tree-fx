@@ -5,12 +5,12 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import me.vzhilin.dbview.ui.tree.TreeTableNode;
+import javafx.scene.control.TreeItem;
 import me.vzhilin.dbview.db.schema.Table;
 import me.vzhilin.dbview.ui.tree.LeafNode;
 import me.vzhilin.dbview.ui.tree.ToManyNode;
 import me.vzhilin.dbview.ui.tree.ToOneNode;
-import javafx.scene.control.TreeItem;
+import me.vzhilin.dbview.ui.tree.TreeTableNode;
 
 import java.util.*;
 

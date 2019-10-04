@@ -1,15 +1,15 @@
 package me.vzhilin.dbview.ui.tree;
 
-import me.vzhilin.dbview.ui.autocomplete.AutoCompletion;
-import me.vzhilin.dbview.ui.autocomplete.row.RowSuggestionProvider;
-import me.vzhilin.dbview.db.QueryContext;
-import me.vzhilin.dbview.db.data.Row;
-import me.vzhilin.dbview.db.mean.exp.ParsedTemplate;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import me.vzhilin.dbview.db.QueryContext;
+import me.vzhilin.dbview.db.data.Row;
+import me.vzhilin.dbview.db.mean.exp.ParsedTemplate;
+import me.vzhilin.dbview.ui.autocomplete.AutoCompletion;
+import me.vzhilin.dbview.ui.autocomplete.row.RowSuggestionProvider;
 
 /**
  * Ячейка с "осмысленным значением" для дерева в главном окне

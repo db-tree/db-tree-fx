@@ -1,10 +1,10 @@
 package me.vzhilin.dbview.ui.autocomplete.row;
 
 import com.google.common.collect.Lists;
-import me.vzhilin.dbview.ui.autocomplete.AutocompletionCell;
-import me.vzhilin.dbview.ui.autocomplete.SuggestionProvider;
 import me.vzhilin.dbview.db.data.Row;
 import me.vzhilin.dbview.db.schema.Table;
+import me.vzhilin.dbview.ui.autocomplete.AutocompletionCell;
+import me.vzhilin.dbview.ui.autocomplete.SuggestionProvider;
 
 import java.util.List;
 import java.util.Map;

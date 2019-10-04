@@ -1,9 +1,6 @@
 package me.vzhilin.dbview;
 
 import com.google.common.base.Joiner;
-import me.vzhilin.dbview.ui.ApplicationContext;
-import me.vzhilin.dbview.ui.MainWindowController;
-import me.vzhilin.dbview.ui.conf.Settings;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -11,6 +8,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import me.vzhilin.dbview.ui.ApplicationContext;
+import me.vzhilin.dbview.ui.MainWindowController;
+import me.vzhilin.dbview.ui.conf.Settings;
 import org.apache.log4j.BasicConfigurator;
 import org.hildan.fxgson.FxGson;
 

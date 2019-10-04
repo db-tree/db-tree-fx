@@ -1,11 +1,11 @@
 package me.vzhilin.dbview.ui.tree;
 
-import me.vzhilin.dbview.db.data.Row;
-import me.vzhilin.dbview.db.schema.Table;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.TreeItem;
+import me.vzhilin.dbview.db.data.Row;
+import me.vzhilin.dbview.db.schema.Table;
 
 import java.util.Iterator;
 

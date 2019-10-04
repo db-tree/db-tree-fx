@@ -1,13 +1,6 @@
 package me.vzhilin.dbview.ui;
 
 import com.google.common.collect.Iterables;
-import me.vzhilin.dbview.ui.conf.ConnectionSettings;
-import me.vzhilin.dbview.ui.conf.Settings;
-import me.vzhilin.dbview.db.QueryContext;
-import me.vzhilin.dbview.db.data.Row;
-import me.vzhilin.dbview.db.export.DataExport;
-import me.vzhilin.dbview.ui.settings.SettingsController;
-import com.vzhilin.dbview.ui.tree.*;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -28,6 +21,12 @@ import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import me.vzhilin.dbview.db.QueryContext;
+import me.vzhilin.dbview.db.data.Row;
+import me.vzhilin.dbview.db.export.DataExport;
+import me.vzhilin.dbview.ui.conf.ConnectionSettings;
+import me.vzhilin.dbview.ui.conf.Settings;
+import me.vzhilin.dbview.ui.settings.SettingsController;
 import me.vzhilin.dbview.ui.tree.Paging;
 import me.vzhilin.dbview.ui.tree.ToOneNode;
 import me.vzhilin.dbview.ui.tree.TreeTableMeaningCell;

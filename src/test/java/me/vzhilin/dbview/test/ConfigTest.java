@@ -3,10 +3,10 @@ package me.vzhilin.dbview.test;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
+import javafx.beans.property.ListProperty;
 import me.vzhilin.dbview.ui.conf.ConnectionSettings;
 import me.vzhilin.dbview.ui.conf.Settings;
 import me.vzhilin.dbview.ui.conf.Template;
-import javafx.beans.property.ListProperty;
 import org.hildan.fxgson.FxGson;
 
 import java.io.File;

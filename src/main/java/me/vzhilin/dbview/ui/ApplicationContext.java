@@ -1,10 +1,10 @@
 package me.vzhilin.dbview.ui;
 
-import me.vzhilin.dbview.ui.conf.ConnectionSettings;
-import me.vzhilin.dbview.ui.conf.Settings;
 import me.vzhilin.dbview.db.ContextCache;
 import me.vzhilin.dbview.db.DbContext;
 import me.vzhilin.dbview.db.QueryContext;
+import me.vzhilin.dbview.ui.conf.ConnectionSettings;
+import me.vzhilin.dbview.ui.conf.Settings;
 
 import java.util.concurrent.ExecutionException;
 

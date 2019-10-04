@@ -2,11 +2,6 @@ package me.vzhilin.dbview.ui.settings;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-import me.vzhilin.dbview.ui.ApplicationContext;
-import me.vzhilin.dbview.ui.MainWindowController;
-import me.vzhilin.dbview.ui.conf.ConnectionSettings;
-import me.vzhilin.dbview.ui.conf.Settings;
-import me.vzhilin.dbview.ui.conf.SettingsCopy;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -20,6 +15,11 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import me.vzhilin.dbview.ui.ApplicationContext;
+import me.vzhilin.dbview.ui.MainWindowController;
+import me.vzhilin.dbview.ui.conf.ConnectionSettings;
+import me.vzhilin.dbview.ui.conf.Settings;
+import me.vzhilin.dbview.ui.conf.SettingsCopy;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;

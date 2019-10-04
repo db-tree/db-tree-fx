@@ -1,10 +1,10 @@
 package me.vzhilin.dbview.ui.tree;
 
-import me.vzhilin.dbview.db.data.Row;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
+import me.vzhilin.dbview.db.data.Row;
 
 public final class TreeTableNode {
     private StringProperty itemColumnProperty = new SimpleStringProperty();

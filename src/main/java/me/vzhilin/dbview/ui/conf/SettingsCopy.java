@@ -12,8 +12,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.google.common.collect.Sets.newHashSet;
-
 public class SettingsCopy {
     private final Settings copy;
 
