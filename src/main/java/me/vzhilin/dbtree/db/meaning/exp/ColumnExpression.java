@@ -1,6 +1,6 @@
 package me.vzhilin.dbtree.db.meaning.exp;
 
-import me.vzhilin.dbtree.db.data.Row;
+import me.vzhilin.dbtree.db.Row;
 
 public class ColumnExpression implements Expression {
     private final String column;

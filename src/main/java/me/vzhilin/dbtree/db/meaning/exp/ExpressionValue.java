@@ -1,7 +1,7 @@
 package me.vzhilin.dbtree.db.meaning.exp;
 
 
-import me.vzhilin.dbtree.db.data.Row;
+import me.vzhilin.dbtree.db.Row;
 
 public final class ExpressionValue {
     private final Row row;

@@ -1,12 +1,10 @@
-package me.vzhilin.dbtree.db.data;
+package me.vzhilin.dbtree.db;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import me.vzhilin.dbtree.db.DbContext;
-import me.vzhilin.dbtree.db.QueryContext;
 import me.vzhilin.dbtree.db.schema.Table;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.MapHandler;

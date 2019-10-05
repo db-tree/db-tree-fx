@@ -3,7 +3,6 @@ package me.vzhilin.dbtree.db;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
-import me.vzhilin.dbtree.db.data.Row;
 import me.vzhilin.dbtree.db.schema.Schema;
 import me.vzhilin.dbtree.db.schema.Table;
 import org.apache.log4j.Logger;
@@ -122,7 +121,6 @@ public class DataDigger implements Closeable {
                     hasNext = rs.next();
                     return row;
                 } else {
-                    hasNext = false;
                     close();
                     throw new NoSuchElementException();
                 }

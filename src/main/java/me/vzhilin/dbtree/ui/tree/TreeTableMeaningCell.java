@@ -6,7 +6,7 @@ import javafx.scene.control.TreeTableCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import me.vzhilin.dbtree.db.QueryContext;
-import me.vzhilin.dbtree.db.data.Row;
+import me.vzhilin.dbtree.db.Row;
 import me.vzhilin.dbtree.db.meaning.exp.ParsedTemplate;
 import me.vzhilin.dbtree.ui.autocomplete.AutoCompletion;
 import me.vzhilin.dbtree.ui.autocomplete.row.RowSuggestionProvider;

@@ -22,8 +22,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import me.vzhilin.dbtree.db.QueryContext;
-import me.vzhilin.dbtree.db.data.Row;
-import me.vzhilin.dbtree.db.export.DataExport;
+import me.vzhilin.dbtree.db.Row;
 import me.vzhilin.dbtree.ui.conf.ConnectionSettings;
 import me.vzhilin.dbtree.ui.conf.Settings;
 import me.vzhilin.dbtree.ui.settings.SettingsController;
@@ -67,31 +66,7 @@ public class MainWindowController {
 
     @FXML
     private void initialize() {
-        treeTable.setRowFactory(new Callback<TreeTableView<TreeTableNode>, TreeTableRow<TreeTableNode>>() {
-            @Override
-            public TreeTableRow<TreeTableNode> call(TreeTableView<TreeTableNode> param) {
-                TreeTableRow<TreeTableNode> row = new TreeTableRow<TreeTableNode>();
-
-                MenuItem exportItem = new MenuItem("Build query");
-                exportItem.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        ObservableList<TreeItem<TreeTableNode>> selectedItems = treeTable.getSelectionModel().getSelectedItems();
-                        new DataExport().export(selectedItems);
-                    }
-                });
-
-                ContextMenu rowMenu = new ContextMenu(exportItem);
-
-                // only display context menu for non-null items:
-                row.contextMenuProperty().bind(
-                        Bindings.when(Bindings.isNotNull(row.itemProperty()))
-                                .then(rowMenu)
-                                .otherwise((ContextMenu)null));
-                return row;
-            }
-        });
-
+        treeTable.setRowFactory(param -> new TreeTableRow<>());
         treeTable.setEditable(true);
         treeTable.setShowRoot(false);
         treeTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);

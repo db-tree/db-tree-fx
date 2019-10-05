@@ -3,7 +3,7 @@ package me.vzhilin.dbtree.test;
 import javafx.beans.property.ListProperty;
 import me.vzhilin.dbtree.db.DbContext;
 import me.vzhilin.dbtree.db.QueryContext;
-import me.vzhilin.dbtree.db.data.Row;
+import me.vzhilin.dbtree.db.Row;
 import me.vzhilin.dbtree.db.schema.Table;
 import me.vzhilin.dbtree.ui.conf.ConnectionSettings;
 import me.vzhilin.dbtree.ui.conf.Settings;

@@ -2,7 +2,7 @@ package me.vzhilin.dbtree.ui.tree;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
-import me.vzhilin.dbtree.db.data.Row;
+import me.vzhilin.dbtree.db.Row;
 import me.vzhilin.dbtree.db.schema.Table;
 
 import java.util.Iterator;

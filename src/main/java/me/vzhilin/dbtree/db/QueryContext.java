@@ -2,7 +2,6 @@ package me.vzhilin.dbtree.db;
 
 import com.google.common.collect.Maps;
 import javafx.beans.property.StringProperty;
-import me.vzhilin.dbtree.db.data.Row;
 import me.vzhilin.dbtree.db.meaning.MeaningParser;
 import me.vzhilin.dbtree.db.meaning.exp.ParsedTemplate;
 import me.vzhilin.dbtree.db.meaning.exp.exceptions.ParseException;
