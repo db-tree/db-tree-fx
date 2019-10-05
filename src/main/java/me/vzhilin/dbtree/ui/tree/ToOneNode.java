@@ -51,7 +51,7 @@ public final class ToOneNode extends BasicTreeItem {
                 }
             }
 
-            Map<Map.Entry<Table, String>, Long> irc = row.inverseReferencesCount();
+            Map<Map.Entry<Table, String>, Long> irc = row.reverseReferencesCount();
             for (Map.Entry<Table, String> tm : row.getTable().getBackRelations().entries()) {
                 long count = irc.get(tm);
 

@@ -1,8 +1,6 @@
 package me.vzhilin.dbtree.db;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import me.vzhilin.dbtree.db.schema.Table;
@@ -13,8 +11,6 @@ import org.apache.log4j.Logger;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import static java.lang.String.format;
@@ -25,6 +21,8 @@ import static java.lang.String.format;
 public class Row {
     /** Логгер */
     private final static Logger LOG = Logger.getLogger(Row.class);
+    private static final String COUNT = "SELECT COUNT(1) as C FROM %s WHERE %s = %d";
+    private static final String ROW = "SELECT %s from %s where %s = ?";
 
     /** Контекст БД */
     private final DbContext ctx;
@@ -71,11 +69,11 @@ public class Row {
         try {
             if (rowData == null) {
                 String columns = Joiner.on(',').join(table.getColumns());
-                String query = format("SELECT %s from %s where %s = ?", columns, table.getName(), table.getPk());
+                String query = format(ROW, columns, table.getName(), table.getPk());
                 rowData = getRunner().query(query, new MapHandler(), pk);
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            LOG.error(ex, ex);
         }
     }
 
@@ -105,7 +103,10 @@ public class Row {
         return references;
     }
 
-    public Map<Map.Entry<Table, String>, Long> inverseReferencesCount() {
+    /**
+     * @return table -&gt; FK column -&gt; count
+     */
+    public Map<Map.Entry<Table, String>, Long> reverseReferencesCount() {
         try {
             if (invReferencesCount == null) {
                 invReferencesCount = Maps.newLinkedHashMap();
@@ -113,7 +114,7 @@ public class Row {
                 for (Map.Entry<Table, String> e: table.getBackRelations().entries()) {
                     Table table = e.getKey();
                     String tableName = table.getName();
-                    String query = format("SELECT COUNT(1) as C FROM %s WHERE %s = %d", tableName, e.getValue(), pk);
+                    String query = format(COUNT, tableName, e.getValue(), pk);
 
                     for (Map<String, Object> m: getRunner().query(query, new MapListHandler())) {
                         long count = ((BigDecimal) m.get("C")).longValue();
@@ -122,7 +123,7 @@ public class Row {
                 }
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            LOG.error(ex, ex);
         }
 
         return invReferencesCount;
@@ -131,36 +132,6 @@ public class Row {
     public Iterable<Row> getInverseReference(Map.Entry<Table, String> relation) {
         return queryContext.getDataDigger().reverseReferences(this, relation.getKey(), relation.getValue());
     }
-
-    public Multimap<Map.Entry<Table, String>, Row> inverseReferences()  {
-        try {
-            if (invRows == null) {
-                invRows = LinkedHashMultimap.create();
-                List<String> queries = Lists.newArrayList();
-
-                for (Map.Entry<Table, String> e: table.getBackRelations().entries()) {
-                    Table table = e.getKey();
-                    String tableName = table.getName();
-                    queries.add(format("select '%s' as table_name, '%s' as column_name, %s as pk FROM %s WHERE %s = :pm", tableName, e.getValue(), table.getPk(), tableName, e.getValue()));
-                }
-
-                String q = Joiner.on(" UNION ALL ").join(queries);
-                for (Map<String, Object> m: getRunner().query(q, new MapListHandler(), Collections.nCopies(queries.size(), pk).toArray())) {
-                    String tb = (String) m.get("TABLE_NAME");
-                    String col = (String) m.get("COLUMN_NAME");
-                    long pk = ((BigDecimal) m.get("PK")).longValue();
-
-                    Table ta = ctx.getSchema().getTable(tb);
-                    invRows.put(Maps.immutableEntry(ta, col), new Row(queryContext, ta, pk));
-                }
-            }
-        } catch (SQLException ex) {
-            LOG.error(ex, ex);
-        }
-
-        return invRows;
-    }
-
 
     @Override public String toString() {
         return table + ": " + pk;

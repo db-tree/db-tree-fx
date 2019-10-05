@@ -12,6 +12,7 @@ import me.vzhilin.dbtree.ui.ApplicationContext;
 import me.vzhilin.dbtree.ui.MainWindowController;
 import me.vzhilin.dbtree.ui.conf.Settings;
 import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
 import org.hildan.fxgson.FxGson;
 
 import java.io.IOException;
@@ -20,6 +21,8 @@ import java.nio.file.Paths;
 import java.util.Locale;
 
 public class MainWindowApp extends Application {
+    private final static Logger LOG = Logger.getLogger(MainWindowApp.class);
+
     @Override public void start(Stage stage) throws Exception {
         BasicConfigurator.configure();
         Locale.setDefault(Locale.US);
@@ -54,7 +57,7 @@ public class MainWindowApp extends Application {
         try {
             return FxGson.create().fromJson(Joiner.on("").join(Files.readAllLines(Paths.get("db-tree.json"))), Settings.class);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error(e, e);
         }
         return null;
     }
