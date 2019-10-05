@@ -129,7 +129,7 @@ public class Row {
     }
 
     public Iterable<Row> getInverseReference(Map.Entry<Table, String> relation) {
-        return queryContext.getDataDigger().inverseReferences(this, relation.getKey(), relation.getValue());
+        return queryContext.getDataDigger().reverseReferences(this, relation.getKey(), relation.getValue());
     }
 
     public Multimap<Map.Entry<Table, String>, Row> inverseReferences()  {

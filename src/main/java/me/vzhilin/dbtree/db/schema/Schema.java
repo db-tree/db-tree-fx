@@ -33,12 +33,6 @@ public final class Schema {
     }
 
     /**
-     * Конструктор по умолчанию
-     */
-    public Schema() {
-    }
-
-    /**
      * Добавляет таблицу
      * @param table таблица
      */

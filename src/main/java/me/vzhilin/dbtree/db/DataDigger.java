@@ -20,6 +20,9 @@ import java.util.NoSuchElementException;
 import static java.lang.String.format;
 
 public class DataDigger implements Closeable {
+    private final static String SEARCH = "SELECT '%1$s' as tableName, %2$s as PK FROM %1$s where %3$s = :1";
+    private static final String REVERSE_REFERENCES = "select %s as pk FROM %s WHERE %s = ?";
+
     private final static Logger LOG = Logger.getLogger(DataDigger.class);
     private final QueryContext queryContext;
     private final Schema schema;
@@ -32,7 +35,7 @@ public class DataDigger implements Closeable {
 
     public Iterable<Row> find(String text) {
         boolean isDigit = text.matches("\\d+");
-        String template = "SELECT '%1$s' as tableName, %2$s as PK FROM %1$s where %3$s = :1";
+
 
         // table --> [column]
         List<String> queries = Lists.newArrayList();
@@ -41,7 +44,7 @@ public class DataDigger implements Closeable {
             for (String columnName: t.getColumns()) {
                 if (queryContext.getSettings().isLookupable(tableName, columnName)) {
                     if (isDigit || !t.getPk().equals(columnName)) {
-                        queries.add(String.format(template, tableName, t.getPk(), columnName));
+                        queries.add(String.format(SEARCH, tableName, t.getPk(), columnName));
                     }
                 }
             }
@@ -55,8 +58,8 @@ public class DataDigger implements Closeable {
         return query(Joiner.on(" UNION ALL ").join(queries), params);
     }
 
-    public Iterable<Row> inverseReferences(Row row, Table table, String column) {
-        String query = format("select %s as pk FROM %s WHERE %s = ?", table.getPk(), table.getName(), column);
+    public Iterable<Row> reverseReferences(Row row, Table table, String column) {
+        String query = format(REVERSE_REFERENCES, table.getPk(), table.getName(), column);
         RowIterator rowIterator = new RowIterator(queryContext, query, row.getPk()) {
             @Override
             protected Row convertRsToRow(ResultSet rs) throws SQLException {
@@ -87,7 +90,6 @@ public class DataDigger implements Closeable {
     }
 
     private static class RowIterator implements Iterator<Row>, Closeable {
-        private final Connection conn;
         private final PreparedStatement st;
         private final ResultSet rs;
         private final QueryContext qc;
@@ -96,7 +98,7 @@ public class DataDigger implements Closeable {
         public RowIterator(QueryContext qc, String query, Object... params) {
             this.qc = qc;
             try {
-                conn = qc.getDbContext().getConnection();
+                Connection conn = qc.getDbContext().getConnection();
                 st = conn.prepareStatement(query);
                 for (int i = 0; i < params.length; i++) {
                     st.setObject(i + 1, params[i]);
@@ -147,7 +149,7 @@ public class DataDigger implements Closeable {
         }
     }
 
-    private static class EmptyIterator implements Iterator<Row> {
+    private static final class EmptyIterator implements Iterator<Row> {
         @Override
         public boolean hasNext() {
             return false;
