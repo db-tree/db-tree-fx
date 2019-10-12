@@ -14,7 +14,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public final class DbContext implements Closeable {
-//    private final Connection connection;
+    private final Connection connection;
     private final DatabaseAdapter adapter;
     private final Catalog catalog;
     private QueryRunner runner;
@@ -25,10 +25,9 @@ public final class DbContext implements Closeable {
         ds.setUrl(jdbcUrl);
         ds.setUsername(login);
         ds.setPassword(password);
-//        connection = ds.getConnection();
+        connection = ds.getConnection();
 
-//        runner = new WrappedQueryRunner(connection);
-        runner = new QueryRunner(ds);
+        runner = new WrappedQueryRunner(connection);
         adapter = new OracleDatabaseAdapter();
         catalog = new CatalogLoader(adapter).load(ds, "VOSHOD");
     }
@@ -43,16 +42,15 @@ public final class DbContext implements Closeable {
 
     @Override
     public void close() {
-//        try {
-//            connection.close();
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Connection getConnection() {
-        return null;
-//        return connection;
+        return connection;
     }
 
     private final static class WrappedQueryRunner extends QueryRunner {

@@ -23,6 +23,7 @@ import me.vzhilin.catalog.Catalog;
 import me.vzhilin.catalog.Table;
 import me.vzhilin.db.Row;
 import me.vzhilin.db.RowContext;
+import me.vzhilin.dbtree.db.DbContext;
 import me.vzhilin.dbtree.db.QueryContext;
 import me.vzhilin.dbtree.ui.conf.ConnectionSettings;
 import me.vzhilin.dbtree.ui.conf.Settings;
@@ -34,7 +35,7 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
-import java.util.Iterator;
+import java.sql.Connection;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.function.BiConsumer;
@@ -119,30 +120,27 @@ public class MainWindowController {
 
         QueryContext queryContext = appContext.newQueryContext(connection.getConnectionName());
         ObservableList<TreeItem<TreeTableNode>> ch = newRoot.getChildren();
-        Catalog catalog = queryContext.getDbContext().getCatalog();
-
-        QueryRunner runner = queryContext.getDbContext().getRunner();
+        DbContext dbContext = queryContext.getDbContext();
+        Connection conn = dbContext.getConnection();
+        Catalog catalog = dbContext.getCatalog();
+        QueryRunner runner = dbContext.getRunner();
         OracleDatabaseAdapter adapter = new OracleDatabaseAdapter();
-        CountOccurences c = new CountOccurences(catalog, runner, adapter);
+        RowContext ctx = new RowContext(catalog, adapter, conn, runner);
+        CountOccurences c = new CountOccurences(ctx);
         Map<Table, Long> rs = c.count(textField.getText());
         rs.forEach(new BiConsumer<Table, Long>() {
             @Override
             public void accept(Table table, Long count) {
-//                TreeTableNode newNode = new TreeTableNode(table.getName(), String.valueOf(aLong), null);
-                SearchInTable search = new SearchInTable(new RowContext(adapter, runner, catalog), table);
+                SearchInTable search = new SearchInTable(ctx, table);
                 Iterable<Row> iter = search.search(textField.getText());
                 ch.add(new CountNode(iter, table, count));
             }
         });
 
-//
-//        Iterator<Row> it = queryContext.getDataDigger().find(textField.getText()).iterator();
-//        new Paging().addNodes(it, ch);
-//
         treeTable.setRoot(newRoot);
-//        if (ch.size() == 1) {
-//            ch.get(0).setExpanded(true);
-//        }
+        if (ch.size() == 1) {
+            ch.get(0).setExpanded(true);
+        }
     }
 
     @FXML
