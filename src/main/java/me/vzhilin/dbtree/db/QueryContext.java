@@ -95,10 +95,11 @@ public final class QueryContext implements Closeable {
         return connectionSettings;
     }
 
-//    public void setTemplate(String name, String template) {
-//        getTemplateProperty(name).setValue(template);
-//        parsedTemplates.remove(dbContext.getSchema().getTable(name));
-//    }
+    public void setTemplate(String schema, String name, String template) {
+        getTemplateProperty(name).setValue(template);
+        Catalog catalog = dbContext.getCatalog();
+        parsedTemplates.remove(catalog.getSchema(schema).getTable(name));
+    }
 
     private void parseTemplates() {
         MeaningParser parser = new MeaningParser();

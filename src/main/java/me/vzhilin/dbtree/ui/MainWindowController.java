@@ -126,6 +126,7 @@ public class MainWindowController {
         QueryRunner runner = dbContext.getRunner();
         OracleDatabaseAdapter adapter = new OracleDatabaseAdapter();
         RowContext ctx = new RowContext(catalog, adapter, conn, runner);
+        ctx.setAttribute("query_context", queryContext);
         CountOccurences c = new CountOccurences(ctx);
         Map<Table, Long> rs = c.count(textField.getText());
         rs.forEach(new BiConsumer<Table, Long>() {

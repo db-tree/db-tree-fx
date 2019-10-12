@@ -1,12 +1,17 @@
 package me.vzhilin.dbtree.ui.autocomplete.row;
 
+import com.google.common.collect.Iterables;
+import me.vzhilin.catalog.Column;
+import me.vzhilin.catalog.ForeignKey;
 import me.vzhilin.catalog.Table;
 import me.vzhilin.db.Row;
 import me.vzhilin.dbtree.ui.autocomplete.AutocompletionCell;
 import me.vzhilin.dbtree.ui.autocomplete.SuggestionProvider;
 
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public final class RowSuggestionProvider implements SuggestionProvider<AutocompletionCell> {
     private final Row row;
@@ -17,56 +22,64 @@ public final class RowSuggestionProvider implements SuggestionProvider<Autocompl
 
     @Override
     public List<AutocompletionCell> suggestions(String text) {
-//        RowSuggestionContext suggContext = getRowSuggestionContext(text);
-//        Table table = suggContext.getTable();
-//        List<String> columns = getColumns(table);
-//        return columns.stream().filter(t -> t.startsWith(suggContext.getText())).map(column -> {
-//            boolean isPk = table.getPrimaryKey().get().hasColumn(column);
-//            boolean isFk =  table.getRelations().containsKey(column);
-//            Row row = suggContext.getRow();
-//            String rightValue = isFk ? table.getRelations().get(column).getName() : row != null ? String.valueOf(row.getField(column)) : null;
-//            return new AutocompletionCell(column, isPk, isFk, rightValue);
-//        }).collect(Collectors.toList());
-        return Collections.emptyList();
+        RowSuggestionContext suggContext = getRowSuggestionContext(text);
+        Table table = suggContext.getTable();
+        Collection<Column> columns = table.getColumns().values();
+        return columns.stream().filter(t -> t.getName().startsWith(suggContext.getText())).map(column -> {
+            boolean isPk = column.getPrimaryKey().isPresent();
+            boolean isFk = !column.getForeignKeys().isEmpty();
+            Row row = suggContext.getRow();
+            String rightValue;
+            if (isFk) {
+                rightValue = String.valueOf(row.forwardReferences().get(Iterables.getOnlyElement(column.getForeignKeys()))); // FIXME
+            } else if (row != null) {
+                rightValue = String.valueOf(row.get(column));
+            } else {
+                rightValue = "";
+            }
+
+            return new AutocompletionCell(column.getName(), isPk, isFk, rightValue);
+        }).collect(Collectors.toList());
     }
 
     private RowSuggestionContext getRowSuggestionContext(String text) {
         Table current = row.getTable();
         Row currentRow = row;
-//        if (text.contains(".")) {
-//            String[] split = text.split("\\.");
-//            for (int i = 0; i < split.length; i++) {
-//                Map<String, Table> rs = current.getRelations();
-//                String name = split[i];
-//                if (!rs.containsKey(name)) {
-//                    break;
-//                }
-//
-//                current = rs.get(name);
-//
-//                if (currentRow != null && currentRow.references().containsKey(name)) {
-//                    currentRow = currentRow.references().get(name);
-//                } else {
-//                    currentRow = null;
-//                }
-//            }
-//
-//            text = text.substring(text.lastIndexOf('.') + 1);
-//        }
+        if (text.contains(".")) {
+            String[] split = text.split("\\.");
+            ForeignKey next = null;
+            for (int i = 0; i < split.length; i++) {
+                Map<String, ForeignKey> rs = current.getForeignKeys();
+                String name = split[i];
+                if (rs.containsKey(name)) {
+                    current = rs.get(name).getPkTable();
+                } else
+                if (current.hasColumn(name)) {
+                    Column column = current.getColumn(name);
+                    if (column.getForeignKeys().size() == 1) {
+                        next = column.getForeignKeys().iterator().next();
+                        current = next.getPkTable();
+                    } else {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+
+                if (currentRow != null && next != null) {
+                    currentRow = currentRow.forwardReferences().get(next);
+                } else {
+                    next = null;
+                    currentRow = null;
+                }
+            }
+
+            text = text.substring(text.lastIndexOf('.') + 1);
+        }
 
         return new RowSuggestionContext(currentRow, current, text);
     }
-//
-//    private List<String> getColumns(Table finalCurrent) {
-//        List<String> result = Lists.newArrayList();
-//        result.add(finalCurrent.getPk());
-//        result.addAll(finalCurrent.getRelations().keySet());
-//        result.addAll(finalCurrent.getColumns().stream().
-//            filter(col -> !col.equals(finalCurrent.getPk()) && !finalCurrent.getRelations().containsKey(col)).collect(Collectors.toList()));
-//        return result;
-//    }
-
-    private final static class RowSuggestionContext {
+    private final class RowSuggestionContext {
         private final Row row;
         private final Table table;
         private final String text;
