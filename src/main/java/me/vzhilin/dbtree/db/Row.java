@@ -1,19 +1,13 @@
 package me.vzhilin.dbtree.db;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import me.vzhilin.dbtree.db.schema.Table;
-import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.handlers.MapHandler;
-import org.apache.commons.dbutils.handlers.MapListHandler;
 import org.apache.log4j.Logger;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Map;
-
-import static java.lang.String.format;
 
 /**
  * Строка таблицы
@@ -21,8 +15,6 @@ import static java.lang.String.format;
 public class Row {
     /** Логгер */
     private final static Logger LOG = Logger.getLogger(Row.class);
-    private static final String COUNT = "SELECT COUNT(1) as C FROM %s WHERE %s = %d";
-    private static final String ROW = "SELECT %s from %s where %s = ?";
 
     /** Контекст БД */
     private final DbContext ctx;
@@ -41,9 +33,6 @@ public class Row {
 
     /** Прямые ссылки */
     private Map<String, Row> references = null;
-
-    /** Обратные ссылки */
-    private Multimap<Map.Entry<Table, String>, Row> invRows = null;
 
     /** Количество обратных ссылок */
     private Map<Map.Entry<Table, String>, Long> invReferencesCount = null;
@@ -68,17 +57,11 @@ public class Row {
     private void ensureLoaded() {
         try {
             if (rowData == null) {
-                String columns = Joiner.on(',').join(table.getColumns());
-                String query = format(ROW, columns, table.getName(), table.getPk());
-                rowData = getRunner().query(query, new MapHandler(), pk);
+                rowData = ctx.fetchColumns(this);
             }
         } catch (SQLException ex) {
             LOG.error(ex, ex);
         }
-    }
-
-    protected QueryRunner getRunner() {
-        return ctx.getRunner();
     }
 
     /**
@@ -109,18 +92,7 @@ public class Row {
     public Map<Map.Entry<Table, String>, Long> reverseReferencesCount() {
         try {
             if (invReferencesCount == null) {
-                invReferencesCount = Maps.newLinkedHashMap();
-
-                for (Map.Entry<Table, String> e: table.getBackRelations().entries()) {
-                    Table table = e.getKey();
-                    String tableName = table.getName();
-                    String query = format(COUNT, tableName, e.getValue(), pk);
-
-                    for (Map<String, Object> m: getRunner().query(query, new MapListHandler())) {
-                        long count = ((BigDecimal) m.get("C")).longValue();
-                        invReferencesCount.put(e, count);
-                    }
-                }
+                invReferencesCount = ctx.getReverseReferencesCount(this);
             }
         } catch (SQLException ex) {
             LOG.error(ex, ex);

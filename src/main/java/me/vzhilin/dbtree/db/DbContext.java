@@ -1,17 +1,29 @@
 package me.vzhilin.dbtree.db;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Maps;
 import me.vzhilin.dbtree.db.schema.Schema;
 import me.vzhilin.dbtree.db.schema.SchemaFactory;
+import me.vzhilin.dbtree.db.schema.Table;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
+import org.apache.commons.dbutils.handlers.MapHandler;
+import org.apache.commons.dbutils.handlers.MapListHandler;
 
 import javax.sql.DataSource;
 import java.io.Closeable;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Map;
+
+import static java.lang.String.format;
 
 public final class DbContext implements Closeable {
+    private static final String ROW = "SELECT %s from %s where %s = ?";
+    private static final String COUNT = "SELECT COUNT(1) as C FROM %s WHERE %s = %d";
+
     private final Connection connection;
     private Schema schema;
     private QueryRunner runner;
@@ -32,7 +44,7 @@ public final class DbContext implements Closeable {
         return schema;
     }
 
-    public QueryRunner getRunner() {
+    private QueryRunner getRunner() {
         return runner;
     }
 
@@ -47,6 +59,27 @@ public final class DbContext implements Closeable {
 
     public Connection getConnection() {
         return connection;
+    }
+
+    public Map<String, Object> fetchColumns(Row row) throws SQLException {
+        Table table = row.getTable();
+        String columns = Joiner.on(',').join(table.getColumns());
+        String query = format(ROW, columns, table.getName(), table.getPk());
+        return getRunner().query(query, new MapHandler(), row.getPk());
+    }
+
+    public Map<Map.Entry<Table, String>, Long> getReverseReferencesCount(Row row) throws SQLException {
+        Map<Map.Entry<Table, String>, Long> invReferencesCount = Maps.newLinkedHashMap();
+        for (Map.Entry<Table, String> e: row.getTable().getBackRelations().entries()) {
+            Table table = e.getKey();
+            String tableName = table.getName();
+            String query = format(COUNT, tableName, e.getValue(), row.getPk());
+            for (Map<String, Object> m: getRunner().query(query, new MapListHandler())) {
+                long count = ((BigDecimal) m.get("C")).longValue();
+                invReferencesCount.put(e, count);
+            }
+        }
+        return invReferencesCount;
     }
 
     private final static class WrappedQueryRunner extends QueryRunner {
