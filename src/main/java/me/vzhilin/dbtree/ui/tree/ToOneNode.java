@@ -1,13 +1,17 @@
 package me.vzhilin.dbtree.ui.tree;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Maps;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
-import me.vzhilin.dbtree.db.Row;
-import me.vzhilin.dbtree.db.schema.Table;
+import me.vzhilin.catalog.*;
+import me.vzhilin.db.Row;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 public final class ToOneNode extends BasicTreeItem {
     private boolean loaded = false;
@@ -36,30 +40,34 @@ public final class ToOneNode extends BasicTreeItem {
             List<TreeItem<TreeTableNode>> simpleNodes   = new LinkedList<>();
             List<TreeItem<TreeTableNode>> relationNodes = new LinkedList<>();
 
-            for (String column : tb.getColumns()) {
-                Object value = row.getField(column);
+            // foreign keys
+            row.forwardReferences().forEach(new BiConsumer<ForeignKey, Row>() {
+                @Override
+                public void accept(ForeignKey foreignKey, Row ref) {
+                    Map.Entry<String, String> e = asStringColumn(row, foreignKey);
+                    TreeTableNode refNode = new TreeTableNode(e.getKey(), e.getValue(), ref);
+                    complexNodes.add(new ToOneNode(ref, refNode));
+                }
+            });
 
-                if (value != null) {
-                    if (tb.getRelations().containsKey(column)) {
-                        Row refRow = this.row.references().get(column);
-                        Table refTable = refRow.getTable();
-                        complexNodes.add(new ToOneNode(refRow, new TreeTableNode(
-                                column, String.valueOf(refRow.getField(refTable.getPk())), refRow)));
-                    } else {
-                        simpleNodes.add(new LeafNode(row, column));
+            // all fields
+            tb.getColumns().forEach(new BiConsumer<String, Column>() {
+                @Override
+                public void accept(String columnName, Column column) {
+                    simpleNodes.add(new LeafNode(row, columnName));
+                }
+            });
+
+            row.backwardReferencesCount().forEach(new BiConsumer<ForeignKey, Number>() {
+                @Override
+                public void accept(ForeignKey foreignKey, Number number) {
+                    long count = number.longValue();
+                    if (count > 0) {
+                        TreeItem<TreeTableNode> toManyNode = new ToManyNode(foreignKey, count, row);
+                        relationNodes.add(toManyNode);
                     }
                 }
-            }
-
-            Map<Map.Entry<Table, String>, Long> irc = row.reverseReferencesCount();
-            for (Map.Entry<Table, String> tm : row.getTable().getBackRelations().entries()) {
-                long count = irc.get(tm);
-
-                if (count > 0) {
-                    TreeItem<TreeTableNode> toManyNode = new ToManyNode(tm, count, row);
-                    relationNodes.add(toManyNode);
-                }
-            }
+            });
 
             ObservableList<TreeItem<TreeTableNode>> ch = super.getChildren();
             ch.addAll(complexNodes);
@@ -68,6 +76,25 @@ public final class ToOneNode extends BasicTreeItem {
         }
 
         return super.getChildren();
+    }
+
+    private Map.Entry<String, String> asStringColumn(Row row, ForeignKey foreignKey) {
+        List<String> columns = new ArrayList<>();
+        List<String> values = new ArrayList<>();
+
+        foreignKey.getColumnMapping().forEach(new BiConsumer<PrimaryKeyColumn, ForeignKeyColumn>() {
+            @Override
+            public void accept(PrimaryKeyColumn primaryKeyColumn, ForeignKeyColumn foreignKeyColumn) {
+                Column column = foreignKeyColumn.getColumn();
+                columns.add(column.getName());
+                values.add(String.valueOf(row.get(column)));
+            }
+        });
+
+        Joiner j = Joiner.on(',');
+        String cols = j.join(columns);
+        String vals = j.join(values);
+        return Maps.immutableEntry(cols, vals);
     }
 
     public Row getRow() {

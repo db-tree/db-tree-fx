@@ -1,6 +1,6 @@
 package me.vzhilin.dbtree.db.meaning.exp;
 
-import me.vzhilin.dbtree.db.Row;
+import me.vzhilin.db.Row;
 
 import java.util.List;
 

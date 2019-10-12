@@ -2,11 +2,13 @@ package me.vzhilin.dbtree.db;
 
 import com.google.common.collect.Maps;
 import javafx.beans.property.StringProperty;
+import me.vzhilin.catalog.Catalog;
+import me.vzhilin.catalog.Schema;
+import me.vzhilin.catalog.Table;
+import me.vzhilin.db.Row;
 import me.vzhilin.dbtree.db.meaning.MeaningParser;
 import me.vzhilin.dbtree.db.meaning.exp.ParsedTemplate;
 import me.vzhilin.dbtree.db.meaning.exp.exceptions.ParseException;
-import me.vzhilin.dbtree.db.schema.Schema;
-import me.vzhilin.dbtree.db.schema.Table;
 import me.vzhilin.dbtree.ui.conf.ConnectionSettings;
 import me.vzhilin.dbtree.ui.conf.Template;
 import org.apache.log4j.Logger;
@@ -30,12 +32,10 @@ public final class QueryContext implements Closeable {
 
     /** table --> exp */
     private final Map<Table, ParsedTemplate> parsedTemplates = Maps.newLinkedHashMap();
-    private final DataDigger dd;
 
     public QueryContext(DbContext dbContext, ConnectionSettings connectionSettings) {
         this.dbContext = dbContext;
         this.connectionSettings = connectionSettings;
-        this.dd = new DataDigger(this);
         parseTemplates();
     }
 
@@ -50,7 +50,7 @@ public final class QueryContext implements Closeable {
     public StringProperty getTemplateProperty(String name) {
         Optional<Template> first = findTemplate(name);
         if (!first.isPresent()) {
-            Template newTemplate = new Template(name, "");
+            Template newTemplate = new Template("", name, "");
             connectionSettings.templatesProperty().add(newTemplate);
             return newTemplate.templateProperty();
         }
@@ -95,19 +95,21 @@ public final class QueryContext implements Closeable {
         return connectionSettings;
     }
 
-    public void setTemplate(String name, String template) {
-        getTemplateProperty(name).setValue(template);
-        parsedTemplates.remove(dbContext.getSchema().getTable(name));
-    }
+//    public void setTemplate(String name, String template) {
+//        getTemplateProperty(name).setValue(template);
+//        parsedTemplates.remove(dbContext.getSchema().getTable(name));
+//    }
 
     private void parseTemplates() {
         MeaningParser parser = new MeaningParser();
-        Schema schema = getDbContext().getSchema();
+        Catalog schema = getDbContext().getCatalog();
         for (Template t: this.connectionSettings.templatesProperty()) {
             String value = t.getTemplate();
-            if (!value.isEmpty() && schema.hasTable(t.getTableName())) {
+            if (!value.isEmpty() && schema.hasTable(t.getSchemaName(), t.getTableName())) {
                 try {
-                    parsedTemplates.put(schema.getTable(t.getTableName()), parser.parse(dbContext.getSchema().getTable(t.getTableName()), value));
+                    Schema s = schema.getSchema(t.getSchemaName());
+                    Table table = s.getTable(t.getTableName());
+                    parsedTemplates.put(table, parser.parse(table, value));
                 } catch (ParseException e) {
                     LOG.error(e, e);
                 }
@@ -121,10 +123,6 @@ public final class QueryContext implements Closeable {
 
     @Override
     public void close() {
-        dd.close();
-    }
-
-    public DataDigger getDataDigger() {
-        return dd;
+//        dd.close();
     }
 }

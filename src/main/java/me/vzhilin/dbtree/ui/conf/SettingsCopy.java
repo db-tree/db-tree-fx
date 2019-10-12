@@ -87,28 +87,28 @@ public class SettingsCopy {
     }
 
     private void writeTemplates(ConnectionSettings orig, ConnectionSettings modif) {
-        Map<String, Template> origMap =
-            orig.templatesProperty().stream().collect(Collectors.toMap(Template::getTableName, t -> t));
-
-        Map<String, Template> dirtyMap =
-                modif.templatesProperty().stream().collect(Collectors.toMap(Template::getTableName, t -> t));
-
-        Set<String> forRemove = Sets.newLinkedHashSet();
-        for (String name: Sets.union(origMap.keySet(), dirtyMap.keySet())) {
-            if (origMap.containsKey(name)) {
-                if (dirtyMap.containsKey(name)) {
-                    origMap.get(name).templateProperty().setValue(dirtyMap.get(name).getTemplate());
-                } else {
-                    forRemove.add(name);
-                }
-            } else {
-                orig.templatesProperty().add(new Template(name, dirtyMap.get(name).getTemplate()));
-            }
-        }
-
-        for (String name: forRemove) {
-            origMap.remove(name);
-        }
+//        Map<String, Template> origMap =
+//            orig.templatesProperty().stream().collect(Collectors.toMap(Template::getTableName, t -> t));
+//
+//        Map<String, Template> dirtyMap =
+//                modif.templatesProperty().stream().collect(Collectors.toMap(Template::getTableName, t -> t));
+//
+//        Set<String> forRemove = Sets.newLinkedHashSet();
+//        for (String name: Sets.union(origMap.keySet(), dirtyMap.keySet())) {
+//            if (origMap.containsKey(name)) {
+//                if (dirtyMap.containsKey(name)) {
+//                    origMap.get(name).templateProperty().setValue(dirtyMap.get(name).getTemplate());
+//                } else {
+//                    forRemove.add(name);
+//                }
+//            } else {
+//                orig.templatesProperty().add(new Template(name, dirtyMap.get(name).getTemplate()));
+//            }
+//        }
+//
+//        for (String name: forRemove) {
+//            origMap.remove(name);
+//        }
     }
 
     private void writeConnection(ConnectionSettings orig, ConnectionSettings modif) {

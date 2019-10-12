@@ -1,6 +1,8 @@
 package me.vzhilin.dbtree.db.meaning;
 
 import com.google.common.collect.Lists;
+import me.vzhilin.catalog.PrimaryKey;
+import me.vzhilin.catalog.Table;
 import me.vzhilin.dbtree.antlr4.MeaningfulBaseVisitor;
 import me.vzhilin.dbtree.antlr4.MeaningfulLexer;
 import me.vzhilin.dbtree.antlr4.MeaningfulParser;
@@ -8,7 +10,6 @@ import me.vzhilin.dbtree.db.meaning.exp.*;
 import me.vzhilin.dbtree.db.meaning.exp.exceptions.ColumnNotFound;
 import me.vzhilin.dbtree.db.meaning.exp.exceptions.NotForeignKey;
 import me.vzhilin.dbtree.db.meaning.exp.exceptions.ParseException;
-import me.vzhilin.dbtree.db.schema.Table;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -96,23 +97,23 @@ public final class MeaningParser {
                     map(c -> c.COLUMN_NAME().getText()).
                     collect(Collectors.toList());
 
-            Table local = table;
-            Iterator<String> it = columns.iterator();
-            while (it.hasNext()) {
-                String c = it.next();
-                if (!local.hasColumn(c)) {
-                    throw new ColumnNotFound(local, c);
-                }
-
-                if (it.hasNext() && !local.getRelations().containsKey(c)) {
-                    throw new NotForeignKey(local, c);
-                }
-
-                if (!c.equals(local.getPk())) {
-                    local = local.getRelations().get(c);
-                }
-
-            }
+//            Table local = table;
+//            Iterator<String> it = columns.iterator();
+//            while (it.hasNext()) {
+//                String c = it.next();
+//                if (!local.hasColumn(c)) {
+//                    throw new ColumnNotFound(local, c);
+//                }
+//
+//                if (it.hasNext() && !local.hasOnlyForeignKey(c)) {
+//                    throw new NotForeignKey(local, c);
+//                }
+//
+//                PrimaryKey pk = local.getPrimaryKey().get();
+//                if (pk.hasColumn(c)) { // FIXME composite keys
+//                    local = local.g().get(c);
+//                }
+//            } FIXME VALIDATION
 
             return new ComplexColumnExpression(columns);
         }

@@ -12,13 +12,12 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
+import me.vzhilin.catalog.Catalog;
+import me.vzhilin.catalog.Table;
 import me.vzhilin.dbtree.db.DbContext;
 import me.vzhilin.dbtree.db.meaning.MeaningParser;
 import me.vzhilin.dbtree.db.meaning.exp.ParsedTemplate;
-import me.vzhilin.dbtree.db.schema.Table;
 import me.vzhilin.dbtree.ui.ApplicationContext;
 import me.vzhilin.dbtree.ui.autocomplete.AutoCompletion;
 import me.vzhilin.dbtree.ui.autocomplete.table.DbSuggestionProvider;
@@ -174,8 +173,8 @@ public class ConnectionSettingsController {
                     testMessageLabel.setTextFill(Color.DARKGREEN);
                     testMessageLabel.setText("OK");
 
-                    refreshTemplates(ctx.getSchema().allTableNames());
-                    refreshLookupTree(ctx.getSchema().allTables());
+//                    refreshTemplates(ctx.getSchema().allTableNames());
+//                    refreshLookupTree(ctx.getSchema().allTables());
                 });
             } catch (SQLException ex) {
                 Platform.runLater(() -> {
@@ -204,19 +203,19 @@ public class ConnectionSettingsController {
             Map<String, TreeItem<LookupTreeNode>> cols = Maps.newLinkedHashMap();
             nodeMap.get(tableName).getChildren().forEach(table -> cols.put(table.getValue().tableProperty().getValue(), table));
 
-            for (String columnName: tableMap.get(tableName).getColumns()) {
-                if (!cols.containsKey(columnName)) {
-                    boolean included = columnName.equals(tableMap.get(tableName).getPk());
-                    settings.addLookupableColumn(tableName, columnName, included);
-
-                    LookupTreeNode newNode = new LookupTreeNode(columnName, false);
-                    newNode.includedProperty().set(included);
-                    TreeItem<LookupTreeNode> newItem = new TreeItem<>(newNode);
-                    cols.put(columnName, newItem);
-
-                    nodeMap.get(tableName).getChildren().add(newItem);
-                }
-            }
+//            for (String columnName: tableMap.get(tableName).getColumns()) {
+//                if (!cols.containsKey(columnName)) {
+//                    boolean included = columnName.equals(tableMap.get(tableName).getPk());
+//                    settings.addLookupableColumn(tableName, columnName, included);
+//
+//                    LookupTreeNode newNode = new LookupTreeNode(columnName, false);
+//                    newNode.includedProperty().set(included);
+//                    TreeItem<LookupTreeNode> newItem = new TreeItem<>(newNode);
+//                    cols.put(columnName, newItem);
+//
+//                    nodeMap.get(tableName).getChildren().add(newItem);
+//                }
+//            }
         }
 
         for (String tableName: Sets.difference(nodeMap.keySet(), tableMap.keySet())) {
@@ -232,7 +231,7 @@ public class ConnectionSettingsController {
         Set<String> existingTables = items.stream().map(Template::getTableName).collect(toSet());
         Sets.SetView<String> newTables = Sets.difference(schemaTables, existingTables);
         for (String name: newTables) {
-            items.add(new Template(name, ""));
+            items.add(new Template("", name, ""));
         }
 
         Sets.SetView<String> removedTables = Sets.difference(existingTables, schemaTables);
@@ -326,8 +325,8 @@ public class ConnectionSettingsController {
                 Template template = (Template) getTableRow().getItem();
                 textField.textProperty().bindBidirectional(template.templateProperty());
 
-
-                Table table = context.getSchema().getTable(template.getTableName());
+                Catalog catalog = context.getCatalog();
+                Table table = catalog.getSchema(template.getSchemaName()).getTable(template.getTableName());
                 DbSuggestionProvider kcaProvider = new DbSuggestionProvider(table);
                 autoCompletion = new AutoCompletion(kcaProvider, textField);
             }
@@ -365,30 +364,31 @@ public class ConnectionSettingsController {
         }
 
         private void setTextForItem(TemplateCell item) {
-            if ("".equals(item.getText())) {
-                setText("");
-            } else {
-                String tableName = item.getTable();
-                if (getContext() != null) {
-                    ParsedTemplate exp = parse(getContext().getSchema().getTable(tableName), item.getText());
-                    if (exp.isValid()) {
-                        setText(item.getText());
-                    } else {
-                        setText(null);
-                        HBox hBox = new HBox();
-
-                        Region r = new Region();
-                        r.setMaxWidth(16);
-                        r.setMinWidth(16);
-                        r.getStyleClass().add("validation-failure");
-                        hBox.getChildren().add(r);
-                        Label label = new Label(exp.getError());
-                        label.getStyleClass().add("validation-message");
-                        hBox.getChildren().add(label);
-                        setGraphic(hBox);
-                    }
-                }
-            }
+            setText("");
+//            if ("".equals(item.getText())) {
+//                setText("");
+//            } else {
+//                String tableName = item.getTable();
+//                if (getContext() != null) {
+//                    ParsedTemplate exp = parse(getContext().getSchema().getTable(tableName), item.getText());
+//                    if (exp.isValid()) {
+//                        setText(item.getText());
+//                    } else {
+//                        setText(null);
+//                        HBox hBox = new HBox();
+//
+//                        Region r = new Region();
+//                        r.setMaxWidth(16);
+//                        r.setMinWidth(16);
+//                        r.getStyleClass().add("validation-failure");
+//                        hBox.getChildren().add(r);
+//                        Label label = new Label(exp.getError());
+//                        label.getStyleClass().add("validation-message");
+//                        hBox.getChildren().add(label);
+//                        setGraphic(hBox);
+//                    }
+//                }
+//            }
         }
 
         private ParsedTemplate parse(Table table, String text) {

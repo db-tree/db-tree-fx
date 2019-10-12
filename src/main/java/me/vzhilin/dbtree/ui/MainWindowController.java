@@ -1,12 +1,9 @@
 package me.vzhilin.dbtree.ui;
 
 import com.google.common.collect.Iterables;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -21,20 +18,26 @@ import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import me.vzhilin.adapter.oracle.OracleDatabaseAdapter;
+import me.vzhilin.catalog.Catalog;
+import me.vzhilin.catalog.Table;
+import me.vzhilin.db.Row;
+import me.vzhilin.db.RowContext;
 import me.vzhilin.dbtree.db.QueryContext;
-import me.vzhilin.dbtree.db.Row;
 import me.vzhilin.dbtree.ui.conf.ConnectionSettings;
 import me.vzhilin.dbtree.ui.conf.Settings;
 import me.vzhilin.dbtree.ui.settings.SettingsController;
-import me.vzhilin.dbtree.ui.tree.Paging;
-import me.vzhilin.dbtree.ui.tree.ToOneNode;
-import me.vzhilin.dbtree.ui.tree.TreeTableMeaningCell;
-import me.vzhilin.dbtree.ui.tree.TreeTableNode;
+import me.vzhilin.dbtree.ui.tree.*;
+import me.vzhilin.search.CountOccurences;
+import me.vzhilin.search.SearchInTable;
+import org.apache.commons.dbutils.QueryRunner;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.function.BiConsumer;
 
 public class MainWindowController {
     private final static Logger LOG = Logger.getLogger(MainWindowController.class);
@@ -116,14 +119,30 @@ public class MainWindowController {
 
         QueryContext queryContext = appContext.newQueryContext(connection.getConnectionName());
         ObservableList<TreeItem<TreeTableNode>> ch = newRoot.getChildren();
+        Catalog catalog = queryContext.getDbContext().getCatalog();
 
-        Iterator<Row> it = queryContext.getDataDigger().find(textField.getText()).iterator();
-        new Paging().addNodes(it, ch);
+        QueryRunner runner = queryContext.getDbContext().getRunner();
+        OracleDatabaseAdapter adapter = new OracleDatabaseAdapter();
+        CountOccurences c = new CountOccurences(catalog, runner, adapter);
+        Map<Table, Long> rs = c.count(textField.getText());
+        rs.forEach(new BiConsumer<Table, Long>() {
+            @Override
+            public void accept(Table table, Long count) {
+//                TreeTableNode newNode = new TreeTableNode(table.getName(), String.valueOf(aLong), null);
+                SearchInTable search = new SearchInTable(new RowContext(adapter, runner, catalog), table);
+                Iterable<Row> iter = search.search(textField.getText());
+                ch.add(new CountNode(iter, table, count));
+            }
+        });
 
+//
+//        Iterator<Row> it = queryContext.getDataDigger().find(textField.getText()).iterator();
+//        new Paging().addNodes(it, ch);
+//
         treeTable.setRoot(newRoot);
-        if (ch.size() == 1) {
-            ch.get(0).setExpanded(true);
-        }
+//        if (ch.size() == 1) {
+//            ch.get(0).setExpanded(true);
+//        }
     }
 
     @FXML
@@ -212,8 +231,9 @@ public class MainWindowController {
                   HBox.setHgrow(r, Priority.ALWAYS);
                   ch.add(r);
                   Row row = ((ToOneNode) treeItem).getRow();
-                  ch.add(new Label(row.getTable().getName()));
-
+                  if (row != null) {
+                      ch.add(new Label(row.getTable().getName()));
+                  }
                   setGraphic(hBox);
               } else
               if (treeItem instanceof Paging.PagingItem){

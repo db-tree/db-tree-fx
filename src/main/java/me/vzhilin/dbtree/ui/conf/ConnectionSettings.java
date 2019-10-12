@@ -48,7 +48,7 @@ public final class ConnectionSettings {
         tableNamePatternProperty.set(cs.getTableNamePattern());
 
         for (Template t: cs.templates) {
-            templates.add(new Template(t.getTableName(), t.getTemplate()));
+            templates.add(new Template(t.getSchemaName(), t.getTableName(), t.getTemplate()));
         }
 
         for (Map.Entry<String, Map<String, BooleanProperty>> e: cs.lookupableColumns.entrySet()) {

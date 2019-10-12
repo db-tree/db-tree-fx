@@ -1,7 +1,7 @@
 package me.vzhilin.dbtree.db.meaning.exp;
 
 
-import me.vzhilin.dbtree.db.Row;
+import me.vzhilin.db.Row;
 
 public final class ExpressionValue {
     private final Row row;
@@ -25,7 +25,7 @@ public final class ExpressionValue {
     @Override
     public String toString() {
         if (isRow) {
-            return String.valueOf(row.getPk());
+            return String.valueOf(row.getKey());
         } else {
             return String.valueOf(value);
         }

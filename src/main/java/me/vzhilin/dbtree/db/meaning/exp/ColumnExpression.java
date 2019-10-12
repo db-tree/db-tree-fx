@@ -1,6 +1,6 @@
 package me.vzhilin.dbtree.db.meaning.exp;
 
-import me.vzhilin.dbtree.db.Row;
+import me.vzhilin.db.Row;
 
 public class ColumnExpression implements Expression {
     private final String column;
@@ -11,10 +11,13 @@ public class ColumnExpression implements Expression {
 
     @Override
     public ExpressionValue render(Row row) {
-        if (row.getTable().getRelations().containsKey(column)) {
-            return new ExpressionValue(row.references().get(column));
-        } else {
-            return new ExpressionValue(row.getField(column));
-        }
+
+//        if (row.getTable().getRelations().containsKey(column)) {
+//            return new ExpressionValue(row.references().get(column));
+//        } else {
+//            return new ExpressionValue(row.getField(column));
+//        }
+
+        return new ExpressionValue("");
     }
 }

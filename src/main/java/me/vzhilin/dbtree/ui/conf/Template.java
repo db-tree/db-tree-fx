@@ -4,16 +4,30 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public final class Template {
+    private final StringProperty schemaName = new SimpleStringProperty();
     private final StringProperty tableName = new SimpleStringProperty();
     private final StringProperty template = new SimpleStringProperty();
 
-    public Template(String table, String template) {
+    public Template(String schema, String table, String template) {
+        schemaName.set(schema);
         tableName.set(table);
         this.template.set(template);
     }
 
+    public String getSchemaName() {
+        return schemaName.get();
+    }
+
+    public StringProperty schemaNameProperty() {
+        return schemaName;
+    }
+
     public String getTableName() {
         return tableName.get();
+    }
+
+    public StringProperty tableNameProperty() {
+        return tableName;
     }
 
     public String getTemplate() {
