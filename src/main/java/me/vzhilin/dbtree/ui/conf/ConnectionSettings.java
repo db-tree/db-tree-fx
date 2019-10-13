@@ -5,7 +5,7 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -34,7 +34,7 @@ public final class ConnectionSettings {
     private final ListProperty<Template> templates = new SimpleListProperty<Template>(FXCollections.observableArrayList(new ArrayList<>()));
 
     /** Колонки для поиска */
-    private final Map<String, Map<String, BooleanProperty>> lookupableColumns = Maps.newLinkedHashMap();
+    private final Map<ColumnKey, BooleanProperty> lookupableColumns = Maps.newLinkedHashMap();
 
     public ConnectionSettings() {
     }
@@ -51,43 +51,20 @@ public final class ConnectionSettings {
             templates.add(new Template(t.getSchemaName(), t.getTableName(), t.getTemplate()));
         }
 
-        for (Map.Entry<String, Map<String, BooleanProperty>> e: cs.lookupableColumns.entrySet()) {
-            LinkedHashMap<String, BooleanProperty> m = Maps.newLinkedHashMap();
-            lookupableColumns.put(e.getKey(), m);
-
-            for (Map.Entry<String, BooleanProperty> p: e.getValue().entrySet()) {
-                m.put(p.getKey(), new SimpleBooleanProperty(p.getValue().get()));
-            }
-        }
+        lookupableColumns.putAll(cs.lookupableColumns);
     }
 
     /**
-     * Table --> column --> isEnabled
+     * schema --> Table --> column --> isEnabled
      * @return
      */
-    public Map<String, Map<String, BooleanProperty>> getLookupableColumns() {
-        return lookupableColumns;
+    public Map<ColumnKey, BooleanProperty> getLookupableColumns() {
+        return Collections.unmodifiableMap(lookupableColumns);
     }
 
-    public BooleanProperty getLookupableProperty(String tableName, String columnName) {
-        if (!lookupableColumns.containsKey(tableName)) {
-            lookupableColumns.put(tableName, Maps.newLinkedHashMap());
-        }
-
-        Map<String, BooleanProperty> mp = lookupableColumns.get(tableName);
-        if (!mp.containsKey(columnName)) {
-            mp.put(columnName, new SimpleBooleanProperty());
-        }
-
-        return mp.get(columnName);
-    }
-
-    public void addLookupableColumn(String tableName, String columnName) {
-       addLookupableColumn(tableName, columnName, false);
-    }
-
-    public void addLookupableColumn(String tableName, String columnName, boolean value) {
-        getLookupableProperty(tableName, columnName).set(value);
+    public void setLookupableColumn(String schemaName, String tableName, String columnName, boolean value) {
+        ColumnKey key = new ColumnKey(new TableKey(new SchemaKey(schemaName), tableName), columnName);
+        lookupableColumns.computeIfAbsent(key, ck -> new SimpleBooleanProperty()).set(value);
     }
 
     public String getConnectionName() {
@@ -138,8 +115,12 @@ public final class ConnectionSettings {
         return connectionName.get();
     }
 
-    public boolean isLookupable(String tableName, String columnName) {
-        return lookupableColumns.containsKey(tableName) && lookupableColumns.get(tableName).containsKey(columnName) && lookupableColumns.get(tableName).get(columnName).getValue();
+    public boolean isLookupable(String schemaName, String tableName, String columnName) {
+        ColumnKey key = new ColumnKey(new TableKey(new SchemaKey(schemaName), tableName), columnName);
+        if (!lookupableColumns.containsKey(key)) {
+            return false;
+        }
+        return lookupableColumns.get(key).getValue();
     }
 
     public StringProperty tableNamePatternProperty() {
@@ -148,6 +129,11 @@ public final class ConnectionSettings {
 
     public String getTableNamePattern() {
         return tableNamePatternProperty.get();
+    }
+
+    public void setLookupableColumns(Map<ColumnKey, BooleanProperty> newValues) {
+        this.lookupableColumns.clear();
+        this.lookupableColumns.putAll(newValues);
     }
 }
 

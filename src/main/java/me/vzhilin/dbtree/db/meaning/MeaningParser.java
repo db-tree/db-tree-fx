@@ -1,20 +1,17 @@
 package me.vzhilin.dbtree.db.meaning;
 
 import com.google.common.collect.Lists;
-import me.vzhilin.catalog.PrimaryKey;
 import me.vzhilin.catalog.Table;
 import me.vzhilin.dbtree.antlr4.MeaningfulBaseVisitor;
 import me.vzhilin.dbtree.antlr4.MeaningfulLexer;
 import me.vzhilin.dbtree.antlr4.MeaningfulParser;
 import me.vzhilin.dbtree.db.meaning.exp.*;
 import me.vzhilin.dbtree.db.meaning.exp.exceptions.ColumnNotFound;
-import me.vzhilin.dbtree.db.meaning.exp.exceptions.NotForeignKey;
 import me.vzhilin.dbtree.db.meaning.exp.exceptions.ParseException;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -86,7 +83,7 @@ public final class MeaningParser {
                 throw new ColumnNotFound(table, columnName);
             }
 
-            return new ColumnExpression(columnName);
+            return new ColumnExpression(table.getColumn(columnName));
         }
 
         @Override

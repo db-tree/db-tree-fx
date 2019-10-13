@@ -2,15 +2,11 @@ package me.vzhilin.dbtree.ui.conf;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class SettingsCopy {
     private final Settings copy;
@@ -56,34 +52,8 @@ public class SettingsCopy {
         }
     }
 
-
     private void writeMeaningful(ConnectionSettings orig, ConnectionSettings modif) {
-        Map<String, Map<String, BooleanProperty>> om = orig.getLookupableColumns();
-        Map<String, Map<String, BooleanProperty>> mm = modif.getLookupableColumns();
-
-        Set<String> forRemove = Sets.newLinkedHashSet();
-        for (String table: Sets.union(om.keySet(), mm.keySet())) {
-            if (!mm.containsKey(table)) {
-                forRemove.add(table);
-            } else {
-                if (!om.containsKey(table)) {
-                    om.put(table, Maps.newLinkedHashMap());
-                }
-
-                Map<String, BooleanProperty> oom = om.get(table);
-                Map<String, BooleanProperty> mmm = mm.get(table);
-
-                for (String column: Sets.union(oom.keySet(), mmm.keySet())) {
-                    if (!oom.containsKey(column)) {
-                        oom.put(column, new SimpleBooleanProperty());
-                    }
-
-                    oom.get(column).set(mmm.get(column).getValue());
-                }
-            }
-        }
-
-        forRemove.forEach(om::remove);
+        orig.setLookupableColumns(modif.getLookupableColumns());
     }
 
     private void writeTemplates(ConnectionSettings orig, ConnectionSettings modif) {

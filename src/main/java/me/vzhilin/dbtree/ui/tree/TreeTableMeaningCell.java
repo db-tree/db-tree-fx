@@ -37,7 +37,9 @@ public class TreeTableMeaningCell extends TreeTableCell<TreeTableNode, Row> {
             meaningTextField = new TextField();
             meaningTextField.getStyleClass().add("table-cell");
             meaningTextField.setOnAction(event -> cancelEdit());
-            meaningTextField.setText(ctx.getTemplate(row.getTable().getName()));
+            String tableName = row.getTable().getName();
+            String schemaName = row.getTable().getSchemaName();
+            meaningTextField.setText(ctx.getTemplate(schemaName, tableName));
             RowSuggestionProvider provider = new RowSuggestionProvider(row);
             autoCompletion = new AutoCompletion(provider, meaningTextField);
         }

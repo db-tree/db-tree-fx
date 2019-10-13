@@ -1,6 +1,5 @@
 package me.vzhilin.dbtree.ui.settings;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -12,8 +11,11 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import me.vzhilin.catalog.Catalog;
+import me.vzhilin.catalog.Column;
 import me.vzhilin.catalog.Table;
 import me.vzhilin.dbtree.db.DbContext;
 import me.vzhilin.dbtree.db.meaning.MeaningParser;
@@ -21,18 +23,16 @@ import me.vzhilin.dbtree.db.meaning.exp.ParsedTemplate;
 import me.vzhilin.dbtree.ui.ApplicationContext;
 import me.vzhilin.dbtree.ui.autocomplete.AutoCompletion;
 import me.vzhilin.dbtree.ui.autocomplete.table.DbSuggestionProvider;
-import me.vzhilin.dbtree.ui.conf.ConnectionSettings;
-import me.vzhilin.dbtree.ui.conf.Template;
+import me.vzhilin.dbtree.ui.conf.*;
 import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-
-import static java.util.stream.Collectors.toSet;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class ConnectionSettingsController {
     private final static Logger LOG = Logger.getLogger(ConnectionSettingsController.class);
@@ -130,11 +130,13 @@ public class ConnectionSettingsController {
     }
 
     public final class TemplateCell {
+        private final String schema;
         private final String table;
         private final StringProperty text;
 
         public TemplateCell(Template template) {
             this.table = template.getTableName();
+            this.schema = template.getSchemaName();
             this.text = template.templateProperty();
         }
 
@@ -144,6 +146,10 @@ public class ConnectionSettingsController {
 
         public String getTable() {
             return table;
+        }
+
+        public String getSchema() {
+            return schema;
         }
     }
 
@@ -173,8 +179,12 @@ public class ConnectionSettingsController {
                     testMessageLabel.setTextFill(Color.DARKGREEN);
                     testMessageLabel.setText("OK");
 
-//                    refreshTemplates(ctx.getSchema().allTableNames());
-//                    refreshLookupTree(ctx.getSchema().allTables());
+                    Set<Table> allTables = new HashSet<>();
+                    Catalog catalog = ctx.getCatalog();
+                    catalog.forEachTable(allTables::add);
+
+                    refreshTemplates(catalog, allTables);
+                    refreshLookupTree(catalog, allTables);
                 });
             } catch (SQLException ex) {
                 Platform.runLater(() -> {
@@ -185,57 +195,135 @@ public class ConnectionSettingsController {
         });
     }
 
-    private void refreshLookupTree(Set<Table> schemaTables) {
-        Map<String, Table> tableMap = Maps.newLinkedHashMap();
-        schemaTables.forEach(table -> tableMap.put(table.getName(), table));
-
-        Map<String, TreeItem<LookupTreeNode>> nodeMap = Maps.newLinkedHashMap();
-        ObservableList<TreeItem<LookupTreeNode>> ch = lookupTreeView.getRoot().getChildren();
-        ch.forEach(table -> nodeMap.put(table.getValue().tableProperty().getValue(), table));
-
-        for (String tableName: tableMap.keySet()) {
-            if (!nodeMap.containsKey(tableName)) {
-                TreeItem<LookupTreeNode> newItem = new TreeItem<>(new LookupTreeNode(tableName, true));
-                nodeMap.put(tableName, newItem);
-                lookupTreeView.getRoot().getChildren().add(newItem);
+    private void refreshLookupTree(Catalog catalog, Set<Table> schemaTables) {
+        Map<ColumnKey, Boolean> schemaEnabled = getColumnsFromSchema(schemaTables);
+        Map<ColumnKey, Boolean> nowEnabled = new HashMap<>();
+        for (TreeItem<LookupTreeNode> schemas: lookupTreeView.getRoot().getChildren()) {
+            for (TreeItem<LookupTreeNode> tables: schemas.getChildren()) {
+                for (TreeItem<LookupTreeNode> columns: tables.getChildren()) {
+                    LookupTreeNode node = columns.getValue();
+                    String schemaName = node.schemaProperty().get();
+                    String tableName = tables.getValue().tableProperty().getValue();
+                    String columnName = node.tableProperty().getValue();
+                    boolean isIncluded = node.includedProperty().get();
+                    nowEnabled.put(new ColumnKey(new TableKey(new SchemaKey(schemaName), tableName), columnName), isIncluded);
+                }
             }
-
-            Map<String, TreeItem<LookupTreeNode>> cols = Maps.newLinkedHashMap();
-            nodeMap.get(tableName).getChildren().forEach(table -> cols.put(table.getValue().tableProperty().getValue(), table));
-
-//            for (String columnName: tableMap.get(tableName).getColumns()) {
-//                if (!cols.containsKey(columnName)) {
-//                    boolean included = columnName.equals(tableMap.get(tableName).getPk());
-//                    settings.addLookupableColumn(tableName, columnName, included);
-//
-//                    LookupTreeNode newNode = new LookupTreeNode(columnName, false);
-//                    newNode.includedProperty().set(included);
-//                    TreeItem<LookupTreeNode> newItem = new TreeItem<>(newNode);
-//                    cols.put(columnName, newItem);
-//
-//                    nodeMap.get(tableName).getChildren().add(newItem);
-//                }
-//            }
         }
 
-        for (String tableName: Sets.difference(nodeMap.keySet(), tableMap.keySet())) {
-            TreeItem<LookupTreeNode> n = nodeMap.get(tableName);
-            n.getParent().getChildren().remove(n);
+        Set<ColumnKey> removedColumns = Sets.difference(nowEnabled.keySet(), schemaEnabled.keySet());
+        Set<ColumnKey> addedColumns = Sets.difference(schemaEnabled.keySet(), nowEnabled.keySet());
 
-            settings.getLookupableColumns().remove(tableName);
+        addedColumns.forEach(new Consumer<ColumnKey>() {
+            @Override
+            public void accept(ColumnKey columnKey) {
+                TreeItem<LookupTreeNode> tableNode = findOrAddTable(columnKey.getTableKey());
+                String schemaName = columnKey.getTableKey().getSchemaKey().getSchemaName();
+                String columnName = columnKey.getColumnName();
+                LookupTreeNode columnNode = new LookupTreeNode(schemaName, columnName, false);
+                TreeItem<LookupTreeNode> item = new TreeItem<>(columnNode);
+                columnNode.includedProperty().set(schemaEnabled.get(columnKey));
+                tableNode.getChildren().add(item);
+            }
+        });
+
+        removedColumns.forEach(new Consumer<ColumnKey>() {
+            @Override
+            public void accept(ColumnKey columnKey) {
+                removeColumn(columnKey);
+            }
+        });
+    }
+
+    private void removeColumn(ColumnKey columnKey) {
+        TreeItem<LookupTreeNode> rootItem = lookupTreeView.getRoot();
+        String schemaName = columnKey.getTableKey().getSchemaKey().getSchemaName();
+        String tableName = columnKey.getTableKey().getTableName();
+
+        ObservableList<TreeItem<LookupTreeNode>> schemas = rootItem.getChildren();
+        Optional<TreeItem<LookupTreeNode>> maybeSchema = find(schemas, schemaName);
+        if (!maybeSchema.isPresent()) {
+            return;
+        }
+
+        ObservableList<TreeItem<LookupTreeNode>> tables = maybeSchema.get().getChildren();
+        Optional<TreeItem<LookupTreeNode>> maybeTable = find(tables, tableName);
+        if (!maybeTable.isPresent()) {
+            return;
+        }
+
+        ObservableList<TreeItem<LookupTreeNode>> columns = maybeTable.get().getChildren();
+        Optional<TreeItem<LookupTreeNode>> maybeColumn = find(columns, columnKey.getColumnName());
+        if (!maybeColumn.isPresent()) {
+            return;
+        }
+
+        columns.remove(maybeColumn.get());
+        if (columns.isEmpty()) {
+            tables.remove(maybeTable.get());
+
+            if (tables.isEmpty()) {
+                schemas.remove(maybeSchema.get());
+            }
         }
     }
 
-    private void refreshTemplates(Set<String> schemaTables) {
+    private TreeItem<LookupTreeNode> findOrAddTable(TableKey tableKey) {
+        TreeItem<LookupTreeNode> rootItem = lookupTreeView.getRoot();
+        String schemaName = tableKey.getSchemaKey().getSchemaName();
+        String tableName = tableKey.getTableName();
+
+        TreeItem<LookupTreeNode> schemaItem = findOrAdd(rootItem.getChildren(), schemaName, schemaName);
+        return findOrAdd(schemaItem.getChildren(), schemaName, tableName);
+    }
+
+    private TreeItem<LookupTreeNode> findOrAdd(ObservableList<TreeItem<LookupTreeNode>> children, String schemaName, String name) {
+        Optional<TreeItem<LookupTreeNode>> maybe = find(children, name);
+        if (maybe.isPresent()) {
+            return maybe.get();
+        } else {
+            TreeItem<LookupTreeNode> newItem = new TreeItem<>(new LookupTreeNode(schemaName, name, true));
+            children.add(newItem);
+            return newItem;
+        }
+    }
+
+    private Optional<TreeItem<LookupTreeNode>> find(ObservableList<TreeItem<LookupTreeNode>> children, String name) {
+        return children.stream().filter(ltni -> name.equals(ltni.getValue().tableProperty().getValue())).findFirst();
+    }
+
+    private Map<ColumnKey, Boolean> getColumnsFromSchema(Set<Table> schemaTables) {
+        Map<ColumnKey, Boolean> result = new HashMap<>();
+        schemaTables.forEach(table -> table.getColumns().forEach(new BiConsumer<String, Column>() {
+            @Override
+            public void accept(String name, Column column) {
+                boolean selected = column.getPrimaryKey().isPresent();
+                result.put(new ColumnKey(new TableKey(new SchemaKey(table.getSchemaName()), table.getName()), name), selected);
+            }
+        }));
+        return result;
+    }
+
+    private void refreshTemplates(Catalog catalog, Set<Table> schemaTables) {
         ObservableList<Template> items = templateTable.getItems();
-        Set<String> existingTables = items.stream().map(Template::getTableName).collect(toSet());
-        Sets.SetView<String> newTables = Sets.difference(schemaTables, existingTables);
-        for (String name: newTables) {
-            items.add(new Template("", name, ""));
+        Set<Table> existingTables = new HashSet<>();
+        Set<Template> removedTemplates = new HashSet<>();
+        items.forEach(template -> {
+            String schemaName = template.getSchemaName();
+            String tableName = template.getTableName();
+            if (catalog.hasTable(schemaName, tableName)) {
+                existingTables.add(catalog.getSchema(schemaName).getTable(tableName));
+            } else {
+                removedTemplates.add(template);
+            }
+        });
+
+        Sets.SetView<Table> newTables = Sets.difference(schemaTables, existingTables);
+        for (Table t: newTables) {
+            items.add(new Template(t.getSchemaName(), t.getName(), ""));
         }
 
-        Sets.SetView<String> removedTables = Sets.difference(existingTables, schemaTables);
-        templateTable.getItems().removeIf(item -> removedTables.contains(item.getTableName()));
+        templateTable.getItems().removeAll(removedTemplates);
     }
 
     public void setConnectoinName(String connectionName) {
@@ -250,31 +338,44 @@ public class ConnectionSettingsController {
         password.textProperty().bindBidirectional(settings.passwordProperty());
         tableNamePattern.textProperty().bindBidirectional(settings.tableNamePatternProperty());
         templateTable.itemsProperty().bindBidirectional(settings.templatesProperty());
-        bindTree(settings.getLookupableColumns());
+        fillTree(settings.getLookupableColumns());
 
         this.settings = settings;
     }
 
-    private void bindTree(Map<String, Map<String, BooleanProperty>> settings) {
-        TreeItem<LookupTreeNode> root = new TreeItem<>(new LookupTreeNode("ROOT", true));
-        ObservableList<TreeItem<LookupTreeNode>> ch = root.getChildren();
+    // schema -> table -> column -> isIncluded
+    private void fillTree(Map<ColumnKey, BooleanProperty> includedColumns) {
+        TreeItem<LookupTreeNode> root = new TreeItem<>(new LookupTreeNode("ROOT", "ROOT", true));
+        // schema -> table -> column
+        Map<SchemaKey, TreeItem<LookupTreeNode>> schemaNodes = new HashMap<>();
+        Map<TableKey, TreeItem<LookupTreeNode>> tableNodes = new HashMap<>();
 
-        for (String table: settings.keySet()) {
-            TreeItem<LookupTreeNode> tableNode = new TreeItem<>(new LookupTreeNode(table, true));
-            ch.add(tableNode);
+        includedColumns.forEach(new BiConsumer<ColumnKey, BooleanProperty>() {
+            @Override
+            public void accept(ColumnKey columnKey, BooleanProperty val) {
+                TreeItem<LookupTreeNode> schemaNode = schemaNodes.computeIfAbsent(columnKey.getTableKey().getSchemaKey(), schemaKey -> {
+                    LookupTreeNode node = new LookupTreeNode(schemaKey.getSchemaName(), "", true);
+                    TreeItem<LookupTreeNode> item = new TreeItem<>(node);
+                    root.getChildren().add(item);
+                    return item;
+                });
 
-            Map<String, BooleanProperty> columns = settings.get(table);
 
-            for (String column: columns.keySet()) {
-                BooleanProperty val = columns.get(column);
+                TreeItem<LookupTreeNode> tableNode = tableNodes.computeIfAbsent(columnKey.getTableKey(), tableKey -> {
+                    LookupTreeNode node = new LookupTreeNode(tableKey.getTableName(), "", true);
+                    TreeItem<LookupTreeNode> item = new TreeItem<>(node);
+                    schemaNode.getChildren().add(item);
+                    return item;
+                });
 
-                LookupTreeNode newNode = new LookupTreeNode(column, false);
+
+                SchemaKey schemaKey = columnKey.getTableKey().getSchemaKey();
+                LookupTreeNode newNode = new LookupTreeNode(schemaKey.getSchemaName(), columnKey.getColumnName(), false);
                 TreeItem<LookupTreeNode> columnNode = new TreeItem<>(newNode);
                 tableNode.getChildren().add(columnNode);
-
                 newNode.includedProperty().bindBidirectional(val);
             }
-        }
+        });
 
         lookupTreeView.setRoot(root);
     }
@@ -364,31 +465,32 @@ public class ConnectionSettingsController {
         }
 
         private void setTextForItem(TemplateCell item) {
-            setText("");
-//            if ("".equals(item.getText())) {
-//                setText("");
-//            } else {
-//                String tableName = item.getTable();
-//                if (getContext() != null) {
-//                    ParsedTemplate exp = parse(getContext().getSchema().getTable(tableName), item.getText());
-//                    if (exp.isValid()) {
-//                        setText(item.getText());
-//                    } else {
-//                        setText(null);
-//                        HBox hBox = new HBox();
-//
-//                        Region r = new Region();
-//                        r.setMaxWidth(16);
-//                        r.setMinWidth(16);
-//                        r.getStyleClass().add("validation-failure");
-//                        hBox.getChildren().add(r);
-//                        Label label = new Label(exp.getError());
-//                        label.getStyleClass().add("validation-message");
-//                        hBox.getChildren().add(label);
-//                        setGraphic(hBox);
-//                    }
-//                }
-//            }
+            if ("".equals(item.getText())) {
+                setText("");
+            } else {
+                String tableName = item.getTable();
+                String schemaName = item.getSchema();
+                if (getContext() != null) {
+                    Catalog catalog = getContext().getCatalog();
+                    ParsedTemplate exp = parse(catalog.getSchema(schemaName).getTable(tableName), item.getText());
+                    if (exp.isValid()) {
+                        setText(item.getText());
+                    } else {
+                        setText(null);
+                        HBox hBox = new HBox();
+
+                        Region r = new Region();
+                        r.setMaxWidth(16);
+                        r.setMinWidth(16);
+                        r.getStyleClass().add("validation-failure");
+                        hBox.getChildren().add(r);
+                        Label label = new Label(exp.getError());
+                        label.getStyleClass().add("validation-message");
+                        hBox.getChildren().add(label);
+                        setGraphic(hBox);
+                    }
+                }
+            }
         }
 
         private ParsedTemplate parse(Table table, String text) {

@@ -1,23 +1,24 @@
 package me.vzhilin.dbtree.db.meaning.exp;
 
+import me.vzhilin.catalog.Column;
 import me.vzhilin.db.Row;
 
 public class ColumnExpression implements Expression {
-    private final String column;
+    private final Column column;
 
-    public ColumnExpression(String column) {
+    public ColumnExpression(Column column) {
         this.column = column;
     }
 
     @Override
     public ExpressionValue render(Row row) {
-
+//        row.get
 //        if (row.getTable().getRelations().containsKey(column)) {
 //            return new ExpressionValue(row.references().get(column));
 //        } else {
 //            return new ExpressionValue(row.getField(column));
 //        }
 
-        return new ExpressionValue("");
+        return new ExpressionValue(row.get(column));
     }
 }

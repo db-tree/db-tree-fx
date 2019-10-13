@@ -43,14 +43,14 @@ public final class QueryContext implements Closeable {
         return dbContext;
     }
 
-    public String getTemplate(String name) {
-        return getTemplateProperty(name).getValue();
+    public String getTemplate(String schemaName, String name) {
+        return getTemplateProperty(schemaName, name).getValue();
     }
 
-    public StringProperty getTemplateProperty(String name) {
+    public StringProperty getTemplateProperty(String schemaName, String name) {
         Optional<Template> first = findTemplate(name);
         if (!first.isPresent()) {
-            Template newTemplate = new Template("", name, "");
+            Template newTemplate = new Template(schemaName, name, "");
             connectionSettings.templatesProperty().add(newTemplate);
             return newTemplate.templateProperty();
         }
@@ -96,7 +96,7 @@ public final class QueryContext implements Closeable {
     }
 
     public void setTemplate(String schema, String name, String template) {
-        getTemplateProperty(name).setValue(template);
+        getTemplateProperty(schema, name).setValue(template);
         Catalog catalog = dbContext.getCatalog();
         parsedTemplates.remove(catalog.getSchema(schema).getTable(name));
     }
