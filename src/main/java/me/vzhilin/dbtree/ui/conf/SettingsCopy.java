@@ -5,8 +5,14 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Sets;
 import javafx.collections.ObservableList;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class SettingsCopy {
     private final Settings copy;
@@ -57,28 +63,24 @@ public class SettingsCopy {
     }
 
     private void writeTemplates(ConnectionSettings orig, ConnectionSettings modif) {
-//        Map<String, Template> origMap =
-//            orig.templatesProperty().stream().collect(Collectors.toMap(Template::getTableName, t -> t));
-//
-//        Map<String, Template> dirtyMap =
-//                modif.templatesProperty().stream().collect(Collectors.toMap(Template::getTableName, t -> t));
-//
-//        Set<String> forRemove = Sets.newLinkedHashSet();
-//        for (String name: Sets.union(origMap.keySet(), dirtyMap.keySet())) {
-//            if (origMap.containsKey(name)) {
-//                if (dirtyMap.containsKey(name)) {
-//                    origMap.get(name).templateProperty().setValue(dirtyMap.get(name).getTemplate());
-//                } else {
-//                    forRemove.add(name);
-//                }
-//            } else {
-//                orig.templatesProperty().add(new Template(name, dirtyMap.get(name).getTemplate()));
-//            }
-//        }
-//
-//        for (String name: forRemove) {
-//            origMap.remove(name);
-//        }
+        Map<TableKey, Template> origMap = new LinkedHashMap<>();
+        orig.templatesProperty().forEach(t -> origMap.put(t.getTableKey(), t));
+
+        Map<TableKey, Template> dirtyMap = new LinkedHashMap<>();
+        modif.templatesProperty().forEach(t -> dirtyMap.put(t.getTableKey(), t));
+        origMap.entrySet().removeIf(e -> !dirtyMap.containsKey(e.getKey()));
+
+        dirtyMap.forEach(new BiConsumer<TableKey, Template>() {
+            @Override
+            public void accept(TableKey tableKey, Template template) {
+                if (!origMap.containsKey(tableKey)) {
+                    origMap.put(tableKey, template);
+                } else {
+                    Template e = origMap.get(tableKey);
+                    e.templateProperty().set(template.templateProperty().getValue());
+                }
+            }
+        });
     }
 
     private void writeConnection(ConnectionSettings orig, ConnectionSettings modif) {

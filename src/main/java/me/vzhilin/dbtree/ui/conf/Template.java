@@ -14,6 +14,10 @@ public final class Template {
         this.template.set(template);
     }
 
+    public TableKey getTableKey() {
+        return new TableKey(new SchemaKey(schemaName.getValue()), tableName.getValue());
+    }
+
     public String getSchemaName() {
         return schemaName.get();
     }
