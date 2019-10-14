@@ -1,22 +1,34 @@
 package me.vzhilin.dbtree.ui.conf;
 
+import javafx.beans.property.SimpleStringProperty;
+
 import java.util.Objects;
 
 public final class ColumnKey {
-    private final TableKey tableKey;
-    private final String column;
+    private final SimpleStringProperty schema;
+    private final SimpleStringProperty table;
+    private final SimpleStringProperty column;
 
-    public ColumnKey(TableKey tableKey, String column) {
-        this.tableKey = tableKey;
-        this.column = column;
+    public ColumnKey(String schema, String table, String column) {
+        this.schema = new SimpleStringProperty(schema);
+        this.table = new SimpleStringProperty(table);
+        this.column = new SimpleStringProperty(column);
     }
 
     public TableKey getTableKey() {
-        return tableKey;
+        return new TableKey(new SchemaKey(schema.get()), table.get());
     }
 
-    public String getColumnName() {
-        return column;
+    public String getSchema() {
+        return schema.get();
+    }
+
+    public String getTable() {
+        return table.get();
+    }
+
+    public String getColumn() {
+        return column.get();
     }
 
     @Override
@@ -24,12 +36,13 @@ public final class ColumnKey {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ColumnKey columnKey = (ColumnKey) o;
-        return tableKey.equals(columnKey.tableKey) &&
-                column.equals(columnKey.column);
+        return schema.get().equals(columnKey.schema.get()) &&
+                table.get().equals(columnKey.table.get()) &&
+                column.get().equals(columnKey.column.get());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(tableKey, column);
+        return Objects.hash(schema.get(), table.get(), column.get());
     }
 }

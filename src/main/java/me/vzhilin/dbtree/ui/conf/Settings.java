@@ -28,7 +28,7 @@ public class Settings {
     public synchronized void save() {
         try {
             PrintWriter pw = new PrintWriter("db-tree.json~");
-            pw.write(FxGson.create().toJson(this));
+            pw.write(FxGson.coreBuilder().setPrettyPrinting().enableComplexMapKeySerialization().create().toJson(this));
             pw.close();
 
             File tempFile = new File("db-tree.json~");

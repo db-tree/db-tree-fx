@@ -206,7 +206,7 @@ public class ConnectionSettingsController {
                     String tableName = tables.getValue().tableProperty().getValue();
                     String columnName = node.tableProperty().getValue();
                     boolean isIncluded = node.includedProperty().get();
-                    nowEnabled.put(new ColumnKey(new TableKey(new SchemaKey(schemaName), tableName), columnName), isIncluded);
+                    nowEnabled.put(new ColumnKey(schemaName, tableName, columnName), isIncluded);
                 }
             }
         }
@@ -219,11 +219,15 @@ public class ConnectionSettingsController {
             public void accept(ColumnKey columnKey) {
                 TreeItem<LookupTreeNode> tableNode = findOrAddTable(columnKey.getTableKey());
                 String schemaName = columnKey.getTableKey().getSchemaKey().getSchemaName();
-                String columnName = columnKey.getColumnName();
+                String columnName = columnKey.getColumn();
+                String tableName = columnKey.getTableKey().getTableName();
                 LookupTreeNode columnNode = new LookupTreeNode(schemaName, columnName, false);
                 TreeItem<LookupTreeNode> item = new TreeItem<>(columnNode);
-                columnNode.includedProperty().set(schemaEnabled.get(columnKey));
+                Boolean included = schemaEnabled.get(columnKey);
+                columnNode.includedProperty().set(included);
                 tableNode.getChildren().add(item);
+
+                settings.setLookupableColumn(schemaName, tableName, columnName, included);
             }
         });
 
@@ -253,7 +257,7 @@ public class ConnectionSettingsController {
         }
 
         ObservableList<TreeItem<LookupTreeNode>> columns = maybeTable.get().getChildren();
-        Optional<TreeItem<LookupTreeNode>> maybeColumn = find(columns, columnKey.getColumnName());
+        Optional<TreeItem<LookupTreeNode>> maybeColumn = find(columns, columnKey.getColumn());
         if (!maybeColumn.isPresent()) {
             return;
         }
@@ -298,7 +302,7 @@ public class ConnectionSettingsController {
             @Override
             public void accept(String name, Column column) {
                 boolean selected = column.getPrimaryKey().isPresent();
-                result.put(new ColumnKey(new TableKey(new SchemaKey(table.getSchemaName()), table.getName()), name), selected);
+                result.put(new ColumnKey(table.getSchemaName(), table.getName(), name), selected);
             }
         }));
         return result;
@@ -354,7 +358,7 @@ public class ConnectionSettingsController {
             @Override
             public void accept(ColumnKey columnKey, BooleanProperty val) {
                 TreeItem<LookupTreeNode> schemaNode = schemaNodes.computeIfAbsent(columnKey.getTableKey().getSchemaKey(), schemaKey -> {
-                    LookupTreeNode node = new LookupTreeNode(schemaKey.getSchemaName(), "", true);
+                    LookupTreeNode node = new LookupTreeNode(schemaKey.getSchemaName(), schemaKey.getSchemaName(), true);
                     TreeItem<LookupTreeNode> item = new TreeItem<>(node);
                     root.getChildren().add(item);
                     return item;
@@ -362,7 +366,7 @@ public class ConnectionSettingsController {
 
 
                 TreeItem<LookupTreeNode> tableNode = tableNodes.computeIfAbsent(columnKey.getTableKey(), tableKey -> {
-                    LookupTreeNode node = new LookupTreeNode(tableKey.getTableName(), "", true);
+                    LookupTreeNode node = new LookupTreeNode(tableKey.getSchemaKey().getSchemaName(), tableKey.getTableName(), true);
                     TreeItem<LookupTreeNode> item = new TreeItem<>(node);
                     schemaNode.getChildren().add(item);
                     return item;
@@ -370,7 +374,7 @@ public class ConnectionSettingsController {
 
 
                 SchemaKey schemaKey = columnKey.getTableKey().getSchemaKey();
-                LookupTreeNode newNode = new LookupTreeNode(schemaKey.getSchemaName(), columnKey.getColumnName(), false);
+                LookupTreeNode newNode = new LookupTreeNode(schemaKey.getSchemaName(), columnKey.getColumn(), false);
                 TreeItem<LookupTreeNode> columnNode = new TreeItem<>(newNode);
                 tableNode.getChildren().add(columnNode);
                 newNode.includedProperty().bindBidirectional(val);

@@ -35,7 +35,7 @@ public final class ConnectionSettings {
 
     /** Колонки для поиска */
     private final Map<ColumnKey, BooleanProperty> lookupableColumns = Maps.newLinkedHashMap();
-
+ // ->
     public ConnectionSettings() {
     }
 
@@ -63,7 +63,7 @@ public final class ConnectionSettings {
     }
 
     public void setLookupableColumn(String schemaName, String tableName, String columnName, boolean value) {
-        ColumnKey key = new ColumnKey(new TableKey(new SchemaKey(schemaName), tableName), columnName);
+        ColumnKey key = new ColumnKey(schemaName, tableName, columnName);
         lookupableColumns.computeIfAbsent(key, ck -> new SimpleBooleanProperty()).set(value);
     }
 
@@ -116,7 +116,7 @@ public final class ConnectionSettings {
     }
 
     public boolean isLookupable(String schemaName, String tableName, String columnName) {
-        ColumnKey key = new ColumnKey(new TableKey(new SchemaKey(schemaName), tableName), columnName);
+        ColumnKey key = new ColumnKey(schemaName, tableName, columnName);
         if (!lookupableColumns.containsKey(key)) {
             return false;
         }
