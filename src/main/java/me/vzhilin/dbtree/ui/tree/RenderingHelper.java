@@ -5,6 +5,7 @@ import me.vzhilin.catalog.Column;
 import me.vzhilin.catalog.ForeignKey;
 import me.vzhilin.catalog.ForeignKeyColumn;
 import me.vzhilin.catalog.PrimaryKeyColumn;
+import me.vzhilin.db.ObjectKey;
 import me.vzhilin.db.Row;
 
 import java.util.ArrayList;
@@ -33,6 +34,28 @@ public class RenderingHelper {
             vals = "<" + vals + ">";
         }
         return new ForeignKeyRow(cols, vals);
+    }
+
+    public String renderMapping(ForeignKey fk) {
+        List<String> fkColumns = new ArrayList<>();
+        List<String> pkColumns = new ArrayList<>();
+        fk.getColumnMapping().forEach(new BiConsumer<PrimaryKeyColumn, ForeignKeyColumn>() {
+            @Override
+            public void accept(PrimaryKeyColumn primaryKeyColumn, ForeignKeyColumn foreignKeyColumn) {
+                fkColumns.add(foreignKeyColumn.getColumn().getName());
+                pkColumns.add(primaryKeyColumn.getColumn().getName());
+            }
+        });
+
+        String fkString = "(" + Joiner.on(',').join(fkColumns)+ ")";
+        String pkString = Joiner.on(',').join(pkColumns);
+        return fkString + "->" + fk.getPkTable().getName() + "(" + pkString + ")";
+    }
+
+    public String renderKey(ObjectKey key) {
+        List<String> vs = new ArrayList<>();
+        key.forEach((pkc, value) -> vs.add(pkc.getName() + "=" + value));
+        return Joiner.on(',').join(vs);
     }
 
     public static final class ForeignKeyRow {

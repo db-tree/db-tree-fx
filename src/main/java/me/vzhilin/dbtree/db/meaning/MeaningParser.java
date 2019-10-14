@@ -79,11 +79,14 @@ public final class MeaningParser {
         @Override
         public Expression visitSimple_column(MeaningfulParser.Simple_columnContext ctx) {
             String columnName = ctx.getText();
-            if (!table.hasColumn(columnName)) {
-                throw new ColumnNotFound(table, columnName);
+            if (table.hasColumn(columnName)) {
+                return new ColumnExpression(table.getColumn(columnName));
             }
 
-            return new ColumnExpression(table.getColumn(columnName));
+            if (table.hasForeignKey(columnName)) {
+                return new ForeignKeyExpression(table.getForeignKeys().get(columnName));
+            }
+            throw new ColumnNotFound(table, columnName);
         }
 
         @Override

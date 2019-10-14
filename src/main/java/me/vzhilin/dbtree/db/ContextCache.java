@@ -5,6 +5,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 public final class ContextCache {
@@ -17,13 +18,13 @@ public final class ContextCache {
                 .build(new CacheLoader<ContextKey, DbContext>() {
                     @Override
                     public DbContext load(ContextKey dsKey) throws Exception {
-                        return new DbContext(dsKey.driverClazz, dsKey.jdbcUrl, dsKey.login, dsKey.password, dsKey.pattern);
+                        return new DbContext(dsKey.driverClazz, dsKey.jdbcUrl, dsKey.login, dsKey.password, dsKey.pattern, dsKey.schemas);
                     }
                 });
     }
 
-    public DbContext getContext(String driverClazz, String jdbcUrl, String login, String password, String pattern) throws ExecutionException {
-        return cache.get(new ContextKey(driverClazz, jdbcUrl, login, password, pattern));
+    public DbContext getContext(String driverClazz, String jdbcUrl, String login, String password, String pattern, Set<String> schemas) throws ExecutionException {
+        return cache.get(new ContextKey(driverClazz, jdbcUrl, login, password, pattern, schemas));
     }
 
     private final static class ContextKey {
@@ -32,29 +33,33 @@ public final class ContextCache {
         private final String login;
         private final String password;
         private final String pattern;
+        private final Set<String> schemas;
 
-        public ContextKey(String driverClazz, String jdbcUrl, String login, String password, String pattern) {
+        public ContextKey(String driverClazz, String jdbcUrl, String login, String password, String pattern, Set<String> schemas) {
             this.driverClazz = driverClazz;
             this.jdbcUrl = jdbcUrl;
             this.login = login;
             this.password = password;
             this.pattern = pattern;
+            this.schemas = schemas;
         }
 
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            ContextKey contextKey = (ContextKey) o;
-            return Objects.equals(driverClazz, contextKey.driverClazz) &&
-                    Objects.equals(jdbcUrl, contextKey.jdbcUrl) &&
-                    Objects.equals(login, contextKey.login) &&
-                    Objects.equals(pattern, contextKey.pattern);
+            ContextKey that = (ContextKey) o;
+            return driverClazz.equals(that.driverClazz) &&
+                    jdbcUrl.equals(that.jdbcUrl) &&
+                    login.equals(that.login) &&
+                    password.equals(that.password) &&
+                    pattern.equals(that.pattern) &&
+                    schemas.equals(that.schemas);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(driverClazz, jdbcUrl, login);
+            return Objects.hash(driverClazz, jdbcUrl, login, password, pattern, schemas);
         }
     }
 }

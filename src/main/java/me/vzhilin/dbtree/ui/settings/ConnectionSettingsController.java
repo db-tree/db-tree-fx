@@ -56,6 +56,9 @@ public class ConnectionSettingsController {
     private TextField tableNamePattern;
 
     @FXML
+    private TextField schemas;
+
+    @FXML
     private TableView<Template> templateTable;
 
     @FXML
@@ -69,10 +72,9 @@ public class ConnectionSettingsController {
     private ConnectionSettings settings;
     private ApplicationContext appContext;
 
-
     private DbContext getContext() {
         try {
-            return appContext.newQueryContext(driverClass.getText(), jdbcUrl.getText(), username.getText(), password.getText(), tableNamePattern.getText());
+            return appContext.newQueryContext(driverClass.getText(), jdbcUrl.getText(), username.getText(), password.getText(), tableNamePattern.getText(), parseSchemas(schemas.getText()));
         } catch (ExecutionException e) {
             LOG.error(e, e);
         }
@@ -174,7 +176,12 @@ public class ConnectionSettingsController {
 
         executor.execute(() -> {
             try {
-                DbContext ctx = new DbContext(driverClass.getText(), jdbcUrl.getText(), username.getText(), password.getText(), tableNamePattern.getText());
+                String driverClazz = driverClass.getText();
+                String url = jdbcUrl.getText();
+                String name = username.getText();
+                String pass = password.getText();
+                String pattern = tableNamePattern.getText();
+                DbContext ctx = new DbContext(driverClazz, url, name, pass, pattern, parseSchemas(schemas.getText()));
                 Platform.runLater(() -> {
                     testMessageLabel.setTextFill(Color.DARKGREEN);
                     testMessageLabel.setText("OK");
@@ -193,6 +200,17 @@ public class ConnectionSettingsController {
                 });
             }
         });
+    }
+
+    private Set<String> parseSchemas(String text) {
+        Scanner sc = new Scanner(text);
+        sc.useDelimiter(",");
+
+        Set<String> result = new HashSet<>();
+        while (sc.hasNext()) {
+            result.add(sc.next().trim());
+        }
+        return result;
     }
 
     private void refreshLookupTree(Catalog catalog, Set<Table> schemaTables) {

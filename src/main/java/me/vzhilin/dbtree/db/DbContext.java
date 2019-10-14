@@ -4,6 +4,7 @@ import me.vzhilin.adapter.DatabaseAdapter;
 import me.vzhilin.adapter.oracle.OracleDatabaseAdapter;
 import me.vzhilin.catalog.Catalog;
 import me.vzhilin.catalog.CatalogLoader;
+import me.vzhilin.catalog.filter.AcceptSchema;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
@@ -12,14 +13,16 @@ import javax.sql.DataSource;
 import java.io.Closeable;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.Set;
 
 public final class DbContext implements Closeable {
     private final Connection connection;
     private final DatabaseAdapter adapter;
     private final Catalog catalog;
-    private QueryRunner runner;
+    private final QueryRunner runner;
 
-    public DbContext(String driverClazz, String jdbcUrl, String login, String password, String pattern) throws SQLException {
+    public DbContext(String driverClazz, String jdbcUrl, String login, String password, String pattern, Set<String> schemas) throws SQLException {
         BasicDataSource ds = new BasicDataSource();
         ds.setDriverClassName(driverClazz);
         ds.setUrl(jdbcUrl);
@@ -29,7 +32,15 @@ public final class DbContext implements Closeable {
 
         runner = new WrappedQueryRunner(connection);
         adapter = new OracleDatabaseAdapter();
-        catalog = new CatalogLoader(adapter).load(ds, "VOSHOD");
+        catalog = new CatalogLoader(adapter).load(ds, new AcceptSchema(getSchemas(schemas)));
+    }
+
+    private Set<String> getSchemas(Set<String> schemas) throws SQLException {
+        if (schemas.isEmpty()) {
+             return Collections.singleton(adapter.defaultSchema(connection));
+        } else {
+            return schemas;
+        }
     }
 
     public Catalog getCatalog() {

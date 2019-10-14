@@ -1,7 +1,6 @@
 package me.vzhilin.dbtree.db.meaning.exp;
-
-
 import me.vzhilin.db.Row;
+import me.vzhilin.dbtree.ui.tree.RenderingHelper;
 
 public final class ExpressionValue {
     private final Row row;
@@ -25,7 +24,7 @@ public final class ExpressionValue {
     @Override
     public String toString() {
         if (isRow) {
-            return String.valueOf(row.getKey());
+            return String.valueOf(new RenderingHelper().renderKey(row.getKey()));
         } else {
             return String.valueOf(value);
         }

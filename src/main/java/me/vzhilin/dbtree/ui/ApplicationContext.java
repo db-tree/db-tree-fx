@@ -6,6 +6,7 @@ import me.vzhilin.dbtree.db.QueryContext;
 import me.vzhilin.dbtree.ui.conf.ConnectionSettings;
 import me.vzhilin.dbtree.ui.conf.Settings;
 
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 public final class ApplicationContext {
@@ -24,11 +25,17 @@ public final class ApplicationContext {
             queryContext.close();
         }
 
-        queryContext = new QueryContext(contextCache.getContext(connection.getDriverClass(), connection.getJdbcUrl(), connection.getUsername(), connection.getPassword(), connection.getTableNamePattern()), connection);
+        String driverClass = connection.getDriverClass();
+        String jdbcUrl = connection.getJdbcUrl();
+        String name = connection.getUsername();
+        String pass = connection.getPassword();
+        String pattern = connection.getTableNamePattern();
+        Set<String> schemas = connection.getSchemas();
+        queryContext = new QueryContext(contextCache.getContext(driverClass, jdbcUrl, name, pass, pattern, schemas), connection);
         return queryContext;
     }
 
-    public DbContext newQueryContext(String driverClazz, String jdbcUrlText, String usernameText, String password, String pattern) throws ExecutionException {
-        return contextCache.getContext(driverClazz, jdbcUrlText, usernameText, password, pattern);
+    public DbContext newQueryContext(String driverClazz, String jdbcUrlText, String usernameText, String password, String pattern, Set<String> schemas) throws ExecutionException {
+        return contextCache.getContext(driverClazz, jdbcUrlText, usernameText, password, pattern, schemas);
     }
 }

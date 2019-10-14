@@ -4,9 +4,7 @@ import com.google.common.collect.Maps;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Настройки подключений
@@ -35,6 +33,8 @@ public final class ConnectionSettings {
 
     /** Колонки для поиска */
     private final Map<ColumnKey, BooleanProperty> lookupableColumns = Maps.newLinkedHashMap();
+
+    private final Set<String> schemas = new HashSet<>();
  // ->
     public ConnectionSettings() {
     }
@@ -46,6 +46,7 @@ public final class ConnectionSettings {
         username.set(cs.getUsername());
         password.set(cs.getPassword());
         tableNamePatternProperty.set(cs.getTableNamePattern());
+        schemas.addAll(cs.schemas);
 
         for (Template t: cs.templates) {
             templates.add(new Template(t.getSchemaName(), t.getTableName(), t.getTemplate()));
@@ -109,6 +110,10 @@ public final class ConnectionSettings {
 
     public ListProperty<Template> templatesProperty() {
         return templates;
+    }
+
+    public Set<String> getSchemas() {
+        return Collections.unmodifiableSet(schemas);
     }
 
     @Override public String toString() {

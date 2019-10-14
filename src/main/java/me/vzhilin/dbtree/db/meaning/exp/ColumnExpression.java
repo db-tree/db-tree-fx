@@ -3,7 +3,7 @@ package me.vzhilin.dbtree.db.meaning.exp;
 import me.vzhilin.catalog.Column;
 import me.vzhilin.db.Row;
 
-public class ColumnExpression implements Expression {
+public final class ColumnExpression implements Expression {
     private final Column column;
 
     public ColumnExpression(Column column) {

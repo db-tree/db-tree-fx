@@ -137,16 +137,23 @@ public final class AutoCompletion {
                 HBox hBox = new HBox();
                 hBox.setSpacing(5);
                 ObservableList<Node> ch = hBox.getChildren();
-                Region r2 = new Region();
-                r2.setMaxWidth(26);
-                r2.setMinWidth(26);
-                if (item.isFk()) {
-                    r2.getStyleClass().add("fk-region");
-                } else
+
                 if (item.isPk()) {
+                    Region r2 = new Region();
+                    r2.setMaxWidth(26);
+                    r2.setMinWidth(26);
                     r2.getStyleClass().add("pk-region");
+                    ch.add(r2);
                 }
-                ch.add(r2);
+
+                if (item.isFk()) {
+                    Region r2 = new Region();
+                    r2.setMaxWidth(26);
+                    r2.setMinWidth(26);
+                    r2.getStyleClass().add("fk-region");
+                    ch.add(r2);
+                }
+
                 Label fieldLabel = new Label(item.getColumn());
                 ch.add(fieldLabel);
                 Region r = new Region();

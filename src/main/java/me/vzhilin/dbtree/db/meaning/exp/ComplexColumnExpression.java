@@ -43,10 +43,12 @@ public class ComplexColumnExpression implements Expression {
                     }
                 }
             }
+            else
+            if (table.hasForeignKey(column)) {
+                current = current.forwardReference(table.getForeignKeys().get(column));
+                continue;
+            }
 
-//            if (refs.containsKey(column)) {
-//                current = refs.get(column);
-//            } else
             if (!iterator.hasNext()) {
                 return new ExpressionValue(current.get(column));
             } else {
