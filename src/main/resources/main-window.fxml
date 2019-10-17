@@ -25,6 +25,7 @@
             <TreeTableView fx:id="treeTable" prefHeight="277.0" prefWidth="364.0" BorderPane.alignment="CENTER">
               <columns>
                 <TreeTableColumn fx:id="itemColumn" prefWidth="75.0" text="Item" />
+                <TreeTableColumn fx:id="tableColumn" prefWidth="75.0" text="Table" />
                 <TreeTableColumn fx:id="valueColumn" prefWidth="75.0" text="Value" />
                   <TreeTableColumn fx:id="meaningfulValueColumn" prefWidth="75.0" text="Meaningful value" />
               </columns>

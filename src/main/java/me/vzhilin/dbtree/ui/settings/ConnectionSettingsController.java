@@ -352,7 +352,7 @@ public class ConnectionSettingsController {
         this.connectionName.setText(connectionName);
     }
 
-    public void bindSettings(ConnectionSettings settings) {
+    public void bindSettingsToUI(ConnectionSettings settings) {
         connectionName.textProperty().bindBidirectional(settings.connectionNameProperty());
         driverClass.textProperty().bindBidirectional(settings.driverClassProperty());
         jdbcUrl.textProperty().bindBidirectional(settings.jdbcUrlProperty());
@@ -400,6 +400,9 @@ public class ConnectionSettingsController {
         });
 
         lookupTreeView.setRoot(root);
+        if (root.getChildren().size() == 1) {
+            root.getChildren().get(0).setExpanded(true);
+        }
     }
 
     private class MeaningTableCell extends TableCell<Template, TemplateCell> {

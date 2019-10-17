@@ -1,42 +1,47 @@
 package me.vzhilin.dbtree.ui;
 
 import com.google.common.collect.Iterables;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.scene.image.Image;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import me.vzhilin.adapter.oracle.OracleDatabaseAdapter;
+import me.vzhilin.adapter.DatabaseAdapter;
 import me.vzhilin.catalog.Catalog;
+import me.vzhilin.catalog.Column;
+import me.vzhilin.catalog.Schema;
 import me.vzhilin.catalog.Table;
 import me.vzhilin.db.Row;
 import me.vzhilin.db.RowContext;
 import me.vzhilin.dbtree.db.DbContext;
 import me.vzhilin.dbtree.db.QueryContext;
+import me.vzhilin.dbtree.ui.conf.ColumnKey;
 import me.vzhilin.dbtree.ui.conf.ConnectionSettings;
 import me.vzhilin.dbtree.ui.conf.Settings;
 import me.vzhilin.dbtree.ui.settings.SettingsController;
-import me.vzhilin.dbtree.ui.tree.*;
+import me.vzhilin.dbtree.ui.tree.CountNode;
+import me.vzhilin.dbtree.ui.tree.TreeTableMeaningCell;
+import me.vzhilin.dbtree.ui.tree.TreeTableNode;
 import me.vzhilin.search.CountOccurences;
+import me.vzhilin.search.Filter;
 import me.vzhilin.search.SearchInTable;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.function.BiConsumer;
 
@@ -51,6 +56,9 @@ public class MainWindowController {
 
     @FXML
     private TreeTableColumn<TreeTableNode, String> itemColumn;
+
+    @FXML
+    private TreeTableColumn<TreeTableNode, String> tableColumn;
 
     @FXML
     private TreeTableColumn<TreeTableNode, String> valueColumn;
@@ -77,6 +85,11 @@ public class MainWindowController {
         itemColumn.setCellValueFactory(v -> v.getValue().getValue().itemColumnProperty());
         itemColumn.setSortable(false);
         itemColumn.setCellFactory(param -> new ItemTreeTableCell());
+
+        tableColumn.setCellFactory(param -> new TableTreeTableCell());
+        tableColumn.setSortable(false);
+        tableColumn.setEditable(false);
+        tableColumn.setCellValueFactory(v -> v.getValue().getValue().tableColumnProperty());
 
         valueColumn.setCellValueFactory(v -> v.getValue().getValue().valueColumnProperty());
         valueColumn.setSortable(false);
@@ -120,20 +133,22 @@ public class MainWindowController {
 
         QueryContext queryContext = appContext.newQueryContext(connection.getConnectionName());
         ObservableList<TreeItem<TreeTableNode>> ch = newRoot.getChildren();
+        Filter filter = filterFor(queryContext.getSettings().getLookupableColumns());
         DbContext dbContext = queryContext.getDbContext();
         Connection conn = dbContext.getConnection();
         Catalog catalog = dbContext.getCatalog();
         QueryRunner runner = dbContext.getRunner();
-        OracleDatabaseAdapter adapter = new OracleDatabaseAdapter();
+        DatabaseAdapter adapter = dbContext.getAdapter();
         RowContext ctx = new RowContext(catalog, adapter, conn, runner);
         ctx.setAttribute("query_context", queryContext);
-        CountOccurences c = new CountOccurences(ctx);
-        Map<Table, Long> rs = c.count(textField.getText());
+        final String searchText = textField.getText();
+        CountOccurences c = new CountOccurences(ctx, searchText);
+        Map<Table, Long> rs = c.count(filter);
         rs.forEach(new BiConsumer<Table, Long>() {
             @Override
             public void accept(Table table, Long count) {
-                SearchInTable search = new SearchInTable(ctx, table);
-                Iterable<Row> iter = search.search(textField.getText());
+                SearchInTable search = new SearchInTable(ctx, table, searchText);
+                Iterable<Row> iter = search.search(filter);
                 ch.add(new CountNode(iter, table, count));
             }
         });
@@ -142,6 +157,36 @@ public class MainWindowController {
         if (ch.size() == 1) {
             ch.get(0).setExpanded(true);
         }
+    }
+
+    private Filter filterFor(Map<ColumnKey, BooleanProperty> lookupableColumns) {
+        Set<String> schemas = new HashSet<>();
+        Set<String> tables = new HashSet<>();
+        Set<String> columns = new HashSet<>();
+
+        lookupableColumns.forEach((columnKey, booleanProperty) -> {
+            if (booleanProperty.getValue()) {
+                schemas.add(columnKey.getSchema());
+                tables.add(columnKey.getTable());
+                columns.add(columnKey.getColumn());
+            }
+        });
+        return new Filter() {
+            @Override
+            public boolean accept(Schema schema) {
+                return schemas.contains(schema.getName());
+            }
+
+            @Override
+            public boolean accept(Table table) {
+                return tables.contains(table.getName());
+            }
+
+            @Override
+            public boolean accept(Column column) {
+                return columns.contains(column.getName());
+            }
+        };
     }
 
     @FXML
@@ -213,39 +258,18 @@ public class MainWindowController {
         this.appContext = appContext;
     }
 
+    private final static class TableTreeTableCell extends TreeTableCell<TreeTableNode, String> {
+        @Override
+        protected void updateItem(String item, boolean empty) {
+            super.updateItem(item, empty);
+            super.setText(item);
+        }
+    }
+
     private static class ItemTreeTableCell extends TreeTableCell<TreeTableNode, String> {
         @Override protected void updateItem(String item, boolean empty) {
           super.updateItem(item, empty);
-
-          if (item == null || empty) {
-              super.setText(null);
-              super.setGraphic(null);
-          } else {
-              TreeItem<TreeTableNode> treeItem = getTreeTableRow().getTreeItem();
-              if (treeItem instanceof ToOneNode) {
-                  HBox hBox = new HBox();
-                  ObservableList<Node> ch = hBox.getChildren();
-                  ch.add(new Label(item));
-                  Region r = new Region();
-                  HBox.setHgrow(r, Priority.ALWAYS);
-                  ch.add(r);
-                  Row row = ((ToOneNode) treeItem).getRow();
-                  if (row != null) {
-                      ch.add(new Label(row.getTable().getName()));
-                  }
-                  setGraphic(hBox);
-              } else
-              if (treeItem instanceof Paging.PagingItem){
-                  HBox hBox = new HBox();
-                  ObservableList<Node> ch = hBox.getChildren();
-                  Button loadMoreButton = new Button("More...");
-                  loadMoreButton.setOnAction((Paging.PagingItem) treeItem);
-                  ch.add(loadMoreButton);
-                  setGraphic(hBox);
-              } else {
-                  setGraphic(new Label(item));
-              }
-          }
+          super.setText(item);
       }
     }
 }

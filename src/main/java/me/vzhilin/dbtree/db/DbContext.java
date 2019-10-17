@@ -2,6 +2,7 @@ package me.vzhilin.dbtree.db;
 
 import me.vzhilin.adapter.DatabaseAdapter;
 import me.vzhilin.adapter.oracle.OracleDatabaseAdapter;
+import me.vzhilin.adapter.postgres.PostgresqlAdapter;
 import me.vzhilin.catalog.Catalog;
 import me.vzhilin.catalog.CatalogLoader;
 import me.vzhilin.catalog.filter.AcceptSchema;
@@ -31,8 +32,22 @@ public final class DbContext implements Closeable {
         connection = ds.getConnection();
 
         runner = new WrappedQueryRunner(connection);
-        adapter = new OracleDatabaseAdapter();
+        adapter = chooseAdapter(driverClazz);
         catalog = new CatalogLoader(adapter).load(ds, new AcceptSchema(getSchemas(schemas)));
+    }
+
+    private DatabaseAdapter chooseAdapter(String driverClazz) {
+        switch (driverClazz) {
+            case "org.postgresql.Driver":
+                return new PostgresqlAdapter();
+            case "oracle.jdbc.OracleDriver":
+                return new OracleDatabaseAdapter();
+        }
+        throw new RuntimeException("unsupported driver: " + driverClazz);
+    }
+
+    public DatabaseAdapter getAdapter() {
+        return adapter;
     }
 
     private Set<String> getSchemas(Set<String> schemas) throws SQLException {

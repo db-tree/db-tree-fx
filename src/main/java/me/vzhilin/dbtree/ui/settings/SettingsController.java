@@ -109,7 +109,7 @@ public final class SettingsController {
                         ConnectionSettingsController controller = loader.getController();
                         controller.setAppContext(appContext);
                         controller.setConnectoinName(newValue.getValue().toString());
-                        controller.bindSettings(settings);
+                        controller.bindSettingsToUI(settings);
 
                         settings.connectionNameProperty().set(newValue.getValue().toString());
                         stackPane.getChildren().add(root);

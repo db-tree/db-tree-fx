@@ -9,11 +9,13 @@ import me.vzhilin.db.Row;
 public final class TreeTableNode {
     private StringProperty itemColumnProperty = new SimpleStringProperty();
     private StringProperty valueColumnProperty = new SimpleStringProperty();
+    private StringProperty tableColumnProperty = new SimpleStringProperty();
     private SimpleObjectProperty<Row> meaningfulColumnProperty = new SimpleObjectProperty<>();
 
     public TreeTableNode(String column, String value, Row row) {
         itemColumnProperty.set(column);
         valueColumnProperty.set(value);
+        tableColumnProperty.set(row == null ? "" : row.getTable().getName());
         meaningfulColumnProperty.set(row);
     }
 
@@ -27,5 +29,9 @@ public final class TreeTableNode {
 
     public ObservableValue<Row> meaningfulValueColumnProperty() {
         return meaningfulColumnProperty;
+    }
+
+    public ObservableValue<String> tableColumnProperty() {
+        return tableColumnProperty;
     }
 }

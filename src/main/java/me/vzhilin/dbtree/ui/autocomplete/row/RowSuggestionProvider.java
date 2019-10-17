@@ -1,12 +1,10 @@
 package me.vzhilin.dbtree.ui.autocomplete.row;
 
-import com.google.common.base.Joiner;
 import me.vzhilin.catalog.*;
 import me.vzhilin.db.Row;
 import me.vzhilin.dbtree.ui.autocomplete.AutocompletionCell;
 import me.vzhilin.dbtree.ui.autocomplete.SuggestionProvider;
 import me.vzhilin.dbtree.ui.tree.RenderingHelper;
-import me.vzhilin.util.BiMap;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -50,13 +48,13 @@ public final class RowSuggestionProvider implements SuggestionProvider<Autocompl
             @Override
             public void accept(String name, Column column) {
                 Set<ForeignKey> fks = column.getForeignKeys();
-//                if (fks.size() > 1) {
+                if (fks.size() > 1) {
                     for (ForeignKey fk: fks) {
                         if (fk.getFkName().startsWith(text) && usedForeignKeys.add(fk)) {
                             cells.add(new AutocompletionCell(fk.getFkName(), false, true, suggContext.getRow().forwardReference(fk)));
                         }
                     }
-//                }
+                }
             }
         });
 
