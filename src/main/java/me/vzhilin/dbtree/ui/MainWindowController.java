@@ -1,9 +1,9 @@
 package me.vzhilin.dbtree.ui;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.StringProperty;
+import javafx.application.Platform;
+import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -42,11 +42,9 @@ import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
 
 public class MainWindowController {
@@ -81,6 +79,7 @@ public class MainWindowController {
 
     @FXML
     private TextArea logView = new TextArea();
+    private IntegerProperty logErrors = new SimpleIntegerProperty();
 
     private Settings settings;
 
@@ -140,10 +139,12 @@ public class MainWindowController {
 
         showLog.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean show) {
                 ObservableList<Node> items = splitPane.getItems();
                 final DoubleProperty positionProperty = settings.dividerPositionProperty();
-                if (newValue) {
+                if (show) {
+                    logErrors.set(0);
+                    showLog.setText("Log");
                     items.add(logView);
                     Double dividerPosition = positionProperty.getValue();
                     splitPane.setDividerPosition(0, dividerPosition == null ? 0.5: dividerPosition);
@@ -166,11 +167,9 @@ public class MainWindowController {
 
     @FXML
     private void onFindAction() throws ExecutionException {
-        TreeItem<TreeTableNode> newRoot = new TreeItem<>(new TreeTableNode("ROOT", "ROOT", null));
         ConnectionSettings connection = cbConnection.getValue();
-
         QueryContext queryContext = appContext.newQueryContext(connection.getConnectionName());
-        ObservableList<TreeItem<TreeTableNode>> ch = newRoot.getChildren();
+
         CatalogFilter filter = filterFor(queryContext.getSettings().getLookupableColumns());
         DbContext dbContext = queryContext.getDbContext();
         Connection conn = dbContext.getConnection();
@@ -182,19 +181,30 @@ public class MainWindowController {
         final String searchText = textField.getText();
         CountOccurences c = new CountOccurences(ctx, searchText);
         Map<Table, Long> rs = c.count(filter);
+
+        List<TreeItem<TreeTableNode>> countNodes = new ArrayList<>();
         rs.forEach(new BiConsumer<Table, Long>() {
             @Override
             public void accept(Table table, Long count) {
                 SearchInTable search = new SearchInTable(ctx, table, searchText);
                 Iterable<Row> iter = search.search(filter);
-                ch.add(new CountNode(iter, table, count));
+                countNodes.add(new CountNode(iter, table, count));
             }
         });
 
-        treeTable.setRoot(newRoot);
-        if (ch.size() == 1) {
-            ch.get(0).setExpanded(true);
-        }
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                TreeItem<TreeTableNode> newRoot = new TreeItem<>(new TreeTableNode("ROOT", "ROOT", null));
+                ObservableList<TreeItem<TreeTableNode>> ch = newRoot.getChildren();
+                ch.addAll(countNodes);
+
+                treeTable.setRoot(newRoot);
+                if (ch.size() == 1) {
+                    ch.get(0).setExpanded(true);
+                }
+            }
+        });
     }
 
     private CatalogFilter filterFor(Map<ColumnKey, BooleanProperty> lookupableColumns) {
@@ -294,6 +304,21 @@ public class MainWindowController {
 
     public void setAppContext(ApplicationContext appContext) {
         this.appContext = appContext;
+        appContext.setLogger(new ApplicationContext.Logger() {
+            @Override
+            public void log(String message) {
+                logView.appendText(new Date() + " " + message);
+            }
+
+            @Override
+            public void log(String message, Throwable ex) {
+                if (!showLog.isSelected()) {
+                    logErrors.setValue(logErrors.get() + 1);
+                    showLog.setText("Log (" + logErrors.get() + ")");
+                }
+                logView.appendText(new Date() + " " + message + "\n" + Throwables.getStackTraceAsString(ex) + "\n");
+            }
+        });
     }
 
     private final static class TableTreeTableCell extends TreeTableCell<TreeTableNode, String> {

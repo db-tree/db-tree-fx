@@ -11,8 +11,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import me.vzhilin.catalog.Catalog;
 import me.vzhilin.catalog.Column;
@@ -76,7 +74,7 @@ public class ConnectionSettingsController {
         try {
             return appContext.newQueryContext(driverClass.getText(), jdbcUrl.getText(), username.getText(), password.getText(), tableNamePattern.getText(), parseSchemas(schemas.getText()));
         } catch (ExecutionException e) {
-            LOG.error(e, e);
+            ApplicationContext.get().getLogger().log("Database error", e);
         }
 
         return null;
@@ -495,26 +493,27 @@ public class ConnectionSettingsController {
             } else {
                 String tableName = item.getTable();
                 String schemaName = item.getSchema();
-                if (getContext() != null) {
-                    Catalog catalog = getContext().getCatalog();
-                    ParsedTemplate exp = parse(catalog.getSchema(schemaName).getTable(tableName), item.getText());
-                    if (exp.isValid()) {
-                        setText(item.getText());
-                    } else {
-                        setText(null);
-                        HBox hBox = new HBox();
-
-                        Region r = new Region();
-                        r.setMaxWidth(16);
-                        r.setMinWidth(16);
-                        r.getStyleClass().add("validation-failure");
-                        hBox.getChildren().add(r);
-                        Label label = new Label(exp.getError());
-                        label.getStyleClass().add("validation-message");
-                        hBox.getChildren().add(label);
-                        setGraphic(hBox);
-                    }
-                }
+                // FIXME validation
+//                if (getContext() != null) {
+//                    Catalog catalog = getContext().getCatalog();
+//                    ParsedTemplate exp = parse(catalog.getSchema(schemaName).getTable(tableName), item.getText());
+//                    if (exp.isValid()) {
+//                        setText(item.getText());
+//                    } else {
+//                        setText(null);
+//                        HBox hBox = new HBox();
+//
+//                        Region r = new Region();
+//                        r.setMaxWidth(16);
+//                        r.setMinWidth(16);
+//                        r.getStyleClass().add("validation-failure");
+//                        hBox.getChildren().add(r);
+//                        Label label = new Label(exp.getError());
+//                        label.getStyleClass().add("validation-message");
+//                        hBox.getChildren().add(label);
+//                        setGraphic(hBox);
+//                    }
+//                }
             }
         }
 

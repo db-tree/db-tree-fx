@@ -13,9 +13,22 @@ public final class ApplicationContext {
     private final ContextCache contextCache = new ContextCache();
     private final Settings settings;
     private QueryContext queryContext;
+    private final static ThreadLocal<ApplicationContext> CURRENT = new ThreadLocal<>();
+    private Logger logger;
 
     public ApplicationContext(Settings settings) {
         this.settings = settings;
+        CURRENT.set(this);
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                logger.log("Uncaught Exception", e);
+            }
+        });
+    }
+
+    public static ApplicationContext get() {
+        return CURRENT.get();
     }
 
     public QueryContext newQueryContext(String connectionName) throws ExecutionException {
@@ -37,5 +50,18 @@ public final class ApplicationContext {
 
     public DbContext newQueryContext(String driverClazz, String jdbcUrlText, String usernameText, String password, String pattern, Set<String> schemas) throws ExecutionException {
         return contextCache.getContext(driverClazz, jdbcUrlText, usernameText, password, pattern, schemas);
+    }
+
+    public synchronized Logger getLogger() {
+        return logger;
+    }
+
+    public synchronized void setLogger(Logger logger) {
+        this.logger = logger;
+    }
+
+    public interface Logger {
+        void log(String message);
+        void log(String message, Throwable ex);
     }
 }

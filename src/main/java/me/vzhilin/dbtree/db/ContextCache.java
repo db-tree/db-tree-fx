@@ -1,9 +1,10 @@
 package me.vzhilin.dbtree.db;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import com.google.common.cache.*;
+import com.google.common.util.concurrent.ListenableFuture;
+import me.vzhilin.dbtree.ui.ApplicationContext;
 
+import java.sql.SQLException;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -15,6 +16,7 @@ public final class ContextCache {
         cache =
             CacheBuilder.newBuilder()
                 .maximumSize(10)
+                .removalListener((RemovalListener<ContextKey, DbContext>) n -> n.getValue().close())
                 .build(new CacheLoader<ContextKey, DbContext>() {
                     @Override
                     public DbContext load(ContextKey dsKey) throws Exception {
@@ -24,7 +26,18 @@ public final class ContextCache {
     }
 
     public DbContext getContext(String driverClazz, String jdbcUrl, String login, String password, String pattern, Set<String> schemas) throws ExecutionException {
-        return cache.get(new ContextKey(driverClazz, jdbcUrl, login, password, pattern, schemas));
+        ContextKey key = new ContextKey(driverClazz, jdbcUrl, login, password, pattern, schemas);
+        DbContext dbContext = cache.get(key);
+        try {
+            if (dbContext != null && dbContext.getConnection().isClosed()) {
+                cache.refresh(key);
+                return cache.get(key);
+            }
+        } catch (SQLException e) {
+            ApplicationContext.get().getLogger().log("Database Error", e);
+            return null;
+        }
+        return dbContext;
     }
 
     private final static class ContextKey {

@@ -30,6 +30,7 @@ public final class DbContext implements Closeable {
         ds.setUsername(login);
         ds.setPassword(password);
         connection = ds.getConnection();
+        connection.setReadOnly(true);
 
         runner = new WrappedQueryRunner(connection);
         adapter = chooseAdapter(driverClazz);
