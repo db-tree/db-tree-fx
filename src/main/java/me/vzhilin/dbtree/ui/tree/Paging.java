@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public final class Paging {
-    private final static int PAGE_SIZE = 200;
+    private final static int PAGE_SIZE = 20;
 
     public void addNodes(Iterator<Row> it, ObservableList<TreeItem<TreeTableNode>> ch) {
         add(it, ch);
@@ -31,14 +31,17 @@ public final class Paging {
     }
 
     private void add(Iterator<Row> it, ObservableList<TreeItem<TreeTableNode>> ch) {
+        List<TreeItem<TreeTableNode>> rs = new ArrayList<>(PAGE_SIZE);
+
         for (int i = 0; i < PAGE_SIZE && it.hasNext(); ++i) {
             Row r = it.next();
             Table table = r.getTable();
             PrimaryKey pk = table.getPrimaryKey().get();
             Map.Entry<String, String> e = toString(r, pk);
-            TreeTableNode newNode = new TreeTableNode(e.getKey(), e.getValue(), r);
-            ch.add(new ToOneNode(r, newNode));
+            rs.add(new ToOneNode(r, new TreeTableNode(e.getKey(), e.getValue(), r)));
         }
+
+        ch.addAll(rs);
     }
 
     private Map.Entry<String, String> toString(Row r, PrimaryKey pk) {
@@ -67,6 +70,7 @@ public final class Paging {
 
         @Override
         public void handle(ActionEvent event) {
+            setGraphic(null);
             ch.remove(this);
             add(it, ch);
             if (it.hasNext()) {

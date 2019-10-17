@@ -1,6 +1,8 @@
 package me.vzhilin.dbtree.ui.conf;
 
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,10 +17,19 @@ import java.util.ArrayList;
 public class Settings {
     private final static Logger LOG = Logger.getLogger(Settings.class);
 
+    private final DoubleProperty dividerPosition = new SimpleDoubleProperty();
     private final ListProperty<ConnectionSettings> connections = new SimpleListProperty<ConnectionSettings>(FXCollections.observableArrayList(new ArrayList<>()));
 
     public ObservableList<ConnectionSettings> getConnections() {
         return connections.get();
+    }
+
+    public double getDividerPosition() {
+        return dividerPosition.get();
+    }
+
+    public DoubleProperty dividerPositionProperty() {
+        return dividerPosition;
     }
 
     public ListProperty<ConnectionSettings> connectionsProperty() {

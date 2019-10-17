@@ -2,37 +2,40 @@ package me.vzhilin.dbtree.ui;
 
 import com.google.common.collect.Iterables;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.scene.image.Image;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import me.vzhilin.adapter.DatabaseAdapter;
 import me.vzhilin.catalog.Catalog;
-import me.vzhilin.catalog.Column;
-import me.vzhilin.catalog.Schema;
+import me.vzhilin.catalog.CatalogFilter;
 import me.vzhilin.catalog.Table;
 import me.vzhilin.db.Row;
 import me.vzhilin.db.RowContext;
 import me.vzhilin.dbtree.db.DbContext;
 import me.vzhilin.dbtree.db.QueryContext;
-import me.vzhilin.dbtree.ui.conf.ColumnKey;
-import me.vzhilin.dbtree.ui.conf.ConnectionSettings;
-import me.vzhilin.dbtree.ui.conf.Settings;
+import me.vzhilin.dbtree.ui.conf.*;
 import me.vzhilin.dbtree.ui.settings.SettingsController;
 import me.vzhilin.dbtree.ui.tree.CountNode;
+import me.vzhilin.dbtree.ui.tree.Paging;
 import me.vzhilin.dbtree.ui.tree.TreeTableMeaningCell;
 import me.vzhilin.dbtree.ui.tree.TreeTableNode;
 import me.vzhilin.search.CountOccurences;
-import me.vzhilin.search.Filter;
 import me.vzhilin.search.SearchInTable;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.log4j.Logger;
@@ -40,6 +43,7 @@ import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.sql.Connection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -68,6 +72,15 @@ public class MainWindowController {
 
     @FXML
     private TextField textField;
+
+    @FXML
+    private ToggleButton showLog;
+
+    @FXML
+    private SplitPane splitPane;
+
+    @FXML
+    private TextArea logView = new TextArea();
 
     private Settings settings;
 
@@ -124,6 +137,31 @@ public class MainWindowController {
                 };
             }
         });
+
+        showLog.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
+                ObservableList<Node> items = splitPane.getItems();
+                final DoubleProperty positionProperty = settings.dividerPositionProperty();
+                if (newValue) {
+                    items.add(logView);
+                    Double dividerPosition = positionProperty.getValue();
+                    splitPane.setDividerPosition(0, dividerPosition == null ? 0.5: dividerPosition);
+
+                    for (SplitPane.Divider dv: splitPane.getDividers()) {
+                        dv.positionProperty().addListener(new ChangeListener<Number>() {
+                            @Override
+                            public void changed(ObservableValue<? extends Number> v, Number oldValue, Number newValue) {
+                                positionProperty.setValue(newValue);
+                            }
+                        });
+                    }
+                } else {
+                    positionProperty.setValue(splitPane.getDividerPositions()[0]);
+                    items.remove(logView);
+                }
+            }
+        });
     }
 
     @FXML
@@ -133,7 +171,7 @@ public class MainWindowController {
 
         QueryContext queryContext = appContext.newQueryContext(connection.getConnectionName());
         ObservableList<TreeItem<TreeTableNode>> ch = newRoot.getChildren();
-        Filter filter = filterFor(queryContext.getSettings().getLookupableColumns());
+        CatalogFilter filter = filterFor(queryContext.getSettings().getLookupableColumns());
         DbContext dbContext = queryContext.getDbContext();
         Connection conn = dbContext.getConnection();
         Catalog catalog = dbContext.getCatalog();
@@ -159,32 +197,32 @@ public class MainWindowController {
         }
     }
 
-    private Filter filterFor(Map<ColumnKey, BooleanProperty> lookupableColumns) {
+    private CatalogFilter filterFor(Map<ColumnKey, BooleanProperty> lookupableColumns) {
         Set<String> schemas = new HashSet<>();
-        Set<String> tables = new HashSet<>();
-        Set<String> columns = new HashSet<>();
+        Set<TableKey> tables = new HashSet<>();
+        Set<ColumnKey> columns = new HashSet<>();
 
         lookupableColumns.forEach((columnKey, booleanProperty) -> {
             if (booleanProperty.getValue()) {
                 schemas.add(columnKey.getSchema());
-                tables.add(columnKey.getTable());
-                columns.add(columnKey.getColumn());
+                tables.add(columnKey.getTableKey());
+                columns.add(columnKey);
             }
         });
-        return new Filter() {
+        return new CatalogFilter() {
             @Override
-            public boolean accept(Schema schema) {
-                return schemas.contains(schema.getName());
+            public boolean acceptSchema(String schema) {
+                return schemas.contains(schema);
             }
 
             @Override
-            public boolean accept(Table table) {
-                return tables.contains(table.getName());
+            public boolean acceptTable(String schema, String table) {
+                return tables.contains(new TableKey(new SchemaKey(schema), table));
             }
 
             @Override
-            public boolean accept(Column column) {
-                return columns.contains(column.getName());
+            public boolean acceptColumn(String schema, String table, String column) {
+                return columns.contains(new ColumnKey(schema, table, column));
             }
         };
     }
@@ -267,9 +305,27 @@ public class MainWindowController {
     }
 
     private static class ItemTreeTableCell extends TreeTableCell<TreeTableNode, String> {
+        private final static Pane EMPTY_PANE = new Pane();
         @Override protected void updateItem(String item, boolean empty) {
-          super.updateItem(item, empty);
-          super.setText(item);
+            TreeItem<TreeTableNode> treeItem = getTreeTableRow().getTreeItem();
+            if (item == null || empty) {
+                super.setText(null);
+            } else {
+                if (treeItem instanceof Paging.PagingItem) {
+                    Pane hBox = new Pane();
+                    ObservableList<Node> ch = hBox.getChildren();
+                    Button loadMoreButton = new Button("More...");
+                    loadMoreButton.setOnAction((Paging.PagingItem) treeItem);
+                    ch.add(loadMoreButton);
+                    treeItem.setGraphic(hBox);
+                    setText(null);
+                } else {
+                    setText(item);
+                    if (treeItem != null) {
+                        treeItem.setGraphic(EMPTY_PANE);
+                    }
+                }
+            }
       }
     }
 }
