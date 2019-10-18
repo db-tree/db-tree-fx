@@ -1,6 +1,7 @@
 package me.vzhilin.dbtree.db;
 
 import me.vzhilin.adapter.DatabaseAdapter;
+import me.vzhilin.adapter.mariadb.MariadbDatabaseAdapter;
 import me.vzhilin.adapter.oracle.OracleDatabaseAdapter;
 import me.vzhilin.adapter.postgres.PostgresqlAdapter;
 import me.vzhilin.catalog.Catalog;
@@ -43,6 +44,8 @@ public final class DbContext implements Closeable {
                 return new PostgresqlAdapter();
             case "oracle.jdbc.OracleDriver":
                 return new OracleDatabaseAdapter();
+            case "org.mariadb.jdbc.Driver":
+                return new MariadbDatabaseAdapter();
         }
         throw new RuntimeException("unsupported driver: " + driverClazz);
     }

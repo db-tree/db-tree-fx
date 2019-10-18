@@ -11,6 +11,8 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import me.vzhilin.catalog.Catalog;
 import me.vzhilin.catalog.Column;
@@ -48,7 +50,7 @@ public class ConnectionSettingsController {
     private TextField username;
 
     @FXML
-    private TextField password;
+    private PasswordField password;
 
     @FXML
     private TextField tableNamePattern;
@@ -72,7 +74,13 @@ public class ConnectionSettingsController {
 
     private DbContext getContext() {
         try {
-            return appContext.newQueryContext(driverClass.getText(), jdbcUrl.getText(), username.getText(), password.getText(), tableNamePattern.getText(), parseSchemas(schemas.getText()));
+            String driver = driverClass.getText();
+            String url = jdbcUrl.getText();
+            String username = this.username.getText();
+            String pass = password.getText();
+            String pattern = tableNamePattern.getText();
+            Set<String> schemas = parseSchemas(this.schemas.getText());
+            return appContext.newQueryContext(driver, url, username, pass, pattern, schemas);
         } catch (ExecutionException e) {
             ApplicationContext.get().getLogger().log("Database error", e);
         }
@@ -491,29 +499,30 @@ public class ConnectionSettingsController {
             if ("".equals(item.getText())) {
                 setText("");
             } else {
+                setText(item.getText());
+
                 String tableName = item.getTable();
                 String schemaName = item.getSchema();
-                // FIXME validation
-//                if (getContext() != null) {
-//                    Catalog catalog = getContext().getCatalog();
-//                    ParsedTemplate exp = parse(catalog.getSchema(schemaName).getTable(tableName), item.getText());
-//                    if (exp.isValid()) {
-//                        setText(item.getText());
-//                    } else {
-//                        setText(null);
-//                        HBox hBox = new HBox();
-//
-//                        Region r = new Region();
-//                        r.setMaxWidth(16);
-//                        r.setMinWidth(16);
-//                        r.getStyleClass().add("validation-failure");
-//                        hBox.getChildren().add(r);
-//                        Label label = new Label(exp.getError());
-//                        label.getStyleClass().add("validation-message");
-//                        hBox.getChildren().add(label);
-//                        setGraphic(hBox);
-//                    }
-//                }
+                if (getContext() != null) {
+                    Catalog catalog = getContext().getCatalog();
+                    ParsedTemplate exp = parse(catalog.getSchema(schemaName).getTable(tableName), item.getText());
+                    if (exp.isValid()) {
+                        setText(item.getText());
+                    } else {
+                        setText(null);
+                        HBox hBox = new HBox();
+
+                        Region r = new Region();
+                        r.setMaxWidth(16);
+                        r.setMinWidth(16);
+                        r.getStyleClass().add("validation-failure");
+                        hBox.getChildren().add(r);
+                        Label label = new Label(exp.getError());
+                        label.getStyleClass().add("validation-message");
+                        hBox.getChildren().add(label);
+                        setGraphic(hBox);
+                    }
+                }
             }
         }
 
