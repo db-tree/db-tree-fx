@@ -6,7 +6,6 @@ import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,7 +15,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.scene.image.Image;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -44,7 +42,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
 
 public class MainWindowController {
@@ -307,16 +304,18 @@ public class MainWindowController {
         appContext.setLogger(new ApplicationContext.Logger() {
             @Override
             public void log(String message) {
-                logView.appendText(new Date() + " " + message);
+                Platform.runLater(() -> logView.appendText(new Date() + " " + message));
             }
 
             @Override
             public void log(String message, Throwable ex) {
-                if (!showLog.isSelected()) {
-                    logErrors.setValue(logErrors.get() + 1);
-                    showLog.setText("Log (" + logErrors.get() + ")");
-                }
-                logView.appendText(new Date() + " " + message + "\n" + Throwables.getStackTraceAsString(ex) + "\n");
+                Platform.runLater(() -> {
+                    if (!showLog.isSelected()) {
+                        logErrors.setValue(logErrors.get() + 1);
+                        showLog.setText("Log (" + logErrors.get() + ")");
+                    }
+                    logView.appendText(new Date() + " " + message + "\n" + Throwables.getStackTraceAsString(ex) + "\n");
+                });
             }
         });
     }
