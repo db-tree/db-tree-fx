@@ -34,7 +34,7 @@
                   <TextField fx:id="driverClass" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <TextField fx:id="jdbcUrl" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <TextField fx:id="username" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <TextField fx:id="password" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                  <PasswordField fx:id="password" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                   <TextField fx:id="schemas" GridPane.columnIndex="1" GridPane.rowIndex="5" promptText="default" />
                   <TextField fx:id="tableNamePattern" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                   <Button fx:id="connectButton" mnemonicParsing="false" onAction="#onTestButton" prefHeight="25.0" prefWidth="125.0" text="Connect" GridPane.rowIndex="7" />
