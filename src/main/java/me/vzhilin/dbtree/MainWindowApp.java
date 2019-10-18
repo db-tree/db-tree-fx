@@ -23,6 +23,7 @@ import java.util.Locale;
 
 public class MainWindowApp extends Application {
     private final static Logger LOG = Logger.getLogger(MainWindowApp.class);
+    private Settings settings;
 
     @Override public void start(Stage stage) throws Exception {
         Platform.setImplicitExit(true);
@@ -43,6 +44,7 @@ public class MainWindowApp extends Application {
         MainWindowController controller = loader.getController();
         load(controller);
         controller.setOwnerWindow(stage);
+
     }
 
     private void setIcon(Stage stage) {
@@ -50,7 +52,7 @@ public class MainWindowApp extends Application {
     }
 
     private void load(MainWindowController controller) {
-        Settings settings = readSettings();
+        settings = readSettings();
         controller.setSettings(settings);
         controller.setAppContext(new ApplicationContext(settings));
     }
@@ -62,5 +64,12 @@ public class MainWindowApp extends Application {
             LOG.error(e, e);
         }
         return new Settings();
+    }
+
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+
+        settings.save();
     }
 }
