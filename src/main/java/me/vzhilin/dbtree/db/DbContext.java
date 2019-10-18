@@ -5,8 +5,8 @@ import me.vzhilin.adapter.mariadb.MariadbDatabaseAdapter;
 import me.vzhilin.adapter.oracle.OracleDatabaseAdapter;
 import me.vzhilin.adapter.postgres.PostgresqlAdapter;
 import me.vzhilin.catalog.Catalog;
+import me.vzhilin.catalog.CatalogFilter;
 import me.vzhilin.catalog.CatalogLoader;
-import me.vzhilin.catalog.filter.AcceptSchema;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
@@ -17,12 +17,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 public final class DbContext implements Closeable {
     private final Connection connection;
     private final DatabaseAdapter adapter;
     private final Catalog catalog;
     private final QueryRunner runner;
+    private final static Pattern MATCH_ANY = Pattern.compile(".*");
 
     public DbContext(String driverClazz, String jdbcUrl, String login, String password, String pattern, Set<String> schemas) throws SQLException {
         BasicDataSource ds = new BasicDataSource();
@@ -35,7 +37,8 @@ public final class DbContext implements Closeable {
 
         runner = new WrappedQueryRunner(connection);
         adapter = chooseAdapter(driverClazz);
-        catalog = new CatalogLoader(adapter).load(ds, new AcceptSchema(getSchemas(schemas)));
+        Pattern compiledPattern = (pattern == null || pattern.isEmpty()) ? MATCH_ANY : Pattern.compile(pattern);
+        catalog = new CatalogLoader(adapter).load(ds, new PatternTableFilter(schemas, compiledPattern));
     }
 
     private DatabaseAdapter chooseAdapter(String driverClazz) {
@@ -103,6 +106,31 @@ public final class DbContext implements Closeable {
         @Override
         public DataSource getDataSource() {
             throw new UnsupportedOperationException();
+        }
+    }
+
+    private final static class PatternTableFilter implements CatalogFilter {
+        private final Set<String> schemas;
+        private final Pattern compiledPattern;
+
+        private PatternTableFilter(Set<String> schemas, Pattern compiledPattern) {
+            this.schemas = schemas;
+            this.compiledPattern = compiledPattern;
+        }
+
+        @Override
+        public boolean acceptSchema(String schemaName) {
+            return schemas.contains(schemaName);
+        }
+
+        @Override
+        public boolean acceptTable(String schemaName, String tableName) {
+            return schemas.contains(schemaName) && compiledPattern.matcher(tableName).matches();
+        }
+
+        @Override
+        public boolean acceptColumn(String schema, String table, String column) {
+            return true;
         }
     }
 }
