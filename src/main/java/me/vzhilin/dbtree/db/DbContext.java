@@ -37,8 +37,16 @@ public final class DbContext implements Closeable {
 
         runner = new WrappedQueryRunner(connection);
         adapter = chooseAdapter(driverClazz);
+        schemas = chooseSchemas(schemas);
         Pattern compiledPattern = (pattern == null || pattern.isEmpty()) ? MATCH_ANY : Pattern.compile(pattern);
         catalog = new CatalogLoader(adapter).load(ds, new PatternTableFilter(schemas, compiledPattern));
+    }
+
+    private Set<String> chooseSchemas(Set<String> schemas) throws SQLException {
+        if (schemas.isEmpty()) {
+            schemas = Collections.singleton(adapter.defaultSchema(connection));
+        }
+        return schemas;
     }
 
     private DatabaseAdapter chooseAdapter(String driverClazz) {

@@ -32,6 +32,7 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -68,7 +69,14 @@ public class ConnectionSettingsController {
     @FXML
     private Label testMessageLabel;
 
-    private final Executor executor = Executors.newSingleThreadExecutor();
+    private final Executor executor = Executors.newSingleThreadExecutor(new ThreadFactory() {
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread th = new Thread(r);
+            th.setDaemon(true);
+            return th;
+        }
+    });
 
     private ConnectionSettings settings;
     private ApplicationContext appContext;
@@ -509,22 +517,25 @@ public class ConnectionSettingsController {
                 String schemaName = item.getSchema();
                 if (getContext() != null) {
                     Catalog catalog = getContext().getCatalog();
-                    ParsedTemplate exp = parse(catalog.getSchema(schemaName).getTable(tableName), item.getText());
-                    if (exp.isValid()) {
-                        setText(item.getText());
-                    } else {
-                        setText(null);
-                        HBox hBox = new HBox();
+                    Table table = catalog.getSchema(schemaName).getTable(tableName);
+                    if (table != null) {
+                        ParsedTemplate exp = parse(table, item.getText());
+                        if (exp.isValid()) {
+                            setText(item.getText());
+                        } else {
+                            setText(null);
+                            HBox hBox = new HBox();
 
-                        Region r = new Region();
-                        r.setMaxWidth(16);
-                        r.setMinWidth(16);
-                        r.getStyleClass().add("validation-failure");
-                        hBox.getChildren().add(r);
-                        Label label = new Label(exp.getError());
-                        label.getStyleClass().add("validation-message");
-                        hBox.getChildren().add(label);
-                        setGraphic(hBox);
+                            Region r = new Region();
+                            r.setMaxWidth(16);
+                            r.setMinWidth(16);
+                            r.getStyleClass().add("validation-failure");
+                            hBox.getChildren().add(r);
+                            Label label = new Label(exp.getError());
+                            label.getStyleClass().add("validation-message");
+                            hBox.getChildren().add(label);
+                            setGraphic(hBox);
+                        }
                     }
                 }
             }
