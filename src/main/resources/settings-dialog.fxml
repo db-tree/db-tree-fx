@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane prefHeight="828.0" prefWidth="1048.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.vzhilin.dbtree.ui.settings.SettingsController">
+   <center>
+      <StackPane fx:id="stackPane">
+         <children>
+            <VBox />
+         </children>
+      </StackPane>
+   </center>
+   <left>
+      <TreeView fx:id="settingView" prefHeight="383.0" prefWidth="204.0" BorderPane.alignment="CENTER" />
+   </left>
+   <top>
+      <FlowPane hgap="5.0" prefHeight="0.0" prefWidth="200.0" vgap="5.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button styleClass="add-btn" fx:id="addButton" mnemonicParsing="false" onAction="#onAddButton" />
+            <Button styleClass="delete-btn" fx:id="removeButton" mnemonicParsing="false" onAction="#onRemoveButton" />
+            <Button styleClass="copy-btn" fx:id="copyButton" mnemonicParsing="false" onAction="#onCopyButton" />
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </BorderPane.margin>
+      </FlowPane>
+   </top>
+   <bottom>
+      <FlowPane alignment="CENTER_RIGHT" columnHalignment="RIGHT" hgap="5.0" maxHeight="0.0" prefHeight="200.0" prefWidth="200.0" rowValignment="TOP" vgap="5.0" BorderPane.alignment="TOP_RIGHT">
+         <children>
+            <Button fx:id="okButton" mnemonicParsing="false" onAction="#onOkButton" text="Ok" />
+            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelButton" text="Cancel" />
+         </children>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+      </FlowPane>
+   </bottom>
+</BorderPane>

@@ -1,0 +1,41 @@
+.add-btn {
+    -fx-background-image: url('../icons/add.png');
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-pref-width: 24px;
+
+}
+
+.delete-btn {
+    -fx-background-image: url('../icons/delete.png');
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-pref-width: 24px;
+}
+
+.copy-btn {
+    -fx-background-image: url('../icons/copy.png');
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-pref-width: 24px;
+}
+
+.validation-failure {
+    -fx-background-image: url('../icons/exclamation.png');
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+
+.validation-message {
+    -fx-text-fill: #A12312;
+    -fx-padding: 0 0 0 5;
+}
+
+.table-row-cell:selected .validation-message {
+    -fx-text-fill: #FFFFFF;
+}
+
+.tree-table-row-cell:selected .validation-message {
+    -fx-text-fill: #FFFFFF;
+}
+

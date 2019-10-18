@@ -1,0 +1,11 @@
+.fk-region {
+    -fx-background-image: url('../icons/fk_icon.png');
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+
+.pk-region {
+    -fx-background-image: url('../icons/pk.png');
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
