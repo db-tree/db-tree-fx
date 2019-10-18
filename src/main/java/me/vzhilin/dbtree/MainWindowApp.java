@@ -2,6 +2,7 @@ package me.vzhilin.dbtree;
 
 import com.google.common.base.Joiner;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -24,6 +25,7 @@ public class MainWindowApp extends Application {
     private final static Logger LOG = Logger.getLogger(MainWindowApp.class);
 
     @Override public void start(Stage stage) throws Exception {
+        Platform.setImplicitExit(true);
         BasicConfigurator.configure();
         Locale.setDefault(Locale.US);
         setIcon(stage);
