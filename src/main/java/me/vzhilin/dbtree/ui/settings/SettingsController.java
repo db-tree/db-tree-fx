@@ -135,6 +135,7 @@ public final class SettingsController {
     @FXML
     public void onAddButton() {
         ConnectionSettings newConnection = new ConnectionSettings();
+        newConnection.tableNamePatternProperty().set(".*");
         newConnection.connectionNameProperty().set("New connection");
         settings.connectionsProperty().add(newConnection);
 
