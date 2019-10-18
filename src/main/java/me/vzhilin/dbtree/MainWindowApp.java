@@ -59,6 +59,6 @@ public class MainWindowApp extends Application {
         } catch (IOException e) {
             LOG.error(e, e);
         }
-        return null;
+        return new Settings();
     }
 }

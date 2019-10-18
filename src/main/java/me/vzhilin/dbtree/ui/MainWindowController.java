@@ -287,7 +287,10 @@ public class MainWindowController {
             }
         });
 
-        cbConnection.setValue(Iterables.getFirst(settings.getConnections(), null));
+        ConnectionSettings sett = Iterables.getFirst(settings.getConnections(), null);
+        if (sett != null) {
+            cbConnection.setValue(sett);
+        }
         cbConnection.itemsProperty().bind(settings.connectionsProperty());
     }
 
