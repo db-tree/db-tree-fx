@@ -5,6 +5,7 @@ import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -41,7 +42,7 @@ public class ConnectionSettingsController {
     private TextField connectionName;
 
     @FXML
-    private TextField driverClass;
+    private ComboBox<String> driverClass;
 
     @FXML
     private TextField jdbcUrl;
@@ -74,7 +75,7 @@ public class ConnectionSettingsController {
 
     private DbContext getContext() {
         try {
-            String driver = driverClass.getText();
+            String driver = driverClass.getValue();
             String url = jdbcUrl.getText();
             String username = this.username.getText();
             String pass = password.getText();
@@ -90,6 +91,9 @@ public class ConnectionSettingsController {
 
     @FXML
     private void initialize() {
+        ObservableList<String> driverList =
+            FXCollections.observableArrayList("oracle.jdbc.OracleDriver", "org.postgresql.Driver", "org.mariadb.jdbc.Driver");
+        driverClass.setItems(driverList);
         initTemplateTable();
         initLookupTree();
     }
@@ -182,7 +186,7 @@ public class ConnectionSettingsController {
 
         executor.execute(() -> {
             try {
-                String driverClazz = driverClass.getText();
+                String driverClazz = driverClass.getValue();
                 String url = jdbcUrl.getText();
                 String name = username.getText();
                 String pass = password.getText();
@@ -360,7 +364,7 @@ public class ConnectionSettingsController {
 
     public void bindSettingsToUI(ConnectionSettings settings) {
         connectionName.textProperty().bindBidirectional(settings.connectionNameProperty());
-        driverClass.textProperty().bindBidirectional(settings.driverClassProperty());
+        driverClass.valueProperty().bindBidirectional(settings.driverClassProperty());
         jdbcUrl.textProperty().bindBidirectional(settings.jdbcUrlProperty());
         username.textProperty().bindBidirectional(settings.usernameProperty());
         password.textProperty().bindBidirectional(settings.passwordProperty());

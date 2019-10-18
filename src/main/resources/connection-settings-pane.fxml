@@ -31,7 +31,7 @@
                   <Label text="Table name pattern" GridPane.rowIndex="6" />
                   <Label fx:id="testMessageLabel" GridPane.columnIndex="1" GridPane.rowIndex="7" />
 
-                  <TextField fx:id="driverClass" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <ComboBox fx:id="driverClass" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <TextField fx:id="jdbcUrl" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <TextField fx:id="username" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                   <PasswordField fx:id="password" GridPane.columnIndex="1" GridPane.rowIndex="4" />
