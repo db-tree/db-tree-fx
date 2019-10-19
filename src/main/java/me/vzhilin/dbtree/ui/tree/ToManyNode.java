@@ -2,9 +2,9 @@ package me.vzhilin.dbtree.ui.tree;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
-import me.vzhilin.catalog.ForeignKey;
-import me.vzhilin.catalog.Table;
-import me.vzhilin.db.Row;
+import me.vzhilin.dbrow.catalog.ForeignKey;
+import me.vzhilin.dbrow.catalog.Table;
+import me.vzhilin.dbrow.db.Row;
 
 import java.util.Iterator;
 

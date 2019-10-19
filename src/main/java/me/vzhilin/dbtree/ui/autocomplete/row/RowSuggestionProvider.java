@@ -1,7 +1,7 @@
 package me.vzhilin.dbtree.ui.autocomplete.row;
 
-import me.vzhilin.catalog.*;
-import me.vzhilin.db.Row;
+import me.vzhilin.dbrow.catalog.*;
+import me.vzhilin.dbrow.db.Row;
 import me.vzhilin.dbtree.ui.autocomplete.AutocompletionCell;
 import me.vzhilin.dbtree.ui.autocomplete.SuggestionProvider;
 import me.vzhilin.dbtree.ui.tree.RenderingHelper;

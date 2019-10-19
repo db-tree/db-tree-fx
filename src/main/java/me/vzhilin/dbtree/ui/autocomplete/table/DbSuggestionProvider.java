@@ -1,7 +1,7 @@
 package me.vzhilin.dbtree.ui.autocomplete.table;
 
 import com.google.common.collect.Lists;
-import me.vzhilin.catalog.Table;
+import me.vzhilin.dbrow.catalog.Table;
 import me.vzhilin.dbtree.ui.autocomplete.AutocompletionCell;
 import me.vzhilin.dbtree.ui.autocomplete.SuggestionProvider;
 

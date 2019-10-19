@@ -1,11 +1,8 @@
 package me.vzhilin.dbtree.db.meaning.exp;
 
-import me.vzhilin.catalog.ForeignKey;
-import me.vzhilin.db.Row;
+import me.vzhilin.dbrow.catalog.ForeignKey;
+import me.vzhilin.dbrow.db.Row;
 import me.vzhilin.dbtree.ui.tree.RenderingHelper;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ForeignKeyExpression implements Expression {
     private final ForeignKey foreignKey;

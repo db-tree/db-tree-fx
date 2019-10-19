@@ -1,7 +1,7 @@
 package me.vzhilin.dbtree.db.meaning.exp;
 
-import me.vzhilin.catalog.Column;
-import me.vzhilin.db.Row;
+import me.vzhilin.dbrow.catalog.Column;
+import me.vzhilin.dbrow.db.Row;
 
 public final class ColumnExpression implements Expression {
     private final Column column;

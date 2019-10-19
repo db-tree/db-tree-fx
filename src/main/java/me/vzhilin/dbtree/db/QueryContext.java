@@ -2,10 +2,10 @@ package me.vzhilin.dbtree.db;
 
 import com.google.common.collect.Maps;
 import javafx.beans.property.StringProperty;
-import me.vzhilin.catalog.Catalog;
-import me.vzhilin.catalog.Schema;
-import me.vzhilin.catalog.Table;
-import me.vzhilin.db.Row;
+import me.vzhilin.dbrow.catalog.Catalog;
+import me.vzhilin.dbrow.catalog.Schema;
+import me.vzhilin.dbrow.catalog.Table;
+import me.vzhilin.dbrow.db.Row;
 import me.vzhilin.dbtree.db.meaning.MeaningParser;
 import me.vzhilin.dbtree.db.meaning.exp.ParsedTemplate;
 import me.vzhilin.dbtree.db.meaning.exp.exceptions.ParseException;

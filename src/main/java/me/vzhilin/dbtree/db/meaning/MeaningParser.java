@@ -1,7 +1,7 @@
 package me.vzhilin.dbtree.db.meaning;
 
 import com.google.common.collect.Lists;
-import me.vzhilin.catalog.Table;
+import me.vzhilin.dbrow.catalog.Table;
 import me.vzhilin.dbtree.antlr4.MeaningfulBaseVisitor;
 import me.vzhilin.dbtree.antlr4.MeaningfulLexer;
 import me.vzhilin.dbtree.antlr4.MeaningfulParser;

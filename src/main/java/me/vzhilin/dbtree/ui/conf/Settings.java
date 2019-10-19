@@ -7,12 +7,10 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.apache.log4j.Logger;
-import org.hildan.fxgson.FxGson;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
+
+//import org.hildan.fxgson.FxGson;
 
 public class Settings {
     private final static Logger LOG = Logger.getLogger(Settings.class);
@@ -37,18 +35,18 @@ public class Settings {
     }
 
     public synchronized void save() {
-        try {
-            PrintWriter pw = new PrintWriter("db-tree.json~");
-            pw.write(FxGson.coreBuilder().setPrettyPrinting().enableComplexMapKeySerialization().create().toJson(this));
-            pw.close();
-
-            File tempFile = new File("db-tree.json~");
-            File configFile = new File("db-tree.json");
-            configFile.delete();
-            tempFile.renameTo(configFile);
-        } catch (FileNotFoundException e) {
-            LOG.error(e, e);
-        }
+//        try {
+//            PrintWriter pw = new PrintWriter("db-tree.json~");
+//            pw.write(FxGson.coreBuilder().setPrettyPrinting().enableComplexMapKeySerialization().create().toJson(this));
+//            pw.close();
+//
+//            File tempFile = new File("db-tree.json~");
+//            File configFile = new File("db-tree.json");
+//            configFile.delete();
+//            tempFile.renameTo(configFile);
+//        } catch (FileNotFoundException e) {
+//            LOG.error(e, e);
+//        }
     }
 
     public ConnectionSettings getConnection(String connectionName) {

@@ -1,6 +1,6 @@
 package me.vzhilin.dbtree.db.meaning.exp;
 
-import me.vzhilin.db.Row;
+import me.vzhilin.dbrow.db.Row;
 
 public final class ParsedTemplate {
     private final boolean valid;

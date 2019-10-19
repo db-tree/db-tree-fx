@@ -1,12 +1,12 @@
 package me.vzhilin.dbtree.ui.tree;
 
 import com.google.common.base.Joiner;
-import me.vzhilin.catalog.Column;
-import me.vzhilin.catalog.ForeignKey;
-import me.vzhilin.catalog.ForeignKeyColumn;
-import me.vzhilin.catalog.PrimaryKeyColumn;
-import me.vzhilin.db.ObjectKey;
-import me.vzhilin.db.Row;
+import me.vzhilin.dbrow.catalog.Column;
+import me.vzhilin.dbrow.catalog.ForeignKey;
+import me.vzhilin.dbrow.catalog.ForeignKeyColumn;
+import me.vzhilin.dbrow.catalog.PrimaryKeyColumn;
+import me.vzhilin.dbrow.db.ObjectKey;
+import me.vzhilin.dbrow.db.Row;
 
 import java.util.ArrayList;
 import java.util.List;

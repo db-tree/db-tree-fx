@@ -6,10 +6,10 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.TreeItem;
-import me.vzhilin.catalog.PrimaryKey;
-import me.vzhilin.catalog.PrimaryKeyColumn;
-import me.vzhilin.catalog.Table;
-import me.vzhilin.db.Row;
+import me.vzhilin.dbrow.catalog.PrimaryKey;
+import me.vzhilin.dbrow.catalog.PrimaryKeyColumn;
+import me.vzhilin.dbrow.catalog.Table;
+import me.vzhilin.dbrow.db.Row;
 
 import java.util.ArrayList;
 import java.util.Iterator;

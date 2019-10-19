@@ -1,12 +1,12 @@
 package me.vzhilin.dbtree.db;
 
-import me.vzhilin.adapter.DatabaseAdapter;
-import me.vzhilin.adapter.mariadb.MariadbDatabaseAdapter;
-import me.vzhilin.adapter.oracle.OracleDatabaseAdapter;
-import me.vzhilin.adapter.postgres.PostgresqlAdapter;
-import me.vzhilin.catalog.Catalog;
-import me.vzhilin.catalog.CatalogFilter;
-import me.vzhilin.catalog.CatalogLoader;
+import me.vzhilin.dbrow.adapter.DatabaseAdapter;
+import me.vzhilin.dbrow.adapter.mariadb.MariadbDatabaseAdapter;
+import me.vzhilin.dbrow.adapter.oracle.OracleDatabaseAdapter;
+import me.vzhilin.dbrow.adapter.postgres.PostgresqlAdapter;
+import me.vzhilin.dbrow.catalog.Catalog;
+import me.vzhilin.dbrow.catalog.CatalogFilter;
+import me.vzhilin.dbrow.catalog.CatalogLoader;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;

@@ -1,5 +1,5 @@
 package me.vzhilin.dbtree.db.meaning.exp;
-import me.vzhilin.db.Row;
+import me.vzhilin.dbrow.db.Row;
 import me.vzhilin.dbtree.ui.tree.RenderingHelper;
 
 public final class ExpressionValue {

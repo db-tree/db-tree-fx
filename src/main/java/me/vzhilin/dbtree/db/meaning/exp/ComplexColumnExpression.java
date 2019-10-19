@@ -1,10 +1,10 @@
 package me.vzhilin.dbtree.db.meaning.exp;
 
 import com.google.common.collect.Iterables;
-import me.vzhilin.catalog.Column;
-import me.vzhilin.catalog.ForeignKey;
-import me.vzhilin.catalog.Table;
-import me.vzhilin.db.Row;
+import me.vzhilin.dbrow.catalog.Column;
+import me.vzhilin.dbrow.catalog.ForeignKey;
+import me.vzhilin.dbrow.catalog.Table;
+import me.vzhilin.dbrow.db.Row;
 
 import java.util.Iterator;
 import java.util.List;
