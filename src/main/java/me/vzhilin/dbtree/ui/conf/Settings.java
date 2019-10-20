@@ -88,7 +88,7 @@ public class Settings {
 
     private static File getFolder() {
         if (OS.contains("win")) {
-            return new File("%APPDATA%\\DBTree");
+            return new File(new File(System.getenv("APPDATA")), "DBTree");
         } else
         if (OS.contains("mac")) {
             return new File("~/Library/Preferences/me.vzhilin.dbtree");
