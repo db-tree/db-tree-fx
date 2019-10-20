@@ -17,17 +17,20 @@ public final class ApplicationContext {
     private QueryContext queryContext;
     private final static ThreadLocal<ApplicationContext> CURRENT = new ThreadLocal<>();
     private Logger logger;
-    private final ExecutorService queryExecutor = Executors.newSingleThreadExecutor();
+    private final ExecutorService queryExecutor;
 
     public ApplicationContext(Settings settings) {
         this.settings = settings;
         CURRENT.set(this);
-        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            @Override
-            public void uncaughtException(Thread t, Throwable e) {
-                logger.log("Uncaught Exception", e);
-            }
-        });
+        Thread.UncaughtExceptionHandler handler = (t, e) -> logger.log("Uncaught Exception", e);
+        Thread.setDefaultUncaughtExceptionHandler(handler);
+
+         queryExecutor = Executors.newSingleThreadExecutor(r -> {
+             Thread thread = new Thread(r);
+             thread.setDaemon(true);
+             thread.setUncaughtExceptionHandler(handler);
+             return thread;
+         });
     }
 
     public static ApplicationContext get() {
