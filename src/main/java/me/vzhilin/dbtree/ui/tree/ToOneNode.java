@@ -1,11 +1,12 @@
 package me.vzhilin.dbtree.ui.tree;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
-import me.vzhilin.dbrow.catalog.Column;
 import me.vzhilin.dbrow.catalog.ForeignKey;
 import me.vzhilin.dbrow.catalog.Table;
 import me.vzhilin.dbrow.db.Row;
+import me.vzhilin.dbtree.ui.ApplicationContext;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -32,45 +33,49 @@ public final class ToOneNode extends BasicTreeItem {
         if (!loaded) {
             loaded = true;
 
-            Table tb = row.getTable();
-
-            List<TreeItem<TreeTableNode>> complexNodes  = new LinkedList<>();
-            List<TreeItem<TreeTableNode>> simpleNodes   = new LinkedList<>();
-            List<TreeItem<TreeTableNode>> relationNodes = new LinkedList<>();
-
-            // foreign keys
-            row.forwardReferences().forEach(new BiConsumer<ForeignKey, Row>() {
-                @Override
-                public void accept(ForeignKey foreignKey, Row ref) {
-                    RenderingHelper.ForeignKeyRow e = new RenderingHelper().renderForeignKey(row, foreignKey);
-                    TreeTableNode refNode = new TreeTableNode(e.cols, e.vals, ref);
-                    complexNodes.add(new ToOneNode(ref, refNode));
-                }
-            });
-
-            // all fields
-            tb.getColumns().forEach(new BiConsumer<String, Column>() {
-                @Override
-                public void accept(String columnName, Column column) {
-                    simpleNodes.add(new LeafNode(row, columnName));
-                }
-            });
-
-            row.backwardReferencesCount().forEach(new BiConsumer<ForeignKey, Number>() {
-                @Override
-                public void accept(ForeignKey foreignKey, Number number) {
-                    long count = number.longValue();
-                    if (count > 0) {
-                        TreeItem<TreeTableNode> toManyNode = new ToManyNode(foreignKey, count, row);
-                        relationNodes.add(toManyNode);
-                    }
-                }
-            });
-
+            RenderingHelper renderingHelper = new RenderingHelper();
             ObservableList<TreeItem<TreeTableNode>> ch = super.getChildren();
-            ch.addAll(complexNodes);
-            ch.addAll(relationNodes);
-            ch.addAll(simpleNodes);
+
+            ApplicationContext.get().getExecutor().submit(new Runnable() {
+                @Override
+                public void run() {
+                    Table tb = row.getTable();
+
+                    List<TreeItem<TreeTableNode>> complexNodes  = new LinkedList<>();
+                    List<TreeItem<TreeTableNode>> simpleNodes   = new LinkedList<>();
+                    List<TreeItem<TreeTableNode>> relationNodes = new LinkedList<>();
+
+                    // foreign keys
+                    row.forwardReferences().forEach(new BiConsumer<ForeignKey, Row>() {
+                        @Override
+                        public void accept(ForeignKey foreignKey, Row ref) {
+                            RenderingHelper.ForeignKeyRow e = renderingHelper.renderForeignKey(row, foreignKey);
+                            TreeTableNode refNode = new TreeTableNode(e.cols, e.vals, ref);
+                            complexNodes.add(new ToOneNode(ref, refNode));
+                        }
+                    });
+
+                    // all fields
+                    tb.getColumns().forEach((columnName, column) -> simpleNodes.add(new LeafNode(row, columnName)));
+
+                    row.backwardReferencesCount().forEach((foreignKey, number) -> {
+                        long count = number.longValue();
+                        if (count > 0) {
+                            TreeItem<TreeTableNode> toManyNode = new ToManyNode(foreignKey, count, row);
+                            relationNodes.add(toManyNode);
+                        }
+                    });
+
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            ch.addAll(complexNodes);
+                            ch.addAll(relationNodes);
+                            ch.addAll(simpleNodes);
+                        }
+                    });
+                }
+            });
         }
 
         return super.getChildren();

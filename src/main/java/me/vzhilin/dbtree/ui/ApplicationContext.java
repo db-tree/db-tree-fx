@@ -8,6 +8,8 @@ import me.vzhilin.dbtree.ui.conf.Settings;
 
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public final class ApplicationContext {
     private final ContextCache contextCache = new ContextCache();
@@ -15,6 +17,7 @@ public final class ApplicationContext {
     private QueryContext queryContext;
     private final static ThreadLocal<ApplicationContext> CURRENT = new ThreadLocal<>();
     private Logger logger;
+    private final ExecutorService queryExecutor = Executors.newSingleThreadExecutor();
 
     public ApplicationContext(Settings settings) {
         this.settings = settings;
@@ -31,7 +34,7 @@ public final class ApplicationContext {
         return CURRENT.get();
     }
 
-    public QueryContext newQueryContext(String connectionName) throws ExecutionException {
+    public synchronized QueryContext newQueryContext(String connectionName) throws ExecutionException {
         ConnectionSettings connection = settings.getConnection(connectionName);
 
         if (queryContext != null) {
@@ -52,12 +55,20 @@ public final class ApplicationContext {
         return contextCache.getContext(driverClazz, jdbcUrlText, usernameText, password, pattern, schemas);
     }
 
+    public DbContext getIfPresent(String driverClazz, String jdbcUrlText, String usernameText, String password, String pattern, Set<String> schemas) {
+        return contextCache.getIfPresent(driverClazz, jdbcUrlText, usernameText, password, pattern, schemas);
+    }
+
     public synchronized Logger getLogger() {
         return logger;
     }
 
     public synchronized void setLogger(Logger logger) {
         this.logger = logger;
+    }
+
+    public ExecutorService getExecutor() {
+        return queryExecutor;
     }
 
     public interface Logger {

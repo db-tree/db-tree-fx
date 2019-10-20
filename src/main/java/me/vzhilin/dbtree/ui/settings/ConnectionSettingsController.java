@@ -69,6 +69,9 @@ public class ConnectionSettingsController {
     @FXML
     private Label testMessageLabel;
 
+    private ConnectionSettings settings;
+    private ApplicationContext appContext;
+
     private final Executor executor = Executors.newSingleThreadExecutor(new ThreadFactory() {
         @Override
         public Thread newThread(Runnable r) {
@@ -77,9 +80,6 @@ public class ConnectionSettingsController {
             return th;
         }
     });
-
-    private ConnectionSettings settings;
-    private ApplicationContext appContext;
 
     private DbContext getContext() {
         try {

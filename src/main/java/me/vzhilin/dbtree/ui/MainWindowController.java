@@ -42,7 +42,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
-import java.util.function.BiConsumer;
 
 public class MainWindowController {
     private final static Logger LOG = Logger.getLogger(MainWindowController.class);
@@ -165,40 +164,55 @@ public class MainWindowController {
     @FXML
     private void onFindAction() throws ExecutionException {
         ConnectionSettings connection = cbConnection.getValue();
-        QueryContext queryContext = appContext.newQueryContext(connection.getConnectionName());
-
-        CatalogFilter filter = filterFor(queryContext.getSettings().getLookupableColumns());
-        DbContext dbContext = queryContext.getDbContext();
-        Connection conn = dbContext.getConnection();
-        Catalog catalog = dbContext.getCatalog();
-        QueryRunner runner = dbContext.getRunner();
-        DatabaseAdapter adapter = dbContext.getAdapter();
-        RowContext ctx = new RowContext(catalog, adapter, conn, runner);
-        ctx.setAttribute("query_context", queryContext);
         final String searchText = textField.getText();
-        CountOccurences c = new CountOccurences(ctx, searchText);
-        Map<Table, Long> rs = c.count(filter);
+        treeTable.setPlaceholder(new ProgressIndicator());
+        textField.setDisable(true);
+        TreeItem<TreeTableNode> newRoot = new TreeItem<>(new TreeTableNode("ROOT", "ROOT", null));
+        treeTable.setRoot(newRoot);
 
         List<TreeItem<TreeTableNode>> countNodes = new ArrayList<>();
-        rs.forEach(new BiConsumer<Table, Long>() {
-            @Override
-            public void accept(Table table, Long count) {
-                SearchInTable search = new SearchInTable(ctx, table, searchText);
-                Iterable<Row> iter = search.search(filter);
-                countNodes.add(new CountNode(iter, table, count));
-            }
-        });
-
-        Platform.runLater(new Runnable() {
+        ApplicationContext.get().getExecutor().execute(new Runnable() {
             @Override
             public void run() {
-                TreeItem<TreeTableNode> newRoot = new TreeItem<>(new TreeTableNode("ROOT", "ROOT", null));
-                ObservableList<TreeItem<TreeTableNode>> ch = newRoot.getChildren();
-                ch.addAll(countNodes);
+                try {
+                    QueryContext queryContext = appContext.newQueryContext(connection.getConnectionName());
+                    CatalogFilter filter = filterFor(queryContext.getSettings().getLookupableColumns());
+                    DbContext dbContext = queryContext.getDbContext();
+                    Connection conn = dbContext.getConnection();
+                    Catalog catalog = dbContext.getCatalog();
+                    QueryRunner runner = dbContext.getRunner();
+                    DatabaseAdapter adapter = dbContext.getAdapter();
+                    RowContext ctx = new RowContext(catalog, adapter, conn, runner);
+                    ctx.setAttribute("query_context", queryContext);
 
-                treeTable.setRoot(newRoot);
-                if (ch.size() == 1) {
-                    ch.get(0).setExpanded(true);
+                    CountOccurences c = new CountOccurences(ctx, searchText);
+                    Map<Table, Long> rs = c.count(filter);
+
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            rs.forEach((table, count) -> {
+                                SearchInTable search = new SearchInTable(ctx, table, searchText);
+                                Iterable<Row> iter = search.search(filter);
+                                countNodes.add(new CountNode(iter, table, count));
+                            });
+
+                            ObservableList<TreeItem<TreeTableNode>> ch = newRoot.getChildren();
+                            ch.addAll(countNodes);
+
+                            if (ch.size() == 1) {
+                                ch.get(0).setExpanded(true);
+                            }
+                        }
+                    });
+
+                } catch (ExecutionException e) {
+                    appContext.getLogger().log("error", e);
+                } finally {
+                    Platform.runLater(() -> {
+                        textField.setDisable(false);
+                        treeTable.setPlaceholder(new Label());
+                    });
                 }
             }
         });

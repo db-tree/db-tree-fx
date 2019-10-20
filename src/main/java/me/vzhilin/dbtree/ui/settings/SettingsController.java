@@ -217,7 +217,6 @@ public final class SettingsController {
             connectionsNode.getChildren().add(newItem(cs));
         }
 
-
         TreeItem<SettingNode> first = Iterables.getFirst(connectionsNode.getChildren(), null);
         if (first != null) {
             settingView.getSelectionModel().select(first);

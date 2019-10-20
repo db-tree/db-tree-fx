@@ -1,7 +1,9 @@
 package me.vzhilin.dbtree.db;
 
-import com.google.common.cache.*;
-import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.cache.RemovalListener;
 import me.vzhilin.dbtree.ui.ApplicationContext;
 
 import java.sql.SQLException;
@@ -38,6 +40,11 @@ public final class ContextCache {
             return null;
         }
         return dbContext;
+    }
+
+    public DbContext getIfPresent(String driverClazz, String jdbcUrl, String login, String password, String pattern, Set<String> schemas) {
+        ContextKey key = new ContextKey(driverClazz, jdbcUrl, login, password, pattern, schemas);
+        return cache.getIfPresent(key);
     }
 
     private final static class ContextKey {
