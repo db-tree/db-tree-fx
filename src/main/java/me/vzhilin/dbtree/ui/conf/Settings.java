@@ -41,8 +41,14 @@ public class Settings {
 
     public synchronized void save() {
         try {
-            File configFile = new File(getFolder(), ".db-tree.json");
-            File tempFile = new File(getFolder(), ".db-tree.json~");
+            File folder = getFolder();
+            if (folder.exists()) {
+                if (!folder.mkdirs()) {
+                    LOG.error("unable to create folder: " + folder.getAbsolutePath());
+                }
+            }
+            File configFile = new File(folder, ".db-tree.json");
+            File tempFile = new File(folder, ".db-tree.json~");
 
             PrintWriter pw = new PrintWriter(tempFile);
             pw.write(FxGson.coreBuilder().setPrettyPrinting().enableComplexMapKeySerialization().create().toJson(this));
