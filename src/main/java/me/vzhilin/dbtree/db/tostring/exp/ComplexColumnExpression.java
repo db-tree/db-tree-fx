@@ -1,4 +1,4 @@
-package me.vzhilin.dbtree.db.meaning.exp;
+package me.vzhilin.dbtree.db.tostring.exp;
 
 import com.google.common.collect.Iterables;
 import me.vzhilin.dbrow.catalog.Column;

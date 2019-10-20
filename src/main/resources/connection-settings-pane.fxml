@@ -49,7 +49,7 @@
                   <TreeTableView fx:id="lookupTreeView" layoutX="34.0" layoutY="14.0" prefHeight="200.0" prefWidth="200.0" />
             </content>
           </Tab>
-          <Tab text="Meaninfgul">
+          <Tab text="String">
             <content>
                   <TableView fx:id="templateTable" prefHeight="400.0" />
             </content>

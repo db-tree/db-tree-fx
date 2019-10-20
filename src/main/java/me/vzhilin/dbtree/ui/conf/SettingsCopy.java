@@ -9,10 +9,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class SettingsCopy {
     private final Settings copy;
@@ -40,7 +36,7 @@ public class SettingsCopy {
 
             writeConnection(orig, modif);
             writeTemplates(orig, modif);
-            writeMeaningful(orig, modif);
+            writeToStringExp(orig, modif);
         }
 
         ObservableList<ConnectionSettings> originalConnections = original.getConnections();
@@ -58,7 +54,7 @@ public class SettingsCopy {
         }
     }
 
-    private void writeMeaningful(ConnectionSettings orig, ConnectionSettings modif) {
+    private void writeToStringExp(ConnectionSettings orig, ConnectionSettings modif) {
         orig.setLookupableColumns(modif.getLookupableColumns());
     }
 

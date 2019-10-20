@@ -1,4 +1,4 @@
-package me.vzhilin.dbtree.db.meaning.exp.exceptions;
+package me.vzhilin.dbtree.db.tostring.exp.exceptions;
 
 import me.vzhilin.dbrow.catalog.Table;
 

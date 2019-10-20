@@ -6,9 +6,9 @@ import me.vzhilin.dbrow.catalog.Catalog;
 import me.vzhilin.dbrow.catalog.Schema;
 import me.vzhilin.dbrow.catalog.Table;
 import me.vzhilin.dbrow.db.Row;
-import me.vzhilin.dbtree.db.meaning.MeaningParser;
-import me.vzhilin.dbtree.db.meaning.exp.ParsedTemplate;
-import me.vzhilin.dbtree.db.meaning.exp.exceptions.ParseException;
+import me.vzhilin.dbtree.db.tostring.Parser;
+import me.vzhilin.dbtree.db.tostring.exp.ParsedTemplate;
+import me.vzhilin.dbtree.db.tostring.exp.exceptions.ParseException;
 import me.vzhilin.dbtree.ui.conf.ConnectionSettings;
 import me.vzhilin.dbtree.ui.conf.Template;
 import org.apache.log4j.Logger;
@@ -69,7 +69,7 @@ public final class QueryContext implements Closeable {
                 return null;
             }
 
-            MeaningParser parser = new MeaningParser();
+            Parser parser = new Parser();
             try {
                 ParsedTemplate ex = parser.parse(table, template);
                 parsedTemplates.put(table, ex);
@@ -82,7 +82,7 @@ public final class QueryContext implements Closeable {
         return null;
     }
 
-    public String getMeaningfulValue(Row row) {
+    public String getToStringValue(Row row) {
         ParsedTemplate pt = getParsedTemplate(row.getTable());
         if (pt != null) {
             return String.valueOf(pt.render(row));
@@ -102,7 +102,7 @@ public final class QueryContext implements Closeable {
     }
 
     private void parseTemplates() {
-        MeaningParser parser = new MeaningParser();
+        Parser parser = new Parser();
         Catalog schema = getDbContext().getCatalog();
         for (Template t: this.connectionSettings.templatesProperty()) {
             String value = t.getTemplate();

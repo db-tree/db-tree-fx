@@ -33,8 +33,8 @@ import me.vzhilin.dbtree.ui.conf.*;
 import me.vzhilin.dbtree.ui.settings.SettingsController;
 import me.vzhilin.dbtree.ui.tree.CountNode;
 import me.vzhilin.dbtree.ui.tree.Paging;
-import me.vzhilin.dbtree.ui.tree.TreeTableMeaningCell;
 import me.vzhilin.dbtree.ui.tree.TreeTableNode;
+import me.vzhilin.dbtree.ui.tree.TreeTableStringCell;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.log4j.Logger;
 
@@ -105,7 +105,7 @@ public class MainWindowController {
         valueColumn.setStyle( "-fx-alignment: CENTER-RIGHT;");
         valueColumn.setCellFactory(param -> new TextFieldTreeTableCell<>());
         meaningfulValueColumn.setCellValueFactory(v -> v.getValue().getValue().meaningfulValueColumnProperty());
-        meaningfulValueColumn.setCellFactory(param -> new TreeTableMeaningCell() {
+        meaningfulValueColumn.setCellFactory(param -> new TreeTableStringCell() {
             @Override
             public void cancelEdit() {
                 super.cancelEdit();

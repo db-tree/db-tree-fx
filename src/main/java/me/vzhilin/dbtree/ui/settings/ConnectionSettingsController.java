@@ -19,8 +19,8 @@ import me.vzhilin.dbrow.catalog.Catalog;
 import me.vzhilin.dbrow.catalog.Column;
 import me.vzhilin.dbrow.catalog.Table;
 import me.vzhilin.dbtree.db.DbContext;
-import me.vzhilin.dbtree.db.meaning.MeaningParser;
-import me.vzhilin.dbtree.db.meaning.exp.ParsedTemplate;
+import me.vzhilin.dbtree.db.tostring.Parser;
+import me.vzhilin.dbtree.db.tostring.exp.ParsedTemplate;
 import me.vzhilin.dbtree.ui.ApplicationContext;
 import me.vzhilin.dbtree.ui.autocomplete.AutoCompletion;
 import me.vzhilin.dbtree.ui.autocomplete.table.DbSuggestionProvider;
@@ -179,12 +179,12 @@ public class ConnectionSettingsController {
 
         ObservableList<TableColumn<Template, ?>> columns = templateTable.getColumns();
         TableColumn<Template, String> tableColumn = new TableColumn<>("Table");
-        TableColumn<Template, TemplateCell> templateColumn = new TableColumn<>("Meaningful");
+        TableColumn<Template, TemplateCell> templateColumn = new TableColumn<>("ToString");
         columns.add(tableColumn);
         columns.add(templateColumn);
         tableColumn.setCellValueFactory(new PropertyValueFactory<>("tableName"));
         templateColumn.setCellValueFactory(param -> new SimpleObjectProperty<>(new TemplateCell(param.getValue())));
-        templateColumn.setCellFactory(param -> new MeaningTableCell());
+        templateColumn.setCellFactory(param -> new ToStringTableCell());
     }
 
     @FXML
@@ -423,11 +423,11 @@ public class ConnectionSettingsController {
         }
     }
 
-    private class MeaningTableCell extends TableCell<Template, TemplateCell> {
+    private class ToStringTableCell extends TableCell<Template, TemplateCell> {
         private TextField textField;
         private AutoCompletion autoCompletion;
 
-        public MeaningTableCell() {
+        public ToStringTableCell() {
 
         }
 
@@ -542,7 +542,7 @@ public class ConnectionSettingsController {
         }
 
         private ParsedTemplate parse(Table table, String text) {
-            return new MeaningParser().parse(table, text);
+            return new Parser().parse(table, text);
         }
     }
 }

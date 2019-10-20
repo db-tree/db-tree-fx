@@ -8,18 +8,18 @@ import javafx.scene.layout.Region;
 import me.vzhilin.dbrow.catalog.Table;
 import me.vzhilin.dbrow.db.Row;
 import me.vzhilin.dbtree.db.QueryContext;
-import me.vzhilin.dbtree.db.meaning.exp.ParsedTemplate;
+import me.vzhilin.dbtree.db.tostring.exp.ParsedTemplate;
 import me.vzhilin.dbtree.ui.autocomplete.AutoCompletion;
 import me.vzhilin.dbtree.ui.autocomplete.row.RowSuggestionProvider;
 
 /**
  * Ячейка с "осмысленным значением" для дерева в главном окне
  */
-public class TreeTableMeaningCell extends TreeTableCell<TreeTableNode, Row> {
+public class TreeTableStringCell extends TreeTableCell<TreeTableNode, Row> {
     private TextField meaningTextField;
     private AutoCompletion autoCompletion;
 
-    public TreeTableMeaningCell() {
+    public TreeTableStringCell() {
         itemProperty().addListener((observable, oldValue, newValue) -> setEditable(newValue != null));
     }
 

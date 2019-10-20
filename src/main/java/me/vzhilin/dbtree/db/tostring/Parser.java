@@ -1,13 +1,13 @@
-package me.vzhilin.dbtree.db.meaning;
+package me.vzhilin.dbtree.db.tostring;
 
 import com.google.common.collect.Lists;
 import me.vzhilin.dbrow.catalog.Table;
-import me.vzhilin.dbtree.antlr4.MeaningfulBaseVisitor;
-import me.vzhilin.dbtree.antlr4.MeaningfulLexer;
-import me.vzhilin.dbtree.antlr4.MeaningfulParser;
-import me.vzhilin.dbtree.db.meaning.exp.*;
-import me.vzhilin.dbtree.db.meaning.exp.exceptions.ColumnNotFound;
-import me.vzhilin.dbtree.db.meaning.exp.exceptions.ParseException;
+import me.vzhilin.dbtree.antlr4.ToStringBaseVisitor;
+import me.vzhilin.dbtree.antlr4.ToStringLexer;
+import me.vzhilin.dbtree.antlr4.ToStringParser;
+import me.vzhilin.dbtree.db.tostring.exp.*;
+import me.vzhilin.dbtree.db.tostring.exp.exceptions.ColumnNotFound;
+import me.vzhilin.dbtree.db.tostring.exp.exceptions.ParseException;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -20,20 +20,20 @@ import static org.antlr.v4.runtime.CharStreams.fromString;
 /**
  * Парсер
  */
-public final class MeaningParser {
+public final class Parser {
     public ParsedTemplate parse(Table table, String textLine) {
         try {
-            MeaningfulLexer lexer = new MeaningfulLexer(fromString(textLine));
+            ToStringLexer lexer = new ToStringLexer(fromString(textLine));
             CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-            MeaningfulParser parser = new MeaningfulParser(tokenStream);
+            ToStringParser parser = new ToStringParser(tokenStream);
             parser.setErrorHandler(new DefaultErrorStrategy() {
                 @Override
-                public void recover(Parser recognizer, RecognitionException e) {
+                public void recover(org.antlr.v4.runtime.Parser recognizer, RecognitionException e) {
                     throw new ParseCancellationException(e);
                 }
 
                 @Override
-                public Token recoverInline(Parser recognizer) throws RecognitionException {
+                public Token recoverInline(org.antlr.v4.runtime.Parser recognizer) throws RecognitionException {
                     InputMismatchException e = new InputMismatchException(recognizer);
                     for (ParserRuleContext context = recognizer.getContext(); context != null; context = context.getParent()) {
                         context.exception = e;
@@ -42,8 +42,8 @@ public final class MeaningParser {
                     throw new ParseCancellationException(e);
                 }
             });
-            MeaningfulParser.ProgramContext tree = parser.program();
-            MeaningfulBaseVisitor<Expression> visitor = new DefaultVisitor(table);
+            ToStringParser.ProgramContext tree = parser.program();
+            ToStringBaseVisitor<Expression> visitor = new DefaultVisitor(table);
             return new ParsedTemplate(visitor.visit(tree));
         } catch (ParseException e) {
             return new ParsedTemplate(e.getMessage());
@@ -52,7 +52,7 @@ public final class MeaningParser {
         }
     }
 
-    public final static class DefaultVisitor extends MeaningfulBaseVisitor<Expression> {
+    public final static class DefaultVisitor extends ToStringBaseVisitor<Expression> {
         private final Table table;
 
         public DefaultVisitor(Table table) {
@@ -60,7 +60,7 @@ public final class MeaningParser {
         }
 
         @Override
-        public Expression visitProgram(MeaningfulParser.ProgramContext ctx) {
+        public Expression visitProgram(ToStringParser.ProgramContext ctx) {
             if (ctx.getChildCount() == 1) {
                 return visit(ctx.getChild(0));
             }
@@ -77,7 +77,7 @@ public final class MeaningParser {
         }
 
         @Override
-        public Expression visitSimple_column(MeaningfulParser.Simple_columnContext ctx) {
+        public Expression visitSimple_column(ToStringParser.Simple_columnContext ctx) {
             String columnName = ctx.getText();
             if (table.hasColumn(columnName)) {
                 return new ColumnExpression(table.getColumn(columnName));
@@ -90,7 +90,7 @@ public final class MeaningParser {
         }
 
         @Override
-        public Expression visitComplex_column(MeaningfulParser.Complex_columnContext ctx) {
+        public Expression visitComplex_column(ToStringParser.Complex_columnContext ctx) {
             List<String> columns = ctx.
                     simple_column().
                     stream().
@@ -119,7 +119,7 @@ public final class MeaningParser {
         }
 
         @Override
-        public Expression visitString(MeaningfulParser.StringContext ctx) {
+        public Expression visitString(ToStringParser.StringContext ctx) {
             return new TextExpression(ctx.getText());
         }
     }

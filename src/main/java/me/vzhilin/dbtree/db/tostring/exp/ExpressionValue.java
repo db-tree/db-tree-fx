@@ -1,4 +1,4 @@
-package me.vzhilin.dbtree.db.meaning.exp;
+package me.vzhilin.dbtree.db.tostring.exp;
 import me.vzhilin.dbrow.db.Row;
 import me.vzhilin.dbtree.ui.tree.RenderingHelper;
 

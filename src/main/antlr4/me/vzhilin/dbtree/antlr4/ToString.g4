@@ -1,4 +1,4 @@
-grammar Meaningful;
+grammar ToString;
 
 program
     : exp (PLUS exp)*
