@@ -1,6 +1,5 @@
 package me.vzhilin.dbtree;
 
-import com.google.common.base.Joiner;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -14,11 +13,7 @@ import me.vzhilin.dbtree.ui.MainWindowController;
 import me.vzhilin.dbtree.ui.conf.Settings;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
-import org.hildan.fxgson.FxGson;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Locale;
 
 public class MainWindowApp extends Application {
@@ -52,19 +47,11 @@ public class MainWindowApp extends Application {
     }
 
     private void load(MainWindowController controller) {
-        settings = readSettings();
+        settings = Settings.readSettings();
         controller.setSettings(settings);
         controller.setAppContext(new ApplicationContext(settings));
     }
 
-    private Settings readSettings() {
-        try {
-            return FxGson.create().fromJson(Joiner.on("").join(Files.readAllLines(Paths.get("db-tree.json"))), Settings.class);
-        } catch (IOException e) {
-            LOG.error(e, e);
-        }
-        return new Settings();
-    }
 
     @Override
     public void stop() throws Exception {
