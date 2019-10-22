@@ -1,7 +1,8 @@
 module hellofx {
-    requires java.sql;
+    requires javafx.base;
     requires javafx.controls;
     requires javafx.fxml;
+    requires java.sql;
     requires dbrow;
     requires commons.dbcp2;
     requires com.google.common;
@@ -12,6 +13,7 @@ module hellofx {
 
     requires java.management;
     requires fx.gson;
+    requires java.keyring;
 
     opens me.vzhilin.dbtree to javafx.fxml;
     opens me.vzhilin.dbtree.ui to javafx.fxml;

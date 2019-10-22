@@ -7,6 +7,11 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import net.east301.keyring.BackendNotSupportedException;
+import net.east301.keyring.Keyring;
+import net.east301.keyring.PasswordRetrievalException;
+import net.east301.keyring.PasswordSaveException;
+import net.east301.keyring.util.LockException;
 import org.apache.log4j.Logger;
 import org.hildan.fxgson.FxGson;
 
@@ -24,6 +29,7 @@ public class Settings {
     private final static Logger LOG = Logger.getLogger(Settings.class);
     private final static String OS = System.getProperty("os.name").toLowerCase();
     public static final String DB_TREE_JSON = ".db-tree.json";
+    private static final String APP_ID = "me.vzhilin.dbtree";
 
     private final DoubleProperty dividerPosition = new SimpleDoubleProperty();
     private final ListProperty<ConnectionSettings> connections = new SimpleListProperty<ConnectionSettings>(FXCollections.observableArrayList(new ArrayList<>()));
@@ -46,8 +52,14 @@ public class Settings {
     }
 
     public synchronized void save() {
+        File folder = getOrCreateFolder();
+
+        savePasswords(folder);
+        saveData(folder);
+    }
+
+    private void saveData(File folder) {
         try {
-            File folder = getOrCreateFolder();
             File configFile = new File(folder, DB_TREE_JSON);
             File tempFile = new File(folder, DB_TREE_JSON_TEMP);
 
@@ -58,6 +70,28 @@ public class Settings {
             tempFile.renameTo(configFile);
         } catch (FileNotFoundException e) {
             LOG.error(e, e);
+        }
+    }
+
+    private void savePasswords(File folder) {
+        Keyring keyring;
+        try {
+            keyring = Keyring.create();
+        } catch (BackendNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (keyring.isKeyStorePathRequired()) {
+            File keyStoreFile = new File(folder, ".keystore");
+            keyring.setKeyStorePath(keyStoreFile.getPath());
+        }
+
+        try {
+            for (ConnectionSettings conn: connections) {
+                keyring.setPassword(APP_ID, conn.getConnectionName(), conn.getPassword());
+            }
+        } catch (LockException | PasswordSaveException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -78,12 +112,41 @@ public class Settings {
     public static Settings readSettings() {
         try {
             File folder = getOrCreateFolder();
-            File configFile = new File(folder, ".db-tree.json");
-            return FxGson.create().fromJson(Joiner.on("").join(Files.readAllLines(configFile.toPath())), Settings.class);
+            Settings settings = readData(folder);
+            readPasswords(settings);
+            return settings;
         } catch (IOException e) {
             LOG.error(e, e);
         }
         return new Settings();
+    }
+
+    private static Settings readData(File folder) throws IOException {
+        File configFile = new File(folder, ".db-tree.json");
+        return FxGson.create().fromJson(Joiner.on("").join(Files.readAllLines(configFile.toPath())), Settings.class);
+    }
+
+    private static void readPasswords(Settings settings) {
+        Keyring keyring;
+        try {
+            keyring = Keyring.create();
+        } catch (BackendNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (keyring.isKeyStorePathRequired()) {
+            File keyStoreFile = new File(getFolder(), ".keystore");
+            keyring.setKeyStorePath(keyStoreFile.getPath());
+        }
+
+        try {
+            for (ConnectionSettings conn: settings.getConnections()) {
+                String password = keyring.getPassword("me.vzhilin.dbtree", conn.getConnectionName());
+                conn.passwordProperty().set(password);
+            }
+        } catch (LockException | PasswordRetrievalException e) {
+            LOG.error(e, e);
+        }
     }
 
     private static File getFolder() {

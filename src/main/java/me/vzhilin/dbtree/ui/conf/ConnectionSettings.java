@@ -23,7 +23,7 @@ public final class ConnectionSettings {
     private final StringProperty username = new SimpleStringProperty();
 
     /** Пароль */
-    private final StringProperty password = new SimpleStringProperty();
+    private final transient StringProperty password = new SimpleStringProperty();
 
     /** regexp для имен таблиц */
     private final StringProperty tableNamePatternProperty = new SimpleStringProperty();
