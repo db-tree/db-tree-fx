@@ -7,6 +7,7 @@ import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -164,6 +165,17 @@ public class MainWindowController {
     @FXML
     private void onFindAction() throws ExecutionException {
         ConnectionSettings connection = cbConnection.getValue();
+        if (connection == null) {
+            ObservableList<ConnectionSettings> connections = settings.getConnections();
+            if (!connections.isEmpty()) {
+                ConnectionSettings c = connections.get(1);
+                cbConnection.setValue(c);
+                connection = c;
+            } else {
+                appContext.getLogger().log("not connected");
+                return;
+            }
+        }
         final String searchText = textField.getText();
         treeTable.setPlaceholder(new ProgressIndicator());
         textField.setDisable(true);
@@ -171,11 +183,12 @@ public class MainWindowController {
         treeTable.setRoot(newRoot);
 
         List<TreeItem<TreeTableNode>> countNodes = new ArrayList<>();
+        ConnectionSettings finalConnection = connection;
         ApplicationContext.get().getExecutor().execute(new Runnable() {
             @Override
             public void run() {
                 try {
-                    QueryContext queryContext = appContext.newQueryContext(connection.getConnectionName());
+                    QueryContext queryContext = appContext.newQueryContext(finalConnection.getConnectionName());
                     CatalogFilter filter = filterFor(queryContext.getSettings().getLookupableColumns());
                     DbContext dbContext = queryContext.getDbContext();
                     Connection conn = dbContext.getConnection();
@@ -335,6 +348,20 @@ public class MainWindowController {
                 });
             }
         });
+    }
+
+    public void onAboutAction(ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("/about.fxml"));
+        Parent root = loader.load();
+        Stage stage = new Stage();
+        stage.initOwner(ownerWindow);
+        stage.initModality(Modality.WINDOW_MODAL);
+        setIcon(stage);
+        Scene scene = new Scene(root);
+        stage.setTitle("About");
+        stage.setScene(scene);
+        stage.show();
     }
 
     private final static class TableTreeTableCell extends TreeTableCell<TreeTableNode, String> {
