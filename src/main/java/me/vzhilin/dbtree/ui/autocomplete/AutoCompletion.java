@@ -16,6 +16,7 @@ import javafx.scene.layout.Region;
 import javafx.stage.Popup;
 import javafx.stage.Window;
 
+import java.util.Collections;
 import java.util.List;
 
 public final class AutoCompletion {
@@ -42,8 +43,9 @@ public final class AutoCompletion {
                     AutocompletionCell selectedItem = suggestionList.getSelectionModel().getSelectedItem();
                     if (selectedItem != null) {
                         SuggestionHelper helper = new SuggestionHelper(local.getText(), local.getCaretPosition());
-                        node.setText(helper.select(selectedItem.getColumn()));
-                        node.positionCaret(local.getText().length());
+                        SuggestionHelper.Select selection = helper.select(selectedItem.getColumn());
+                        node.setText(selection.getResult());
+                        node.positionCaret(selection.getCursorPosition());
                         popup.hide();
                     }
                     break;
@@ -82,7 +84,14 @@ public final class AutoCompletion {
         caretPosition = Math.min(caretPosition, local.getText().length());
 
         SuggestionHelper helper = new SuggestionHelper(local.getText(), caretPosition);
-        List<AutocompletionCell> list = getProvider().suggestions(helper.word());
+        SuggestionHelper.Suggestion suggestion = helper.word();
+        List<AutocompletionCell> list;
+        if (suggestion.isWord()) {
+            list = getProvider().suggestions(suggestion.getWord());
+        } else {
+            list = Collections.emptyList();
+        }
+
 
         ObservableList<AutocompletionCell> items = suggestionList.getItems();
         items.clear();
