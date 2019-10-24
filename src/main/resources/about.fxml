@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<FlowPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="218.0" prefWidth="555.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ImageView fitHeight="221.0" fitWidth="218.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@icons/icon.png" />
+         </image>
+      </ImageView>
+      <VBox prefHeight="218.0" prefWidth="304.0">
+         <children>
+            <Label prefHeight="121.0" prefWidth="333.0" text="DB Tree">
+               <font>
+                  <Font size="64.0" />
+               </font>
+               <VBox.margin>
+                  <Insets left="10.0" />
+               </VBox.margin>
+            </Label>
+            <TextArea editable="false" text="Version: 0.1&#10;github: https://github.com/vzhn/db-tree-fx">
+               <VBox.margin>
+                  <Insets left="10.0" />
+               </VBox.margin>
+            </TextArea>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+         </children>
+      </VBox>
+   </children>
+</FlowPane>
