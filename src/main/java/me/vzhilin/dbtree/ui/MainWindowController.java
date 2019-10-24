@@ -19,6 +19,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Callback;
 import me.vzhilin.dbrow.adapter.DatabaseAdapter;
 import me.vzhilin.dbrow.catalog.Catalog;
@@ -361,6 +362,8 @@ public class MainWindowController {
         Scene scene = new Scene(root);
         stage.setTitle("About");
         stage.setScene(scene);
+        stage.initStyle(StageStyle.UTILITY);
+        stage.setResizable(false);
         stage.show();
     }
 
