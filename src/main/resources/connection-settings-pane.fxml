@@ -2,7 +2,7 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<VBox prefHeight="658.0" prefWidth="492.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.vzhilin.dbtree.ui.settings.ConnectionSettingsController">
+<VBox prefHeight="818.0" prefWidth="564.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.vzhilin.dbtree.ui.settings.ConnectionSettingsController">
    <children>
       <TitledPane text="JDBC Settings" VBox.vgrow="NEVER">
          <content>
@@ -19,6 +19,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints />
                </rowConstraints>
                <children>
                   <Label fx:id="textLabel" text="Connection name" BorderPane.alignment="CENTER_LEFT" />
@@ -35,7 +36,7 @@
                   <TextField fx:id="jdbcUrl" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <TextField fx:id="username" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                   <PasswordField fx:id="password" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                  <TextField fx:id="schemas" GridPane.columnIndex="1" GridPane.rowIndex="5" promptText="default" />
+                  <TextField fx:id="schemas" promptText="default" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                   <TextField fx:id="tableNamePattern" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                   <Button fx:id="connectButton" mnemonicParsing="false" onAction="#onTestButton" prefHeight="25.0" prefWidth="125.0" text="Connect" GridPane.rowIndex="7" />
                </children>

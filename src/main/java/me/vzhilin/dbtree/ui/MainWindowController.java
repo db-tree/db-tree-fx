@@ -358,6 +358,7 @@ public class MainWindowController {
         Stage stage = new Stage();
         stage.initOwner(ownerWindow);
         stage.initModality(Modality.WINDOW_MODAL);
+
         setIcon(stage);
         Scene scene = new Scene(root);
         stage.setTitle("About");
