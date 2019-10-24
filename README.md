@@ -1,3 +1,5 @@
-![comment][site/screen.png]
+# DB Tree
+Database row search and navigation using primary and foreign key constaints.
 
-Search and navigation tool
+![comment](site/screen.png)
+
