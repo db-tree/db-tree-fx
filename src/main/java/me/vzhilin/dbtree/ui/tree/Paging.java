@@ -56,8 +56,8 @@ public final class Paging {
                 columns.add(primaryKeyColumn.getName());
             }
         });
-        String vsText = Joiner.on(',').join(values);
-        String csText = Joiner.on(',').join(columns);
+        String vsText = Joiner.on(", ").join(values);
+        String csText = Joiner.on(", ").join(columns);
         return Maps.immutableEntry(csText, vsText);
     }
 

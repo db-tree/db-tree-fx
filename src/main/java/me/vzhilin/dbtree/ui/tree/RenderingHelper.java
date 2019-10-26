@@ -33,7 +33,7 @@ public final class RenderingHelper {
             }
         });
 
-        Joiner j = Joiner.on(',');
+        Joiner j = Joiner.on(", ");
         String cols = j.join(columns);
         String vals = j.join(values);
         if (fk.size() > 1) {
@@ -54,15 +54,15 @@ public final class RenderingHelper {
             }
         });
 
-        String fkString = "(" + Joiner.on(',').join(fkColumns)+ ")";
-        String pkString = Joiner.on(',').join(pkColumns);
+        String fkString = "(" + Joiner.on(", ").join(fkColumns)+ ")";
+        String pkString = Joiner.on(", ").join(pkColumns);
         return fkString + "->" + fk.getPkTable().getName() + "(" + pkString + ")";
     }
 
     public String renderKey(ObjectKey key) {
         List<String> vs = new ArrayList<>();
         key.forEach((pkc, value) -> vs.add(pkc.getName() + "=" + conv.toString(value)));
-        return Joiner.on(',').join(vs);
+        return Joiner.on(", ").join(vs);
     }
 
     public String toString(Object value) {
