@@ -2,6 +2,7 @@ package me.vzhilin.dbtree.ui.autocomplete.row;
 
 import me.vzhilin.dbrow.catalog.*;
 import me.vzhilin.dbrow.db.Row;
+import me.vzhilin.dbtree.ui.ApplicationContext;
 import me.vzhilin.dbtree.ui.autocomplete.AutocompletionCell;
 import me.vzhilin.dbtree.ui.autocomplete.SuggestionProvider;
 import me.vzhilin.dbtree.ui.tree.RenderingHelper;
@@ -24,6 +25,7 @@ public final class RowSuggestionProvider implements SuggestionProvider<Autocompl
 
         Set<ForeignKey> usedForeignKeys = new HashSet<>();
         Set<Column> usedColumns = new HashSet<>();
+        RenderingHelper renderingHelper = ApplicationContext.get().getRenderingHelper();
         List<AutocompletionCell> cells = new ArrayList<>();
         if (table.getPrimaryKey().isPresent()) {
             for (PrimaryKeyColumn pkc: table.getPrimaryKey().get().getColumns()) {
@@ -38,7 +40,7 @@ public final class RowSuggestionProvider implements SuggestionProvider<Autocompl
         // composite keys
         for (ForeignKey fk: table.getForeignKeys().values()) {
             if (fk.size() >= 2 && fk.getFkName().startsWith(text) && usedForeignKeys.add(fk)) {
-                String textMapping = new RenderingHelper().renderMapping(fk);
+                String textMapping = renderingHelper.renderMapping(fk);
                 cells.add(new AutocompletionCell(fk.getFkName() + " " + textMapping, false, true, suggContext.getRow().forwardReference(fk)));
             }
         }

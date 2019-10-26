@@ -7,12 +7,19 @@ import me.vzhilin.dbrow.catalog.ForeignKeyColumn;
 import me.vzhilin.dbrow.catalog.PrimaryKeyColumn;
 import me.vzhilin.dbrow.db.ObjectKey;
 import me.vzhilin.dbrow.db.Row;
+import me.vzhilin.dbtree.ui.util.ToStringConverter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-public class RenderingHelper {
+public final class RenderingHelper {
+    private final ToStringConverter conv;
+
+    public RenderingHelper(ToStringConverter conv) {
+        this.conv = conv;
+    }
+
     public ForeignKeyRow renderForeignKey(Row row, ForeignKey fk) {
         List<String> columns = new ArrayList<>();
         List<String> values = new ArrayList<>();
@@ -22,7 +29,7 @@ public class RenderingHelper {
             public void accept(PrimaryKeyColumn primaryKeyColumn, ForeignKeyColumn foreignKeyColumn) {
                 Column column = foreignKeyColumn.getColumn();
                 columns.add(column.getName());
-                values.add(String.valueOf(row.get(column)));
+                values.add(conv.toString(row.get(column)));
             }
         });
 
@@ -54,8 +61,12 @@ public class RenderingHelper {
 
     public String renderKey(ObjectKey key) {
         List<String> vs = new ArrayList<>();
-        key.forEach((pkc, value) -> vs.add(pkc.getName() + "=" + value));
+        key.forEach((pkc, value) -> vs.add(pkc.getName() + "=" + conv.toString(value)));
         return Joiner.on(',').join(vs);
+    }
+
+    public String toString(Object value) {
+        return conv.toString(value);
     }
 
     public static final class ForeignKeyRow {

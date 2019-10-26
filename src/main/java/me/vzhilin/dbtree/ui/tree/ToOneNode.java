@@ -7,6 +7,7 @@ import me.vzhilin.dbrow.catalog.ForeignKey;
 import me.vzhilin.dbrow.catalog.Table;
 import me.vzhilin.dbrow.db.Row;
 import me.vzhilin.dbtree.ui.ApplicationContext;
+import me.vzhilin.dbtree.ui.util.ToStringConverter;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -33,10 +34,12 @@ public final class ToOneNode extends BasicTreeItem {
         if (!loaded) {
             loaded = true;
 
-            RenderingHelper renderingHelper = new RenderingHelper();
+            RenderingHelper renderingHelper = ApplicationContext.get().getRenderingHelper();
             ObservableList<TreeItem<TreeTableNode>> ch = super.getChildren();
 
-            ApplicationContext.get().getExecutor().submit(new Runnable() {
+            ApplicationContext app = ApplicationContext.get();
+            ToStringConverter conv = app.getToStringConverter();
+            app.getQueryExecutorService().submit(new Runnable() {
                 @Override
                 public void run() {
                     Table tb = row.getTable();
@@ -56,7 +59,13 @@ public final class ToOneNode extends BasicTreeItem {
                     });
 
                     // all fields
-                    tb.getColumns().forEach((columnName, column) -> simpleNodes.add(new LeafNode(row, columnName)));
+                    tb.getColumns().forEach((columnName, column) -> {
+                        Object v = row.get(columnName);
+                        if (v != null) {
+                            String textValue = conv.toString(v);
+                            simpleNodes.add(new LeafNode(row, columnName, textValue));
+                        }
+                    });
 
                     row.backwardReferencesCount().forEach((foreignKey, number) -> {
                         long count = number.longValue();

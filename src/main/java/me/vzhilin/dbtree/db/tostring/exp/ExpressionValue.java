@@ -1,5 +1,6 @@
 package me.vzhilin.dbtree.db.tostring.exp;
 import me.vzhilin.dbrow.db.Row;
+import me.vzhilin.dbtree.ui.ApplicationContext;
 import me.vzhilin.dbtree.ui.tree.RenderingHelper;
 
 public final class ExpressionValue {
@@ -23,10 +24,11 @@ public final class ExpressionValue {
 
     @Override
     public String toString() {
+        RenderingHelper renderingHelper = ApplicationContext.get().getRenderingHelper();
         if (isRow) {
-            return String.valueOf(new RenderingHelper().renderKey(row.getKey()));
+            return renderingHelper.renderKey(row.getKey());
         } else {
-            return String.valueOf(value);
+            return renderingHelper.toString(value);
         }
     }
 }

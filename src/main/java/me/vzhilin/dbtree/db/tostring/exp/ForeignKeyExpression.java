@@ -2,6 +2,7 @@ package me.vzhilin.dbtree.db.tostring.exp;
 
 import me.vzhilin.dbrow.catalog.ForeignKey;
 import me.vzhilin.dbrow.db.Row;
+import me.vzhilin.dbtree.ui.ApplicationContext;
 import me.vzhilin.dbtree.ui.tree.RenderingHelper;
 
 public class ForeignKeyExpression implements Expression {
@@ -13,7 +14,8 @@ public class ForeignKeyExpression implements Expression {
 
     @Override
     public ExpressionValue render(Row row) {
+        RenderingHelper renderingHelper = ApplicationContext.get().getRenderingHelper();
         Row ref = row.forwardReference(foreignKey);
-        return new ExpressionValue(ref == null ? "" : new RenderingHelper().renderKey(ref.getKey()));
+        return new ExpressionValue(ref == null ? "" : renderingHelper.renderKey(ref.getKey()));
     }
 }

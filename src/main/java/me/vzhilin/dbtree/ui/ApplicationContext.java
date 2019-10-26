@@ -5,6 +5,8 @@ import me.vzhilin.dbtree.db.DbContext;
 import me.vzhilin.dbtree.db.QueryContext;
 import me.vzhilin.dbtree.ui.conf.ConnectionSettings;
 import me.vzhilin.dbtree.ui.conf.Settings;
+import me.vzhilin.dbtree.ui.tree.RenderingHelper;
+import me.vzhilin.dbtree.ui.util.ToStringConverter;
 
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -18,6 +20,8 @@ public final class ApplicationContext {
     private final static ThreadLocal<ApplicationContext> CURRENT = new ThreadLocal<>();
     private Logger logger;
     private final ExecutorService queryExecutor;
+    private final ToStringConverter toStringConverter = new ToStringConverter();
+    private final RenderingHelper renderingHelper = new RenderingHelper(toStringConverter);
 
     public ApplicationContext(Settings settings) {
         this.settings = settings;
@@ -70,8 +74,16 @@ public final class ApplicationContext {
         this.logger = logger;
     }
 
-    public ExecutorService getExecutor() {
+    public ExecutorService getQueryExecutorService() {
         return queryExecutor;
+    }
+
+    public RenderingHelper getRenderingHelper() {
+        return renderingHelper;
+    }
+
+    public ToStringConverter getToStringConverter() {
+        return toStringConverter;
     }
 
     public interface Logger {

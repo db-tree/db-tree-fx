@@ -10,6 +10,7 @@ import me.vzhilin.dbrow.catalog.PrimaryKey;
 import me.vzhilin.dbrow.catalog.PrimaryKeyColumn;
 import me.vzhilin.dbrow.catalog.Table;
 import me.vzhilin.dbrow.db.Row;
+import me.vzhilin.dbtree.ui.ApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -45,12 +46,13 @@ public final class Paging {
     }
 
     private Map.Entry<String, String> toString(Row r, PrimaryKey pk) {
+        RenderingHelper renderingHelper = ApplicationContext.get().getRenderingHelper();
         List<String> columns = new ArrayList<>();
         List<String> values = new ArrayList<>();
         pk.getColumns().forEach(new Consumer<PrimaryKeyColumn>() {
             @Override
             public void accept(PrimaryKeyColumn primaryKeyColumn) {
-                values.add(String.valueOf(r.get(primaryKeyColumn.getColumn())));
+                values.add(renderingHelper.toString(r.get(primaryKeyColumn.getColumn())));
                 columns.add(primaryKeyColumn.getName());
             }
         });

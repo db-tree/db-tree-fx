@@ -185,7 +185,7 @@ public class MainWindowController {
 
         List<TreeItem<TreeTableNode>> countNodes = new ArrayList<>();
         ConnectionSettings finalConnection = connection;
-        ApplicationContext.get().getExecutor().execute(new Runnable() {
+        ApplicationContext.get().getQueryExecutorService().execute(new Runnable() {
             @Override
             public void run() {
                 try {
