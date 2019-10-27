@@ -28,7 +28,7 @@ public class ComplexColumnExpression implements Expression {
 
             Map<ForeignKey, Row> refs = current.forwardReferences();
             Table table = current.getTable();
-            ForeignKey fk = table.getForeignKeys().get(column);
+            ForeignKey fk = table.getForeignKey(column);
             if (fk != null && refs.containsKey(fk)) {
                 current = refs.get(fk);
                 continue;
@@ -45,7 +45,7 @@ public class ComplexColumnExpression implements Expression {
             }
             else
             if (table.hasForeignKey(column)) {
-                current = current.forwardReference(table.getForeignKeys().get(column));
+                current = current.forwardReference(table.getForeignKey(column));
                 continue;
             }
 

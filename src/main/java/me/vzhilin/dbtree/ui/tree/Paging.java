@@ -6,9 +6,9 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.TreeItem;
-import me.vzhilin.dbrow.catalog.PrimaryKey;
-import me.vzhilin.dbrow.catalog.PrimaryKeyColumn;
 import me.vzhilin.dbrow.catalog.Table;
+import me.vzhilin.dbrow.catalog.UniqueConstraint;
+import me.vzhilin.dbrow.catalog.UniqueConstraintColumn;
 import me.vzhilin.dbrow.db.Row;
 import me.vzhilin.dbtree.ui.ApplicationContext;
 
@@ -37,7 +37,8 @@ public final class Paging {
         for (int i = 0; i < PAGE_SIZE && it.hasNext(); ++i) {
             Row r = it.next();
             Table table = r.getTable();
-            PrimaryKey pk = table.getPrimaryKey().get();
+
+            UniqueConstraint pk = table.getAnyUniqueConstraint();
             Map.Entry<String, String> e = toString(r, pk);
             rs.add(new ToOneNode(r, new TreeTableNode(e.getKey(), e.getValue(), r)));
         }
@@ -45,13 +46,13 @@ public final class Paging {
         ch.addAll(rs);
     }
 
-    private Map.Entry<String, String> toString(Row r, PrimaryKey pk) {
+    private Map.Entry<String, String> toString(Row r, UniqueConstraint pk) {
         RenderingHelper renderingHelper = ApplicationContext.get().getRenderingHelper();
         List<String> columns = new ArrayList<>();
         List<String> values = new ArrayList<>();
-        pk.getColumns().forEach(new Consumer<PrimaryKeyColumn>() {
+        pk.getColumns().forEach(new Consumer<UniqueConstraintColumn>() {
             @Override
-            public void accept(PrimaryKeyColumn primaryKeyColumn) {
+            public void accept(UniqueConstraintColumn primaryKeyColumn) {
                 values.add(renderingHelper.toString(r.get(primaryKeyColumn.getColumn())));
                 columns.add(primaryKeyColumn.getName());
             }

@@ -4,7 +4,7 @@ import com.google.common.base.Joiner;
 import me.vzhilin.dbrow.catalog.Column;
 import me.vzhilin.dbrow.catalog.ForeignKey;
 import me.vzhilin.dbrow.catalog.ForeignKeyColumn;
-import me.vzhilin.dbrow.catalog.PrimaryKeyColumn;
+import me.vzhilin.dbrow.catalog.UniqueConstraintColumn;
 import me.vzhilin.dbrow.db.ObjectKey;
 import me.vzhilin.dbrow.db.Row;
 import me.vzhilin.dbtree.ui.util.ToStringConverter;
@@ -24,9 +24,9 @@ public final class RenderingHelper {
         List<String> columns = new ArrayList<>();
         List<String> values = new ArrayList<>();
 
-        fk.getColumnMapping().forEach(new BiConsumer<PrimaryKeyColumn, ForeignKeyColumn>() {
+        fk.getColumnMapping().forEach(new BiConsumer<UniqueConstraintColumn, ForeignKeyColumn>() {
             @Override
-            public void accept(PrimaryKeyColumn primaryKeyColumn, ForeignKeyColumn foreignKeyColumn) {
+            public void accept(UniqueConstraintColumn primaryKeyColumn, ForeignKeyColumn foreignKeyColumn) {
                 Column column = foreignKeyColumn.getColumn();
                 columns.add(column.getName());
                 values.add(conv.toString(row.get(column)));
@@ -46,9 +46,9 @@ public final class RenderingHelper {
     public String renderMapping(ForeignKey fk) {
         List<String> fkColumns = new ArrayList<>();
         List<String> pkColumns = new ArrayList<>();
-        fk.getColumnMapping().forEach(new BiConsumer<PrimaryKeyColumn, ForeignKeyColumn>() {
+        fk.getColumnMapping().forEach(new BiConsumer<UniqueConstraintColumn, ForeignKeyColumn>() {
             @Override
-            public void accept(PrimaryKeyColumn primaryKeyColumn, ForeignKeyColumn foreignKeyColumn) {
+            public void accept(UniqueConstraintColumn primaryKeyColumn, ForeignKeyColumn foreignKeyColumn) {
                 fkColumns.add(foreignKeyColumn.getColumn().getName());
                 pkColumns.add(primaryKeyColumn.getColumn().getName());
             }
@@ -56,7 +56,7 @@ public final class RenderingHelper {
 
         String fkString = "(" + Joiner.on(", ").join(fkColumns)+ ")";
         String pkString = Joiner.on(", ").join(pkColumns);
-        return fkString + "->" + fk.getPkTable().getName() + "(" + pkString + ")";
+        return fkString + "->" + fk.getUniqueConstraint().getTable().getName() + "(" + pkString + ")";
     }
 
     public String renderKey(ObjectKey key) {

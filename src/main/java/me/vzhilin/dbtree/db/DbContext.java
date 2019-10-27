@@ -6,7 +6,7 @@ import me.vzhilin.dbrow.adapter.oracle.OracleDatabaseAdapter;
 import me.vzhilin.dbrow.adapter.postgres.PostgresqlAdapter;
 import me.vzhilin.dbrow.catalog.Catalog;
 import me.vzhilin.dbrow.catalog.CatalogFilter;
-import me.vzhilin.dbrow.catalog.CatalogLoader;
+import me.vzhilin.dbrow.catalog.loader.CatalogLoaderFactory;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
@@ -39,7 +39,8 @@ public final class DbContext implements Closeable {
         adapter = chooseAdapter(driverClazz);
         schemas = chooseSchemas(schemas);
         Pattern compiledPattern = (pattern == null || pattern.isEmpty()) ? MATCH_ANY : Pattern.compile(pattern);
-        catalog = new CatalogLoader(adapter).load(ds, new PatternTableFilter(schemas, compiledPattern));
+        CatalogLoaderFactory factory = new CatalogLoaderFactory();
+        catalog = factory.getLoader(ds).load(ds, new PatternTableFilter(schemas, compiledPattern));
     }
 
     private Set<String> chooseSchemas(Set<String> schemas) throws SQLException {

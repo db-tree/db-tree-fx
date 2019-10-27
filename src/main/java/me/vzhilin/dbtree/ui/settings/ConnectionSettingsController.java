@@ -337,7 +337,7 @@ public class ConnectionSettingsController {
         schemaTables.forEach(table -> table.getColumns().forEach(new BiConsumer<String, Column>() {
             @Override
             public void accept(String name, Column column) {
-                boolean selected = column.getPrimaryKey().isPresent();
+                boolean selected = !column.getUniqueConstraints().isEmpty();
                 result.put(new ColumnKey(table.getSchemaName(), table.getName(), name), selected);
             }
         }));

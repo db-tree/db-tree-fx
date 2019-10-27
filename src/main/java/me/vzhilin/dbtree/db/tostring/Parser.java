@@ -84,7 +84,7 @@ public final class Parser {
             }
 
             if (table.hasForeignKey(columnName)) {
-                return new ForeignKeyExpression(table.getForeignKeys().get(columnName));
+                return new ForeignKeyExpression(table.getForeignKey(columnName));
             }
             throw new ColumnNotFound(table, columnName);
         }

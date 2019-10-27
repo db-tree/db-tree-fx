@@ -7,7 +7,10 @@ import me.vzhilin.dbtree.ui.autocomplete.AutocompletionCell;
 import me.vzhilin.dbtree.ui.autocomplete.SuggestionProvider;
 import me.vzhilin.dbtree.ui.tree.RenderingHelper;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.function.BiConsumer;
 
 public final class RowSuggestionProvider implements SuggestionProvider<AutocompletionCell> {
@@ -27,18 +30,20 @@ public final class RowSuggestionProvider implements SuggestionProvider<Autocompl
         Set<Column> usedColumns = new HashSet<>();
         RenderingHelper renderingHelper = ApplicationContext.get().getRenderingHelper();
         List<AutocompletionCell> cells = new ArrayList<>();
-        if (table.getPrimaryKey().isPresent()) {
-            for (PrimaryKeyColumn pkc: table.getPrimaryKey().get().getColumns()) {
-                Column column = pkc.getColumn();
-                boolean isFk = !column.getForeignKeys().isEmpty();
-                if (column.getName().startsWith(text) && usedColumns.add(column)) {
-                    cells.add(new AutocompletionCell(column.getName(), true, isFk, suggContext.getRow().get(column)));
-                }
-            }
-        }
+
+//      FIXME
+//        if (table.getPrimaryKey().isPresent()) {
+//            for (PrimaryKeyColumn pkc: table.getPrimaryKey().get().getColumns()) {
+//                Column column = pkc.getColumn();
+//                boolean isFk = !column.getForeignKeys().isEmpty();
+//                if (column.getName().startsWith(text) && usedColumns.add(column)) {
+//                    cells.add(new AutocompletionCell(column.getName(), true, isFk, suggContext.getRow().get(column)));
+//                }
+//            }
+//        }
 
         // composite keys
-        for (ForeignKey fk: table.getForeignKeys().values()) {
+        for (ForeignKey fk: table.getForeignKeys()) {
             if (fk.size() >= 2 && fk.getFkName().startsWith(text) && usedForeignKeys.add(fk)) {
                 String textMapping = renderingHelper.renderMapping(fk);
                 cells.add(new AutocompletionCell(fk.getFkName() + " " + textMapping, false, true, suggContext.getRow().forwardReference(fk)));
@@ -61,14 +66,14 @@ public final class RowSuggestionProvider implements SuggestionProvider<Autocompl
         });
 
         // one column in one foreign key
-        for (ForeignKey fk: table.getForeignKeys().values()) {
+        for (ForeignKey fk: table.getForeignKeys()) {
             if (fk.size() < 2) {
                 continue;
             }
 
-            fk.getColumnMapping().forEach(new BiConsumer<PrimaryKeyColumn, ForeignKeyColumn>() {
+            fk.getColumnMapping().forEach(new BiConsumer<UniqueConstraintColumn, ForeignKeyColumn>() {
                 @Override
-                public void accept(PrimaryKeyColumn primaryKeyColumn, ForeignKeyColumn foreignKeyColumn) {
+                public void accept(UniqueConstraintColumn primaryKeyColumn, ForeignKeyColumn foreignKeyColumn) {
                     Column column = foreignKeyColumn.getColumn();
                     if (column.getName().startsWith(text)) {
                         cells.add(new AutocompletionCell(fk.getFkName(), false, true, suggContext.getRow().forwardReference(fk)));
@@ -81,9 +86,8 @@ public final class RowSuggestionProvider implements SuggestionProvider<Autocompl
         table.getColumns().forEach(new BiConsumer<String, Column>() {
             @Override
             public void accept(String name, Column column) {
-                Set<ForeignKey> foreignKeys = column.getForeignKeys();
-                boolean isFk = !foreignKeys.isEmpty();
-                boolean isPk = column.getPrimaryKey().isPresent();
+                boolean isFk = !column.getForeignKeys().isEmpty();
+                boolean isPk = !column.getUniqueConstraints().isEmpty();
                 if (!isPk && column.getName().startsWith(text) && usedColumns.add(column)) {
                     Object value = suggContext.getRow().get(column);
                     cells.add(new AutocompletionCell(name, false, isFk, String.valueOf(value)));
@@ -100,11 +104,11 @@ public final class RowSuggestionProvider implements SuggestionProvider<Autocompl
             String[] split = text.split("\\.");
             ForeignKey foreignKey = null;
             for (int i = 0; i < split.length; i++) {
-                Map<String, ForeignKey> rs = currentTable.getForeignKeys();
+//                Map<String, ForeignKey> rs = currentTable.getForeignKeys();
                 String name = split[i];
                 if (!name.isEmpty()) {
-                    if (rs.containsKey(name)) {
-                        foreignKey = rs.get(name);
+                    if (currentTable.hasForeignKey(name)) {
+                        foreignKey = currentTable.getForeignKey(name);
                     } else
                     if (currentTable.hasColumn(name)) {
                         Column column = currentTable.getColumn(name);
@@ -118,7 +122,7 @@ public final class RowSuggestionProvider implements SuggestionProvider<Autocompl
                     }
 
                     if (currentRow != null) {
-                        currentTable = foreignKey.getPkTable();
+                        currentTable = foreignKey.getUniqueConstraint().getTable();
                         currentRow = currentRow.forwardReference(foreignKey);
                     } else {
                         break;
