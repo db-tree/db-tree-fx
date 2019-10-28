@@ -382,6 +382,7 @@ public class MainWindowController {
             TreeItem<TreeTableNode> treeItem = getTreeTableRow().getTreeItem();
             if (item == null || empty) {
                 super.setText(null);
+                super.setGraphic(EMPTY_PANE);
             } else {
                 if (treeItem instanceof Paging.PagingItem) {
                     Pane hBox = new Pane();

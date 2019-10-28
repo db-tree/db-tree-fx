@@ -48,6 +48,23 @@ public final class ToOneNode extends BasicTreeItem {
                     List<TreeItem<TreeTableNode>> simpleNodes   = new LinkedList<>();
                     List<TreeItem<TreeTableNode>> relationNodes = new LinkedList<>();
 
+                    row.backwardReferencesCount().forEach((uc, refCount) -> {
+                        if (refCount.isEmpty()) {
+                            return;
+                        }
+
+                        UniqueConstratintNode ucn = new UniqueConstratintNode(row, uc);
+                        refCount.forEach((fk, count) -> {
+                            long c = count.longValue();
+                            if (c > 0) {
+                                ucn.getChildren().add(new ToManyNode(fk, c, row));
+                            }
+                        });
+                        if (!ucn.getChildren().isEmpty()) {
+                            complexNodes.add(ucn);
+                        }
+                    });
+
                     // foreign keys
                     row.forwardReferences().forEach(new BiConsumer<ForeignKey, Row>() {
                         @Override
@@ -67,13 +84,13 @@ public final class ToOneNode extends BasicTreeItem {
                         }
                     });
 
-                    row.backwardReferencesCount().forEach((foreignKey, number) -> {
-                        long count = number.longValue();
-                        if (count > 0) {
-                            TreeItem<TreeTableNode> toManyNode = new ToManyNode(foreignKey, count, row);
-                            relationNodes.add(toManyNode);
-                        }
-                    });
+//                    row.backwardReferencesCount().forEach((foreignKey, number) -> {
+//                        long count = number.longValue();
+//                        if (count > 0) {
+//                            TreeItem<TreeTableNode> toManyNode = new ToManyNode(foreignKey, count, row);
+//                            relationNodes.add(toManyNode);
+//                        }
+//                    });
 
                     Platform.runLater(new Runnable() {
                         @Override

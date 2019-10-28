@@ -19,11 +19,11 @@ public final class TreeTableNode {
         meaningfulColumnProperty.set(row);
     }
 
-    public ObservableValue<String> itemColumnProperty() {
+    public StringProperty itemColumnProperty() {
         return itemColumnProperty;
     }
 
-    public ObservableValue<String> valueColumnProperty() {
+    public StringProperty valueColumnProperty() {
         return valueColumnProperty;
     }
 
@@ -31,7 +31,7 @@ public final class TreeTableNode {
         return meaningfulColumnProperty;
     }
 
-    public ObservableValue<String> tableColumnProperty() {
+    public StringProperty tableColumnProperty() {
         return tableColumnProperty;
     }
 }
