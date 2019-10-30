@@ -379,6 +379,7 @@ public class MainWindowController {
     private static class ItemTreeTableCell extends TreeTableCell<TreeTableNode, String> {
         private final static Pane EMPTY_PANE = new Pane();
         @Override protected void updateItem(String item, boolean empty) {
+//            super.updateItem(item, empty);
             TreeItem<TreeTableNode> treeItem = getTreeTableRow().getTreeItem();
             if (item == null || empty) {
                 super.setText(null);

@@ -27,7 +27,7 @@ public final class UniqueConstratintNode extends BasicTreeItem {
         if (columns.size() > 1) {
             joinedColumns = "(" + joinedColumns + ")";
         }
-        ttn.itemColumnProperty().set(joinedColumns);
+        ttn.itemColumnProperty().set("[U] " + joinedColumns);
         return ttn;
     }
 }

@@ -40,7 +40,7 @@ public final class Paging {
 
             UniqueConstraint pk = table.getAnyUniqueConstraint();
             Map.Entry<String, String> e = toString(r, pk);
-            rs.add(new ToOneNode(r, new TreeTableNode(e.getKey(), e.getValue(), r)));
+            rs.add(new ToOneNode(r, new TreeTableNode("[U] " + e.getKey(), e.getValue(), r)));
         }
 
         ch.addAll(rs);

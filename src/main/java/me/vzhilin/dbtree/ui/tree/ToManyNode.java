@@ -17,7 +17,9 @@ public final class ToManyNode extends BasicTreeItem {
         this.row = row;
         relation = fk;
         Table tb = fk.getTable();
-        setValue(new TreeTableNode(String.format("(+) %s::%s (%d)", tb.getName(),  fk.getFkAsString(), count), "", null));
+        TreeTableNode ttn = new TreeTableNode(String.format("%s (%d)", fk.getFkAsString(), count), "", null);
+        ttn.tableColumnProperty().set(tb.getName());
+        setValue(ttn);
     }
 
     @Override public boolean isLeaf() {

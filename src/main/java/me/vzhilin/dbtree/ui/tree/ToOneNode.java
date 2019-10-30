@@ -70,7 +70,7 @@ public final class ToOneNode extends BasicTreeItem {
                         @Override
                         public void accept(ForeignKey foreignKey, Row ref) {
                             RenderingHelper.ForeignKeyRow e = renderingHelper.renderForeignKey(row, foreignKey);
-                            TreeTableNode refNode = new TreeTableNode(e.cols, e.vals, ref);
+                            TreeTableNode refNode = new TreeTableNode("[F] " + e.cols, e.vals, ref);
                             complexNodes.add(new ToOneNode(ref, refNode));
                         }
                     });
