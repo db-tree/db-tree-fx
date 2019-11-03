@@ -1,5 +1,8 @@
 package me.vzhilin.dbtree.ui.conf;
 
+import com.github.javakeyring.BackendNotSupportedException;
+import com.github.javakeyring.Keyring;
+import com.github.javakeyring.PasswordAccessException;
 import com.google.common.base.Joiner;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ListProperty;
@@ -7,11 +10,6 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import net.east301.keyring.BackendNotSupportedException;
-import net.east301.keyring.Keyring;
-import net.east301.keyring.PasswordRetrievalException;
-import net.east301.keyring.PasswordSaveException;
-import net.east301.keyring.util.LockException;
 import org.apache.log4j.Logger;
 import org.hildan.fxgson.FxGson;
 
@@ -81,16 +79,11 @@ public class Settings {
             throw new RuntimeException(e);
         }
 
-        if (keyring.isKeyStorePathRequired()) {
-            File keyStoreFile = new File(folder, ".keystore");
-            keyring.setKeyStorePath(keyStoreFile.getPath());
-        }
-
         try {
             for (ConnectionSettings conn: connections) {
                 keyring.setPassword(APP_ID, conn.getConnectionName(), conn.getPassword());
             }
-        } catch (LockException | PasswordSaveException e) {
+        } catch (PasswordAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -134,17 +127,12 @@ public class Settings {
             throw new RuntimeException(e);
         }
 
-        if (keyring.isKeyStorePathRequired()) {
-            File keyStoreFile = new File(getFolder(), ".keystore");
-            keyring.setKeyStorePath(keyStoreFile.getPath());
-        }
-
         try {
             for (ConnectionSettings conn: settings.getConnections()) {
                 String password = keyring.getPassword("me.vzhilin.dbtree", conn.getConnectionName());
                 conn.passwordProperty().set(password);
             }
-        } catch (LockException | PasswordRetrievalException e) {
+        } catch (PasswordAccessException e) {
             LOG.error(e, e);
         }
     }
