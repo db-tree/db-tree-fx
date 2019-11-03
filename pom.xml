@@ -36,7 +36,7 @@
             <version>${javafx.version}</version>
         </dependency>
         <dependency>
-            <groupId>net.east301</groupId>
+            <groupId>com.github.javakeyring</groupId>
             <artifactId>java-keyring</artifactId>
             <version>1.0.1-SNAPSHOT</version>
         </dependency>
