@@ -81,6 +81,8 @@ public class ConnectionSettingsController {
         }
     });
 
+    private DbContext localContext;
+
     private DbContext getContext() {
         try {
             String driver = driverClass.getValue();
@@ -102,8 +104,28 @@ public class ConnectionSettingsController {
         ObservableList<String> driverList =
             FXCollections.observableArrayList("oracle.jdbc.OracleDriver", "org.postgresql.Driver", "org.mariadb.jdbc.Driver");
         driverClass.setItems(driverList);
-        initTemplateTable();
-        initLookupTree();
+
+        lookupTreeView.setPlaceholder(new ProgressIndicator());
+        templateTable.setPlaceholder(new ProgressIndicator());
+
+        executor.execute(new Runnable() {
+            DbContext dbContext = null;
+
+            @Override
+            public void run() {
+                try {
+                    dbContext = getContext();
+                } finally {
+                    Platform.runLater(() -> {
+                        localContext = dbContext;
+                        lookupTreeView.setPlaceholder(new Label());
+                        templateTable.setPlaceholder(new Label());
+                        initTemplateTable();
+                        initLookupTree();
+                    });
+                }
+            }
+        });
     }
 
     private void initLookupTree() {
@@ -204,6 +226,7 @@ public class ConnectionSettingsController {
                     testMessageLabel.setTextFill(Color.DARKGREEN);
                     testMessageLabel.setText("OK");
 
+                    localContext = ctx;
                     Set<Table> allTables = new HashSet<>();
                     Catalog catalog = ctx.getCatalog();
                     catalog.forEachTable(allTables::add);
@@ -461,15 +484,14 @@ public class ConnectionSettingsController {
         }
 
         private void bindTextField() {
-            DbContext context = getContext();
-            if (context != null) {
+            if (localContext != null) {
                 textField = new TextField();
                 textField.setOnAction(e -> cancelEdit());
 
-                Template template = (Template) getTableRow().getItem();
+                Template template = getTableRow().getItem();
                 textField.textProperty().bindBidirectional(template.templateProperty());
 
-                Catalog catalog = context.getCatalog();
+                Catalog catalog = localContext.getCatalog();
                 Table table = catalog.getSchema(template.getSchemaName()).getTable(template.getTableName());
                 DbSuggestionProvider kcaProvider = new DbSuggestionProvider(table);
                 autoCompletion = new AutoCompletion(kcaProvider, textField);
@@ -515,8 +537,8 @@ public class ConnectionSettingsController {
 
                 String tableName = item.getTable();
                 String schemaName = item.getSchema();
-                if (getContext() != null) {
-                    Catalog catalog = getContext().getCatalog();
+                if (localContext != null) {
+                    Catalog catalog = localContext.getCatalog();
                     Table table = catalog.getSchema(schemaName).getTable(tableName);
                     if (table != null) {
                         ParsedTemplate exp = parse(table, item.getText());
