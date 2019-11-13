@@ -142,7 +142,7 @@ public class Settings {
             return new File(new File(System.getenv("APPDATA")), "DBTree");
         } else
         if (OS.contains("mac")) {
-            return new File("~/Library/Preferences/me.vzhilin.dbtree");
+            return new File(new File(System.getenv("HOME")), "Library/Preferences/" + APP_ID);
         } else
         if (OS.contains("nix") || OS.contains("nux") || OS.contains("aix")){
             return new File("~");
