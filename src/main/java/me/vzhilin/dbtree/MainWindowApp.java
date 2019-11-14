@@ -56,7 +56,8 @@ public class MainWindowApp extends Application {
     @Override
     public void stop() throws Exception {
         super.stop();
-
         settings.save();
+        Platform.exit();
+        System.exit(0); // workaround JavaFX exit bug on GNU/Linux
     }
 }
