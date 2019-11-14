@@ -1,13 +1,13 @@
 #!/bin/bash
 JAVA_HOME=~/opt/jdk-13.0.1/
-JPACKAGE_HOME=~/opt/openjdk-14-jpackage+1-70_linux-x64_bin/jdk-14
+JPACKAGE_HOME=~/opt/jdk-14
 JAVAFX_JMODS=~/opt/javafx-jmods-13.0.1
 
 if [ ! -d "target/jre" ]
 then
 	$JAVA_HOME/bin/jlink \
 	--module-path $JAVAFX_JMODS \
-	--add-modules javafx.base,javafx.controls,javafx.fxml,javafx.graphics,java.sql,java.management,java.security.jgss \
+	--add-modules javafx.base,javafx.controls,javafx.fxml,javafx.graphics,java.sql,java.management,java.security.jgss,jdk.security.auth \
 	--output target/jre
 fi
 
@@ -20,6 +20,5 @@ $JPACKAGE_HOME/bin/jpackage \
 	--type rpm \
 	--linux-package-name DBTree \
 	--linux-app-category Database \
-	--verbose \
 	--linux-shortcut \
 	-d installer -i target/shade -n DBTree --main-class me.vzhilin.dbtree.MainWindowApp --main-jar db-tree-view-fx.jar
