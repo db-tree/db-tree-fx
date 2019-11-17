@@ -90,6 +90,11 @@ public class ConnectionSettingsController {
             String username = this.username.getText();
             String pass = password.getText();
             String pattern = tableNamePattern.getText();
+
+            if (driver == null || url == null) {
+                return null;
+            }
+
             Set<String> schemas = parseSchemas(this.schemas.getText());
             return appContext.newQueryContext(driver, url, username, pass, pattern, schemas);
         } catch (ExecutionException e) {

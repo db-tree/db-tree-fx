@@ -164,12 +164,17 @@ public class MainWindowController {
     }
 
     @FXML
+    public void exitApplication(ActionEvent event) {
+        Platform.exit();
+    }
+
+    @FXML
     private void onFindAction() throws ExecutionException {
         ConnectionSettings connection = cbConnection.getValue();
         if (connection == null) {
             ObservableList<ConnectionSettings> connections = settings.getConnections();
             if (!connections.isEmpty()) {
-                ConnectionSettings c = connections.get(1);
+                ConnectionSettings c = connections.get(0);
                 cbConnection.setValue(c);
                 connection = c;
             } else {

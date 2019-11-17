@@ -129,7 +129,7 @@ public class Settings {
 
         try {
             for (ConnectionSettings conn: settings.getConnections()) {
-                String password = keyring.getPassword("me.vzhilin.dbtree", conn.getConnectionName());
+                String password = keyring.getPassword(APP_ID, conn.getConnectionName());
                 conn.passwordProperty().set(password);
             }
         } catch (PasswordAccessException e) {
@@ -145,7 +145,7 @@ public class Settings {
             return new File(new File(System.getenv("HOME")), "Library/Preferences/" + APP_ID);
         } else
         if (OS.contains("nix") || OS.contains("nux") || OS.contains("aix")){
-            return new File("~");
+            return new File(System.getenv("HOME"));
         } else {
             return new File(".");
         }
