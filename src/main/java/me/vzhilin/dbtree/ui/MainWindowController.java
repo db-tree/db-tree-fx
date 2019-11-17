@@ -280,11 +280,21 @@ public class MainWindowController {
         stage.initModality(Modality.WINDOW_MODAL);
         setIcon(stage);
         controller.setSettings(settings);
-        Scene scene = new Scene(root, 800, 500);
+        Scene scene = new Scene(root, 800, 600);
         scene.getStylesheets().add(getClass().getResource("/styles/connection-settings.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/styles/autocomplete.css").toExternalForm());
         stage.setTitle("Settings");
         stage.setScene(scene);
+
+        if (settings.getSettingsWindow() != null) {
+            Settings.Dimensions dimension = settings.getSettingsWindow();
+            stage.setWidth(dimension.width);
+            stage.setHeight(dimension.height);
+        }
+
+        stage.widthProperty().addListener((v, ov, nv) -> settings.setSettingsWindowWidth(nv.intValue()));
+        stage.heightProperty().addListener((v, ov, nv) -> settings.setSettingsWindowHeight(nv.intValue()));
+
         stage.show();
     }
 

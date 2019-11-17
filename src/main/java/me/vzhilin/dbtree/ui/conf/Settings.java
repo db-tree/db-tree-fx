@@ -159,15 +159,31 @@ public class Settings {
         return settingsWindow;
     }
 
-    public void setMainWindowWidth(int height) {
+    public void setMainWindowWidth(int width) {
+        if (mainWindow == null) {
+            mainWindow = new Dimensions();
+        }
+
+        mainWindow.width = width;
+    }
+
+    public void setMainWindowHeight(int height) {
+        if (mainWindow == null) {
+            mainWindow = new Dimensions();
+        }
+
+        mainWindow.height = height;
+    }
+
+    public void setSettingsWindowWidth(int width) {
         if (settingsWindow == null) {
             settingsWindow = new Dimensions();
         }
 
-        settingsWindow.width = height;
+        settingsWindow.width = width;
     }
 
-    public void setMainWindowHeight(int height) {
+    public void setSettingsWindowHeight(int height) {
         if (settingsWindow == null) {
             settingsWindow = new Dimensions();
         }

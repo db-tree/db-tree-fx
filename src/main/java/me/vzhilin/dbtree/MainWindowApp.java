@@ -39,8 +39,8 @@ public class MainWindowApp extends Application {
         MainWindowController controller = loader.getController();
         load(controller);
         controller.setOwnerWindow(stage);
-        if (settings.getSettingsWindow() != null) {
-            Settings.Dimensions dimension = settings.getSettingsWindow();
+        if (settings.getMainWindow() != null) {
+            Settings.Dimensions dimension = settings.getMainWindow();
             stage.setWidth(dimension.width);
             stage.setHeight(dimension.height);
         }
