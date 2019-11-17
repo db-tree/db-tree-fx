@@ -28,7 +28,7 @@ public class MainWindowApp extends Application {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("/main-window.fxml"));
         Parent root = loader.load();
-        Scene scene = new Scene(root, 800, 500);
+        Scene scene = new Scene(root, 1024, 768);
         ObservableList<String> stylesheets = scene.getStylesheets();
         stylesheets.add(getClass().getResource("/styles/connection-settings.css").toExternalForm());
         stylesheets.add(getClass().getResource("/styles/autocomplete.css").toExternalForm());

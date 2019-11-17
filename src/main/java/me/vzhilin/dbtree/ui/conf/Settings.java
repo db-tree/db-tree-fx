@@ -20,13 +20,11 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.util.ArrayList;
 
-//import org.hildan.fxgson.FxGson;
-
 public class Settings {
-    public static final String DB_TREE_JSON_TEMP = ".db-tree.json~";
+    private static final String DB_TREE_JSON_TEMP = ".db-tree.json~";
     private final static Logger LOG = Logger.getLogger(Settings.class);
     private final static String OS = System.getProperty("os.name").toLowerCase();
-    public static final String DB_TREE_JSON = ".db-tree.json";
+    private static final String DB_TREE_JSON = ".db-tree.json";
     private static final String APP_ID = "me.vzhilin.dbtree";
 
     private final DoubleProperty dividerPosition = new SimpleDoubleProperty();

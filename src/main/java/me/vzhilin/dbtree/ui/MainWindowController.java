@@ -294,8 +294,15 @@ public class MainWindowController {
 
     public void setSettings(Settings settings) {
         this.settings = settings;
-
         setupCombobox(settings);
+
+        if (settings.connectionsProperty().isEmpty()) {
+            try {
+                onConfigAction();
+            } catch (IOException e) {
+                // FIXME
+            }
+        }
     }
 
     private void setupCombobox(Settings settings) {
