@@ -27,9 +27,11 @@ public class Settings {
     private static final String DB_TREE_JSON = ".db-tree.json";
     private static final String APP_ID = "me.vzhilin.dbtree";
 
+    private Dimensions mainWindow;
+    private Dimensions settingsWindow;
+
     private final DoubleProperty dividerPosition = new SimpleDoubleProperty();
     private final ListProperty<ConnectionSettings> connections = new SimpleListProperty<ConnectionSettings>(FXCollections.observableArrayList(new ArrayList<>()));
-
 
     public ObservableList<ConnectionSettings> getConnections() {
         return connections.get();
@@ -147,5 +149,34 @@ public class Settings {
         } else {
             return new File(".");
         }
+    }
+
+    public Dimensions getMainWindow() {
+        return mainWindow;
+    }
+
+    public Dimensions getSettingsWindow() {
+        return settingsWindow;
+    }
+
+    public void setMainWindowWidth(int height) {
+        if (settingsWindow == null) {
+            settingsWindow = new Dimensions();
+        }
+
+        settingsWindow.width = height;
+    }
+
+    public void setMainWindowHeight(int height) {
+        if (settingsWindow == null) {
+            settingsWindow = new Dimensions();
+        }
+
+        settingsWindow.height = height;
+    }
+
+    public static class Dimensions {
+        public int width;
+        public int height;
     }
 }

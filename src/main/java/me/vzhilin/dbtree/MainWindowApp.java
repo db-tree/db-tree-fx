@@ -35,10 +35,19 @@ public class MainWindowApp extends Application {
         stylesheets.add(getClass().getResource("/styles/main-window.css").toExternalForm());
         stage.setTitle("DB Tree");
         stage.setScene(scene);
-        stage.show();
+
         MainWindowController controller = loader.getController();
         load(controller);
         controller.setOwnerWindow(stage);
+        if (settings.getSettingsWindow() != null) {
+            Settings.Dimensions dimension = settings.getSettingsWindow();
+            stage.setWidth(dimension.width);
+            stage.setHeight(dimension.height);
+        }
+
+        stage.widthProperty().addListener((v, ov, nv) -> settings.setMainWindowWidth(nv.intValue()));
+        stage.heightProperty().addListener((v, ov, nv) -> settings.setMainWindowHeight(nv.intValue()));
+        stage.show();
 
     }
 
