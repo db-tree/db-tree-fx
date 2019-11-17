@@ -10,7 +10,7 @@
           <Menu mnemonicParsing="false" text="File">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#onConfigAction" text="Configuration" />
-                  <MenuItem mnemonicParsing="false" text="Close" />
+              <MenuItem mnemonicParsing="false" onAction="#onCloseAction" text="Close" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">

@@ -20,10 +20,12 @@ public final class AboutController {
         String buildDate = props.getProperty("build.date");
 
 
-        String text = "author: Vladimir Zhilin\n" +
-                "version: $version\n" +
-                "build date: $date\n" +
-                "github: https://github.com/vzhn/db-tree-fx";
+        String text =
+            "author: Vladimir Zhilin\n" +
+            "version: $version\n" +
+            "build date: $date\n" +
+            "email: db.tree.app@gmail.com\n" +
+            "github: https://github.com/db-tree";
 
         text = text.replace("$date", buildDate).replace("$version", version);
         aboutText.setText(text);

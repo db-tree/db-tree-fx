@@ -135,7 +135,7 @@ public class MainWindowController {
             }
         });
 
-        showLog.selectedProperty().addListener(new ChangeListener<Boolean>() {
+        showLog.selectedProperty().addListener(new ChangeListener<>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean show) {
                 ObservableList<Node> items = splitPane.getItems();
@@ -145,15 +145,10 @@ public class MainWindowController {
                     showLog.setText("Log");
                     items.add(logView);
                     Double dividerPosition = positionProperty.getValue();
-                    splitPane.setDividerPosition(0, dividerPosition == null ? 0.5: dividerPosition);
+                    splitPane.setDividerPosition(0, (dividerPosition == null || dividerPosition == 0) ? 0.5 : dividerPosition);
 
-                    for (SplitPane.Divider dv: splitPane.getDividers()) {
-                        dv.positionProperty().addListener(new ChangeListener<Number>() {
-                            @Override
-                            public void changed(ObservableValue<? extends Number> v, Number oldValue, Number newValue) {
-                                positionProperty.setValue(newValue);
-                            }
-                        });
+                    for (SplitPane.Divider dv : splitPane.getDividers()) {
+                        dv.positionProperty().addListener((v, v1, v2) -> positionProperty.setValue(v2));
                     }
                 } else {
                     positionProperty.setValue(splitPane.getDividerPositions()[0]);
@@ -388,6 +383,10 @@ public class MainWindowController {
         stage.initStyle(StageStyle.UTILITY);
         stage.setResizable(false);
         stage.show();
+    }
+
+    public void onCloseAction(ActionEvent actionEvent) {
+        Platform.exit();
     }
 
     private final static class TableTreeTableCell extends TreeTableCell<TreeTableNode, String> {
