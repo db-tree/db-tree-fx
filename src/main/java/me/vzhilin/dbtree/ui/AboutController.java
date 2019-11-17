@@ -24,8 +24,9 @@ public final class AboutController {
             "author: Vladimir Zhilin\n" +
             "version: $version\n" +
             "build date: $date\n" +
-            "email: db.tree.app@gmail.com\n" +
-            "github: https://github.com/db-tree";
+            "github: https://github.com/db-tree\n" +
+            "email: db.tree.app@gmail.com\n\n" +
+            "bugs? suggestions? shoot me an email!";
 
         text = text.replace("$date", buildDate).replace("$version", version);
         aboutText.setText(text);
