@@ -16,9 +16,9 @@ $JPACKAGE_HOME/bin/jpackage \
 	--runtime-image target/jre \
 	--icon src/main/resources/icons/icon.png \
 	--vendor "Vladimir Zhilin" \
-	--app-version 0.0.1a \
+	--app-version 0.0.2 \
 	--type rpm \
-	--linux-package-name DBTree \
+	--linux-package-name db-tree \
 	--linux-app-category Database \
 	--linux-shortcut \
-	-d installer -i target/shade -n DBTree --main-class me.vzhilin.dbtree.MainWindowApp --main-jar db-tree-view-fx.jar
+	-d installer -i target/shade -n db-tree --main-class me.vzhilin.dbtree.MainWindowApp --main-jar db-tree-view-fx.jar

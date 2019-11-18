@@ -17,8 +17,8 @@ $JPACKAGE_HOME/bin/jpackage \
 	--runtime-image target/jre \
 	--icon src/main/resources/icons/icon.icns \
 	--vendor "Vladimir Zhilin" \
-	--app-version 0.0.1-SNAPSHOT \
+	--app-version 0.0.2 \
 	--package-type dmg \
 	--mac-package-identifier me.vzhilin.dbtree \
 	--mac-package-name DBTree \
-	-d installer -i target/shade -n DBTree --main-class me.vzhilin.dbtree.MainWindowApp --main-jar db-tree-view-fx.jar
+	-d installer -i target/shade -n db-tree --main-class me.vzhilin.dbtree.MainWindowApp --main-jar db-tree-view-fx.jar

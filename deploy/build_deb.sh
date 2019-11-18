@@ -17,7 +17,7 @@ $JPACKAGE_HOME/bin/jpackage \
 	--icon src/main/resources/icons/icon.png \
 	--vendor "Vladimir Zhilin" \
 	--linux-deb-maintainer "zhilin.vladimir.nic@gmail.com" \
-	--app-version 0.0.1a \
+	--app-version 0.0.2 \
 	--type deb \
 	--linux-package-name db-tree \
 	--linux-app-category Database \
