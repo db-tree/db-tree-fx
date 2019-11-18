@@ -9,7 +9,7 @@
 <?import javafx.scene.text.Font?>
 <FlowPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="218.0" prefWidth="534.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.vzhilin.dbtree.ui.AboutController">
    <children>
-      <ImageView fitHeight="221.0" fitWidth="218.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@icons/icon.png" />
          </image>
@@ -24,7 +24,7 @@
                   <Insets left="10.0" />
                </VBox.margin>
             </Label>
-            <TextArea fx:id="aboutText" editable="false" prefHeight="284.0" text="author: Vladimir Zhilin&#10;version: $version&#10;build date: $date&#10;github: https://github.com/vzhn/db-tree-fx">
+            <TextArea fx:id="aboutText" editable="false" prefHeight="300.0" text="author: Vladimir Zhilin&#10;version: $version&#10;build date: $date&#10;github: https://github.com/vzhn/db-tree-fx">
                <VBox.margin>
                   <Insets left="10.0" />
                </VBox.margin>

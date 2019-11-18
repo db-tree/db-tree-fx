@@ -39,7 +39,7 @@ public class MainWindowApp extends Application {
         stylesheets.add(getClass().getResource("/styles/connection-settings.css").toExternalForm());
         stylesheets.add(getClass().getResource("/styles/autocomplete.css").toExternalForm());
         stylesheets.add(getClass().getResource("/styles/main-window.css").toExternalForm());
-        stage.setTitle("DB Tree");
+        stage.setTitle("db-tree");
         stage.setScene(scene);
 
         MainWindowController controller = loader.getController();
