@@ -43,8 +43,11 @@ public class MainWindowApp extends Application {
         stage.setScene(scene);
 
         MainWindowController controller = loader.getController();
-        load(controller);
         controller.setOwnerWindow(stage);
+        stage.show();
+
+        load(controller);
+
         if (settings.getMainWindow() != null) {
             Settings.Dimensions dimension = settings.getMainWindow();
             stage.setWidth(dimension.width);
@@ -53,8 +56,6 @@ public class MainWindowApp extends Application {
 
         stage.widthProperty().addListener((v, ov, nv) -> settings.setMainWindowWidth(nv.intValue()));
         stage.heightProperty().addListener((v, ov, nv) -> settings.setMainWindowHeight(nv.intValue()));
-        stage.show();
-
     }
 
     private void setIcon(Stage stage) {

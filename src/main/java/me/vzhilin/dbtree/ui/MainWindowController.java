@@ -291,6 +291,10 @@ public class MainWindowController {
         stage.heightProperty().addListener((v, ov, nv) -> settings.setSettingsWindowHeight(nv.intValue()));
 
         stage.show();
+
+        if (settings.getConnections().isEmpty()) {
+            controller.onAddButton();
+        }
     }
 
     private void setIcon(Stage stage) {
@@ -340,6 +344,11 @@ public class MainWindowController {
     }
 
     public void refreshTreeView() {
+        if (cbConnection.valueProperty().get() == null) {
+            if (!settings.getConnections().isEmpty()) {
+                cbConnection.setValue(settings.getConnections().get(0));
+            }
+        }
         treeTable.refresh();
     }
 
