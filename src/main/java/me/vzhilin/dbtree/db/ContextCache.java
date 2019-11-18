@@ -110,7 +110,7 @@ public final class ContextCache {
             ContextKey that = (ContextKey) o;
             return driverClazz.equals(that.driverClazz) &&
                     host.equals(that.host) &&
-                    port.equals(that.port) &&
+                    Objects.equals(port, that.port) &&
                     database.equals(that.database) &&
                     login.equals(that.login) &&
                     Objects.equals(pattern, that.pattern) &&
