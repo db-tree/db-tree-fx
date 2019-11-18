@@ -20,6 +20,12 @@ public class MainWindowApp extends Application {
     private final static Logger LOG = Logger.getLogger(MainWindowApp.class);
     private Settings settings;
 
+    static {
+        if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+            System.setProperty("prism.lcdtext", "false");
+        }
+    }
+
     @Override public void start(Stage stage) throws Exception {
         Platform.setImplicitExit(true);
         BasicConfigurator.configure();
