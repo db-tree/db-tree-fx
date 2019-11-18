@@ -22,13 +22,32 @@ public final class ContextCache {
                 .build(new CacheLoader<ContextKey, DbContext>() {
                     @Override
                     public DbContext load(ContextKey dsKey) throws Exception {
-                        return new DbContext(dsKey.driverClazz, dsKey.jdbcUrl, dsKey.login, dsKey.password, dsKey.pattern, dsKey.schemas);
+                        return new DbContext(dsKey.driverClazz, dsKey.host, dsKey.port, dsKey.database, dsKey.login, dsKey.password, dsKey.pattern, dsKey.schemas);
                     }
                 });
     }
 
-    public DbContext getContext(String driverClazz, String jdbcUrl, String login, String password, String pattern, Set<String> schemas) throws ExecutionException {
-        ContextKey key = new ContextKey(driverClazz, jdbcUrl, login, password, pattern, schemas);
+    public DbContext getContext(
+            String driverClazz,
+            String host,
+            String port,
+            String database,
+            String login,
+            String password,
+            String pattern,
+            Set<String> schemas) throws ExecutionException {
+
+        ContextKey key = new ContextKey(
+            driverClazz,
+            host,
+            port,
+            database,
+            login,
+            password,
+            pattern,
+            schemas
+        );
+
         DbContext dbContext = cache.get(key);
         try {
             if (dbContext != null && dbContext.getConnection().isClosed()) {
@@ -42,22 +61,42 @@ public final class ContextCache {
         return dbContext;
     }
 
-    public DbContext getIfPresent(String driverClazz, String jdbcUrl, String login, String password, String pattern, Set<String> schemas) {
-        ContextKey key = new ContextKey(driverClazz, jdbcUrl, login, password, pattern, schemas);
+    public DbContext getIfPresent(String driverClazz,
+                                  String host,
+                                  String port,
+                                  String database,
+                                  String login,
+                                  String password,
+                                  String pattern,
+                                  Set<String> schemas) {
+
+        ContextKey key = new ContextKey(driverClazz, host, port, database, login, password, pattern, schemas);
         return cache.getIfPresent(key);
     }
 
     private final static class ContextKey {
         private final String driverClazz;
-        private final String jdbcUrl;
+        private final String host;
+        private final String port;
+        private final String database;
         private final String login;
         private final String password;
         private final String pattern;
         private final Set<String> schemas;
 
-        public ContextKey(String driverClazz, String jdbcUrl, String login, String password, String pattern, Set<String> schemas) {
+        public ContextKey(String driverClazz,
+                          String host,
+                          String port,
+                          String database,
+                          String login,
+                          String password,
+                          String pattern,
+                          Set<String> schemas) {
+
             this.driverClazz = driverClazz;
-            this.jdbcUrl = jdbcUrl;
+            this.host = host;
+            this.port = port;
+            this.database = database;
             this.login = login;
             this.password = password;
             this.pattern = pattern;
@@ -70,16 +109,17 @@ public final class ContextCache {
             if (o == null || getClass() != o.getClass()) return false;
             ContextKey that = (ContextKey) o;
             return driverClazz.equals(that.driverClazz) &&
-                    jdbcUrl.equals(that.jdbcUrl) &&
+                    host.equals(that.host) &&
+                    port.equals(that.port) &&
+                    database.equals(that.database) &&
                     login.equals(that.login) &&
-                    password.equals(that.password) &&
-                    pattern.equals(that.pattern) &&
-                    schemas.equals(that.schemas);
+                    Objects.equals(pattern, that.pattern) &&
+                    Objects.equals(schemas, that.schemas);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(driverClazz, jdbcUrl, login, password, pattern, schemas);
+            return Objects.hash(driverClazz, host, port, database, login, pattern, schemas);
         }
     }
 }

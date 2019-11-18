@@ -17,7 +17,13 @@ public final class ConnectionSettings {
     private final StringProperty driverClass = new SimpleStringProperty();
 
     /** Адрес подключения */
-    private final StringProperty jdbcUrl = new SimpleStringProperty();
+    private final StringProperty host = new SimpleStringProperty();
+
+    /** connection port */
+    private final StringProperty port = new SimpleStringProperty();
+
+    /** database name */
+    private final StringProperty database = new SimpleStringProperty();
 
     /** Имя пользователя */
     private final StringProperty username = new SimpleStringProperty();
@@ -42,7 +48,9 @@ public final class ConnectionSettings {
     public ConnectionSettings(ConnectionSettings cs) {
         connectionName.set(cs.getConnectionName());
         driverClass.set(cs.getDriverClass());
-        jdbcUrl.set(cs.getJdbcUrl());
+        host.set(cs.getHost());
+        port.set(cs.getPort());
+        database.set(cs.getDatabase());
         username.set(cs.getUsername());
         password.set(cs.getPassword());
         tableNamePatternProperty.set(cs.getTableNamePattern());
@@ -53,6 +61,30 @@ public final class ConnectionSettings {
         }
 
         lookupableColumns.putAll(cs.lookupableColumns);
+    }
+
+    public String getHost() {
+        return host.get();
+    }
+
+    public StringProperty hostProperty() {
+        return host;
+    }
+
+    public String getPort() {
+        return port.get();
+    }
+
+    public StringProperty portProperty() {
+        return port;
+    }
+
+    public String getDatabase() {
+        return database.get();
+    }
+
+    public StringProperty databaseProperty() {
+        return database;
     }
 
     /**
@@ -82,14 +114,6 @@ public final class ConnectionSettings {
 
     public StringProperty driverClassProperty() {
         return driverClass;
-    }
-
-    public String getJdbcUrl() {
-        return jdbcUrl.get();
-    }
-
-    public StringProperty jdbcUrlProperty() {
-        return jdbcUrl;
     }
 
     public String getUsername() {

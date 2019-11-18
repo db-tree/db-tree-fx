@@ -20,6 +20,9 @@ public class SettingsCopy {
     public SettingsCopy(Settings original) {
         this.original = original;
         this.copy = new Settings();
+        this.copy.setSettingsWindow(original.getSettingsWindow());
+        this.copy.setMainWindow(original.getMainWindow());
+        this.copy.dividerPositionProperty().setValue(original.getDividerPosition());
 
         for (ConnectionSettings cs: original.getConnections()) {
             ConnectionSettings newCs = new ConnectionSettings(cs);
@@ -82,7 +85,9 @@ public class SettingsCopy {
     private void writeConnection(ConnectionSettings orig, ConnectionSettings modif) {
         orig.connectionNameProperty().set(modif.getConnectionName());
         orig.driverClassProperty().set(modif.getDriverClass());
-        orig.jdbcUrlProperty().set(modif.getJdbcUrl());
+        orig.hostProperty().set(modif.getHost());
+        orig.portProperty().set(modif.getPort());
+        orig.databaseProperty().set(modif.getDatabase());
         orig.usernameProperty().set(modif.getUsername());
         orig.passwordProperty().set(modif.getPassword());
         orig.tableNamePatternProperty().set(modif.getTableNamePattern());

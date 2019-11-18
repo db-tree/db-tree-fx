@@ -49,21 +49,45 @@ public final class ApplicationContext {
         }
 
         String driverClass = connection.getDriverClass();
-        String jdbcUrl = connection.getJdbcUrl();
+        String host = connection.getHost();
+        String port = connection.getPort();
+        String database = connection.getDatabase();
         String name = connection.getUsername();
         String pass = connection.getPassword();
         String pattern = connection.getTableNamePattern();
         Set<String> schemas = connection.getSchemas();
-        queryContext = new QueryContext(contextCache.getContext(driverClass, jdbcUrl, name, pass, pattern, schemas), connection);
+
+        DbContext context = contextCache.getContext(driverClass, host, port, database, name, pass, pattern, schemas);
+        queryContext = new QueryContext(context, connection);
         return queryContext;
     }
 
-    public DbContext newQueryContext(String driverClazz, String jdbcUrlText, String usernameText, String password, String pattern, Set<String> schemas) throws ExecutionException {
-        return contextCache.getContext(driverClazz, jdbcUrlText, usernameText, password, pattern, schemas);
+    public DbContext newQueryContext(String driverClazz,
+                                     String host,
+                                     String port,
+                                     String database,
+                                     String usernameText,
+                                     String password,
+                                     String pattern,
+                                     Set<String> schemas) throws ExecutionException {
+
+        return contextCache.getContext(driverClazz,
+                host,
+                port,
+                database,
+                usernameText,
+                password,
+                pattern,
+                schemas);
     }
 
-    public DbContext getIfPresent(String driverClazz, String jdbcUrlText, String usernameText, String password, String pattern, Set<String> schemas) {
-        return contextCache.getIfPresent(driverClazz, jdbcUrlText, usernameText, password, pattern, schemas);
+    public DbContext getIfPresent(String driverClazz,
+                                  String host,
+                                  String port,
+                                  String database,
+                                  String usernameText, String password, String pattern, Set<String> schemas) {
+
+        return contextCache.getIfPresent(driverClazz, host, port, database, usernameText, password, pattern, schemas);
     }
 
     public synchronized Logger getLogger() {

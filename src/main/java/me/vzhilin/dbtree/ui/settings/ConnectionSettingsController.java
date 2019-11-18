@@ -46,7 +46,13 @@ public class ConnectionSettingsController {
     private ComboBox<String> driverClass;
 
     @FXML
-    private TextField jdbcUrl;
+    private TextField hostname;
+
+    @FXML
+    private TextField port;
+
+    @FXML
+    private TextField database;
 
     @FXML
     private TextField username;
@@ -69,6 +75,12 @@ public class ConnectionSettingsController {
     @FXML
     private Label testMessageLabel;
 
+    @FXML
+    private Tab searchTab;
+
+    @FXML
+    private Tab stringTab;
+
     private ConnectionSettings settings;
     private ApplicationContext appContext;
 
@@ -86,19 +98,24 @@ public class ConnectionSettingsController {
     private DbContext getContext() {
         try {
             String driver = driverClass.getValue();
-            String url = jdbcUrl.getText();
+            String h = hostname.getText();
+            String p = port.getText();
+            String db = database.getText();
             String username = this.username.getText();
             String pass = password.getText();
             String pattern = tableNamePattern.getText();
 
-            if (driver == null || url == null) {
+            if (driver == null ) {
                 return null;
             }
 
             Set<String> schemas = parseSchemas(this.schemas.getText());
-            return appContext.newQueryContext(driver, url, username, pass, pattern, schemas);
+            return appContext.newQueryContext(driver, h, p, db, username, pass, pattern, schemas);
         } catch (ExecutionException e) {
-            ApplicationContext.get().getLogger().log("Database error", e);
+            ApplicationContext applicationContext = ApplicationContext.get();
+            if (applicationContext != null) {
+                applicationContext.getLogger().log("Database error", e);
+            }
         }
 
         return null;
@@ -139,9 +156,9 @@ public class ConnectionSettingsController {
         lookupTreeView.showRootProperty().setValue(false);
 
         TreeTableColumn<LookupTreeNode, Boolean> selectedColumn = new TreeTableColumn<>("Selected");
-        selectedColumn.setPrefWidth(80);
-        selectedColumn.setMaxWidth(80);
-        selectedColumn.setMinWidth(60);
+        selectedColumn.setPrefWidth(160);
+        selectedColumn.setMaxWidth(160);
+        selectedColumn.setMinWidth(100);
         TreeTableColumn<LookupTreeNode, String> tableColumn = new TreeTableColumn<>("Column");
 
         lookupTreeView.getColumns().add(tableColumn);
@@ -222,14 +239,21 @@ public class ConnectionSettingsController {
         executor.execute(() -> {
             try {
                 String driverClazz = driverClass.getValue();
-                String url = jdbcUrl.getText();
-                String name = username.getText();
-                String pass = password.getText();
-                String pattern = tableNamePattern.getText();
-                DbContext ctx = new DbContext(driverClazz, url, name, pass, pattern, parseSchemas(schemas.getText()));
+                DbContext ctx = new DbContext(driverClazz,
+                    hostname.getText(),
+                    port.getText(),
+                    database.getText(),
+                    username.getText(),
+                    password.getText(),
+                    tableNamePattern.getText(),
+                    parseSchemas(schemas.getText())
+                );
                 Platform.runLater(() -> {
                     testMessageLabel.setTextFill(Color.DARKGREEN);
                     testMessageLabel.setText("OK");
+
+                    stringTab.setDisable(false);
+                    searchTab.setDisable(false);
 
                     localContext = ctx;
                     Set<Table> allTables = new HashSet<>();
@@ -243,6 +267,9 @@ public class ConnectionSettingsController {
                 Platform.runLater(() -> {
                     testMessageLabel.setTextFill(Color.RED);
                     testMessageLabel.setText(ex.getMessage());
+
+                    stringTab.setDisable(true);
+                    searchTab.setDisable(true);
                 });
             }
         });
@@ -401,7 +428,9 @@ public class ConnectionSettingsController {
     public void bindSettingsToUI(ConnectionSettings settings) {
         connectionName.textProperty().bindBidirectional(settings.connectionNameProperty());
         driverClass.valueProperty().bindBidirectional(settings.driverClassProperty());
-        jdbcUrl.textProperty().bindBidirectional(settings.jdbcUrlProperty());
+        hostname.textProperty().bindBidirectional(settings.hostProperty());
+        port.textProperty().bindBidirectional(settings.portProperty());
+        database.textProperty().bindBidirectional(settings.databaseProperty());
         username.textProperty().bindBidirectional(settings.usernameProperty());
         password.textProperty().bindBidirectional(settings.passwordProperty());
         tableNamePattern.textProperty().bindBidirectional(settings.tableNamePatternProperty());

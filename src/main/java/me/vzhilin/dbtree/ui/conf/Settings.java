@@ -37,7 +37,7 @@ public class Settings {
         return connections.get();
     }
 
-    public double getDividerPosition() {
+    public Double getDividerPosition() {
         return dividerPosition.get();
     }
 
@@ -189,6 +189,14 @@ public class Settings {
         }
 
         settingsWindow.height = height;
+    }
+
+    public void setSettingsWindow(Dimensions settingsWindow) {
+        this.settingsWindow = settingsWindow;
+    }
+
+    public void setMainWindow(Dimensions mainWindow) {
+        this.mainWindow = mainWindow;
     }
 
     public static class Dimensions {

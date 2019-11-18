@@ -16,6 +16,8 @@ import java.io.Closeable;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -25,11 +27,34 @@ public final class DbContext implements Closeable {
     private final Catalog catalog;
     private final QueryRunner runner;
     private final static Pattern MATCH_ANY = Pattern.compile(".*");
+    private final static Map<String, DatabaseInfo> DATABASES = new HashMap<>();
 
-    public DbContext(String driverClazz, String jdbcUrl, String login, String password, String pattern, Set<String> schemas) throws SQLException {
+    static {
+        DATABASES.put("org.postgresql.Driver", new DatabaseInfo(
+        "jdbc:postgresql://%s:%s:%s", new PostgresqlAdapter(), "5432"
+        ));
+
+        DATABASES.put("oracle.jdbc.OracleDriver", new DatabaseInfo(
+        "jdbc:oracle:thin:@%s:%s:%s", new OracleDatabaseAdapter(), "1521"
+        ));
+
+        DATABASES.put("org.mariadb.jdbc.Driver", new DatabaseInfo(
+        "jdbc:mariadb://%s:%s:%s", new MariadbDatabaseAdapter(), "3306"
+        ));
+    }
+
+    public DbContext(String driverClazz,
+                     String host,
+                     String port,
+                     String database,
+                     String login,
+                     String password,
+                     String pattern,
+                     Set<String> schemas) throws SQLException {
+
         BasicDataSource ds = new BasicDataSource();
         ds.setDriverClassName(driverClazz);
-        ds.setUrl(jdbcUrl);
+        ds.setUrl(getUrl(driverClazz, host, port, database));
         ds.setUsername(login);
         ds.setPassword(password);
         connection = ds.getConnection();
@@ -43,6 +68,10 @@ public final class DbContext implements Closeable {
         catalog = factory.getLoader(ds).load(ds, new PatternTableFilter(schemas, compiledPattern));
     }
 
+    private String getUrl(String driverClazz, String host, String port, String database) {
+        return DATABASES.get(driverClazz).getUrl(host, port, database);
+    }
+
     private Set<String> chooseSchemas(Set<String> schemas) throws SQLException {
         if (schemas.isEmpty()) {
             schemas = Collections.singleton(adapter.defaultSchema(connection));
@@ -51,15 +80,7 @@ public final class DbContext implements Closeable {
     }
 
     private DatabaseAdapter chooseAdapter(String driverClazz) {
-        switch (driverClazz) {
-            case "org.postgresql.Driver":
-                return new PostgresqlAdapter();
-            case "oracle.jdbc.OracleDriver":
-                return new OracleDatabaseAdapter();
-            case "org.mariadb.jdbc.Driver":
-                return new MariadbDatabaseAdapter();
-        }
-        throw new RuntimeException("unsupported driver: " + driverClazz);
+        return DATABASES.get(driverClazz).adapter;
     }
 
     public DatabaseAdapter getAdapter() {
@@ -140,6 +161,23 @@ public final class DbContext implements Closeable {
         @Override
         public boolean acceptColumn(String schema, String table, String column) {
             return true;
+        }
+    }
+
+    private final static class DatabaseInfo {
+        private final String jdbcUrl;
+        private final DatabaseAdapter adapter;
+        private final String defaultPort;
+
+        public DatabaseInfo(String jdbcUrl, DatabaseAdapter adapter, String defaultPort) {
+            this.jdbcUrl = jdbcUrl;
+            this.adapter = adapter;
+            this.defaultPort = defaultPort;
+        }
+
+        public String getUrl(String host, String port, String database) {
+            boolean portIsBlank = port == null || port.isEmpty();
+            return String.format(jdbcUrl, host, portIsBlank ? defaultPort : port, database);
         }
     }
 }
