@@ -17,5 +17,15 @@ When there is need to examine specific row in the database people usually write 
 
 See [wiki](https://github.com/vzhn/db-tree-fx/wiki/Usage) for detailed information
 
-# Downloads
+Supported databases:
+* oracle
+* postgres
+* MariaDB
+
+# Download
+Supported platforms:
+* GNU/Linux x86_64 rpm and deb packages
+* Windows x86_64
+* macOS  
+
 See [latest release packages](https://github.com/db-tree/db-tree-fx/releases/latest)
